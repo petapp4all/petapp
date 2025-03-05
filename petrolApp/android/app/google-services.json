@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "427554801659",
+    "project_id": "petrolapp-87da8",
+    "storage_bucket": "petrolapp-87da8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:427554801659:android:09397bb7ba8b12705a6d5e",
+        "android_client_info": {
+          "package_name": "com.mathew4567.petrolApp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "427554801659-iq67mavvkp43fpncrooo75d6hlplhdl1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mathew4567.petrolApp",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "427554801659-4rbt0mhm6into2fnrf6lifmre12rn06p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJHdgO_GkvTZvHpnGHQd3JibfYSMAl528"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "427554801659-4rbt0mhm6into2fnrf6lifmre12rn06p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
