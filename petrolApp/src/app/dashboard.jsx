@@ -4,8 +4,10 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
+  BackHandler,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getUserDetails,
@@ -40,6 +42,24 @@ const Dashboard = () => {
     queryClient.invalidateQueries(["userDetails"]);
     router.push("/");
   };
+
+  // Handle back button press
+  useEffect(() => {
+    const backAction = () => {
+      Alert.alert("Logout Confirmation", "Are you sure you want to logout?", [
+        { text: "Cancel", style: "cancel" },
+        { text: "Yes", onPress: handleLogout },
+      ]);
+      return true; // Prevent default back action
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove(); // Cleanup listener on unmount
+  }, []);
 
   if (isLoading) {
     return (

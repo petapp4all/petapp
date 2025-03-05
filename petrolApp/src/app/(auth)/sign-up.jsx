@@ -18,6 +18,7 @@ const SignUpScreen = () => {
   const router = useRouter();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -33,7 +34,7 @@ const SignUpScreen = () => {
   });
 
   const handleSignUp = () => {
-    if (!fullName || !email || !password || !confirmPassword) {
+    if (!fullName || !email || !phoneNumber || !password || !confirmPassword) {
       Alert.alert("Error", "Please fill all fields");
       return;
     }
@@ -42,7 +43,7 @@ const SignUpScreen = () => {
       return;
     }
 
-    mutation.mutate({ fullName, email, password });
+    mutation.mutate({ fullName, email, phoneNumber, password });
   };
 
   return (
@@ -58,7 +59,7 @@ const SignUpScreen = () => {
           Create an Account
         </Text>
         <View className="bg-white/10 p-6 rounded-2xl w-full shadow-lg border border-white/20 backdrop-blur-md">
-          <View className="flex-row items-center bg-white/20 px-4 py-3 rounded-lg mb-4 border border-white/30">
+          <View className="flex-row items-center bg-white/20 px-4 py-2 rounded-lg mb-4 border border-white/30">
             <FontAwesome name="user" size={20} color="#ddd" />
             <TextInput
               className="flex-1 ml-3 text-white text-lg font-bold"
@@ -68,8 +69,7 @@ const SignUpScreen = () => {
               onChangeText={setFullName}
             />
           </View>
-
-          <View className="flex-row items-center bg-white/20 px-4 py-3 rounded-lg mb-4 border border-white/30">
+          <View className="flex-row items-center bg-white/20 px-4 py-2 rounded-lg mb-4 border border-white/30">
             <FontAwesome name="envelope" size={20} color="#ddd" />
             <TextInput
               className="flex-1 ml-3 text-white text-lg font-bold"
@@ -80,8 +80,18 @@ const SignUpScreen = () => {
               onChangeText={setEmail}
             />
           </View>
-
-          <View className="flex-row items-center bg-white/20 px-4 py-3 rounded-lg mb-4 border border-white/30">
+          <View className="flex-row items-center bg-white/20 px-4 py-2 rounded-lg mb-4 border border-white/30">
+            <FontAwesome name="phone" size={20} color="#ddd" />
+            <TextInput
+              className="flex-1 ml-3 text-white text-lg font-bold"
+              placeholder="Phone Number"
+              placeholderTextColor="#ddd"
+              keyboardType="phone-pad"
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
+            />
+          </View>
+          <View className="flex-row items-center bg-white/20 px-4 py-2 rounded-lg mb-4 border border-white/30">
             <Ionicons name="lock-closed" size={20} color="#ddd" />
             <TextInput
               className="flex-1 ml-3 text-white text-lg font-bold"
@@ -92,8 +102,7 @@ const SignUpScreen = () => {
               onChangeText={setPassword}
             />
           </View>
-
-          <View className="flex-row items-center bg-white/20 px-4 py-3 rounded-lg mb-6 border border-white/30">
+          <View className="flex-row items-center bg-white/20 px-4 py-2 rounded-lg mb-6 border border-white/30">
             <Ionicons name="lock-closed" size={20} color="#ddd" />
             <TextInput
               className="flex-1 ml-3 text-white text-lg font-bold"
@@ -104,7 +113,6 @@ const SignUpScreen = () => {
               onChangeText={setConfirmPassword}
             />
           </View>
-
           <TouchableOpacity
             className="rounded-lg overflow-hidden"
             onPress={handleSignUp}
@@ -112,7 +120,7 @@ const SignUpScreen = () => {
           >
             <LinearGradient
               colors={["#0072FF", "#00C6FF"]}
-              className="px-6 py-3 rounded-lg flex-row justify-center items-center"
+              className="px-6 py-4 rounded-lg flex-row justify-center items-center"
             >
               {mutation.isPending ? (
                 <ActivityIndicator color="#fff" />
@@ -123,7 +131,7 @@ const SignUpScreen = () => {
               )}
             </LinearGradient>
           </TouchableOpacity>
-
+          expo start --android
           <TouchableOpacity
             className="mt-4"
             onPress={() => router.push("/sign-in")}

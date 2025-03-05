@@ -2,6 +2,7 @@ import { apiUrl } from "./utils.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const registerUser = async (userData) => {
+  console.log(apiUrl);
   const response = await fetch(`${apiUrl}/users/signup`, {
     method: "POST",
     headers: {
@@ -30,7 +31,7 @@ export const loginUser = async (credentials) => {
     }
 
     const data = await response.json();
-
+    console.log(data.token);
     // Store updated user details & token
     await AsyncStorage.setItem("userDetails", JSON.stringify(data));
     await AsyncStorage.setItem("userToken", data.token);

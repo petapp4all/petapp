@@ -11,7 +11,7 @@ userRouter.post(
   "/signup",
   expressAsyncHandler(async (req, res) => {
     console.log(req.body);
-    const { fullName, email, password } = req.body;
+    const { fullName, email, phoneNumber, password } = req.body;
     const foundUser = await User.findOne({ email });
     if (foundUser) {
       console.log(foundUser);
@@ -27,6 +27,7 @@ userRouter.post(
         _id: user._id,
         fullName: user.fullName,
         email: user.email,
+        phoneNumber: user.phoneNumber,
         isAdmin: user.isAdmin,
         token: generateToken(user),
       });
