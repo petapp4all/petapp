@@ -9,3 +9,9 @@ export const apiUrl = isDevelopment
   : extra.apiUrlProduction || "https://petrol-auth.vercel.app/api";
 
 export const queryClient = new QueryClient();
+
+export const getError = (error) => {
+  return error.response && error.response.data.message
+    ? error.response.data.message
+    : error.message;
+};

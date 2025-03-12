@@ -15,7 +15,7 @@ import { useRouter } from "expo-router";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import * as LocalAuthentication from "expo-local-authentication";
 import { useMutation } from "@tanstack/react-query";
-import { loginUser } from "../../components/utils/auth";
+import { loginUser, logoutUser } from "../../components/utils/auth";
 
 const SignInScreen = () => {
   const router = useRouter();
@@ -25,14 +25,13 @@ const SignInScreen = () => {
   const [password, setPassword] = useState("");
   const [isBiometricSupported, setIsBiometricSupported] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
-
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
-        const token = await AsyncStorage.getItem("authToken");
-        const storedEmail = await AsyncStorage.getItem("userEmail");
-        if (token && storedEmail) {
-          setEmail(storedEmail);
+        const userDetails = await AsyncStorage.getItem("userDetails");
+        if (userDetails) {
+          const parsedUser = JSON.parse(userDetails);
+          setEmail(parsedUser.email);
           setUserLoggedIn(true);
         }
       } catch (error) {
@@ -52,24 +51,16 @@ const SignInScreen = () => {
 
   const handleLoginWithBiometrics = async () => {
     try {
-      const hasHardware = await LocalAuthentication.hasHardwareAsync();
-      if (!hasHardware) {
-        Alert.alert("Error", "Biometric authentication is not supported.");
-        return;
-      }
-      const isEnrolled = await LocalAuthentication.isEnrolledAsync();
-      if (!isEnrolled) {
-        Alert.alert("Error", "No fingerprints or biometrics enrolled.");
-        return;
-      }
-
       const result = await LocalAuthentication.authenticateAsync({
         promptMessage: "Authenticate with Fingerprint",
       });
 
       if (result.success) {
-        Alert.alert("Success", "Authenticated successfully!");
-        router.push("/dashboard");
+        const userDetails = await AsyncStorage.getItem("userDetails");
+        if (userDetails) {
+          Alert.alert("Success", "Authenticated successfully!");
+          router.push("/dashboard");
+        }
       } else {
         Alert.alert("Error", "Authentication failed.");
       }
@@ -82,15 +73,14 @@ const SignInScreen = () => {
   const mutation = useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
-      AsyncStorage.setItem("authToken", data.token);
-      AsyncStorage.setItem("userEmail", email);
       Alert.alert("Success", "Login successful!");
-      router.push("/dashboard");
+      router.push("/(user)/menu");
     },
-
     onError: (error) => {
-      console.log(error);
-      Alert.alert("Error", error.message);
+      const errorMessage =
+        error.message || "Something went wrong, please try again";
+      console.log("errorMessage=:", errorMessage);
+      Alert.alert("Error", errorMessage);
     },
   });
 
@@ -110,15 +100,14 @@ const SignInScreen = () => {
       resizeMode="cover"
     >
       <View className="absolute top-0 left-0 right-0 bottom-0 bg-black opacity-50" />
-
       <Animated.View
         style={{ opacity: fadeAnim }}
         className="w-full max-w-md p-6"
       >
         {/* Show welcome message if user is already logged in */}
         {userLoggedIn ? (
-          <Text className="text-white text-4xl font-extrabold text-center mb-6 tracking-wide">
-            Welcome Back, {email}
+          <Text className="text-white text-2xl font-extrabold text-center mb-6 tracking-wide">
+            Welcome Back, {email.split("@")[0]}
           </Text>
         ) : (
           <Text className="text-white text-4xl font-extrabold text-center mb-6 tracking-wide">
@@ -129,7 +118,7 @@ const SignInScreen = () => {
         <View className="bg-white/10 p-6 rounded-3xl w-full shadow-lg backdrop-blur-md border border-white/20">
           {/* Show password input only if user is already logged in */}
           {!userLoggedIn && (
-            <View className="flex-row items-center bg-white/20 px-4 py-3 rounded-xl mb-4 border border-white/30">
+            <View className="flex-row items-center bg-white/20 px-4 py-4 rounded-xl mb-4 border border-white/30">
               <FontAwesome name="envelope" size={20} color="#ddd" />
               <TextInput
                 className="flex-1 ml-3 text-white text-lg font-bold"
@@ -143,7 +132,7 @@ const SignInScreen = () => {
           )}
 
           {/* Password Input */}
-          <View className="flex-row items-center bg-white/20 px-4 py-3 rounded-xl mb-6 border border-white/30">
+          <View className="flex-row items-center bg-white/20 px-4 py-4 rounded-xl mb-6 border border-white/30">
             <Ionicons name="lock-closed" size={24} color="#ddd" />
             <TextInput
               className="flex-1 ml-3 text-white text-lg font-bold"
@@ -167,11 +156,15 @@ const SignInScreen = () => {
             activeOpacity={0.8}
             className="rounded-lg overflow-hidden shadow-xl"
             onPress={() => mutation.mutate({ email, password })}
-            disabled={mutation.isPending}
+            disabled={
+              (userLoggedIn ? !password : !email || !password) ||
+              mutation.isPending
+            }
           >
             <LinearGradient
               colors={["#0072FF", "#00C6FF"]}
               className="px-6 py-4 rounded-lg"
+              style={{ opacity: mutation.isPending ? 0.5 : 1 }}
             >
               {mutation.isPending ? (
                 <ActivityIndicator color="#fff" />
@@ -211,11 +204,10 @@ const SignInScreen = () => {
                     {
                       text: "PROCEED",
                       onPress: async () => {
-                        await AsyncStorage.removeItem("authToken");
-                        await AsyncStorage.removeItem("userEmail");
+                        await AsyncStorage.removeItem("userDetails");
+                        setUserLoggedIn(false);
                         setEmail("");
                         setPassword("");
-                        setUserLoggedIn(false);
                         Alert.alert(
                           "Success",
                           "All saved data has been cleared. You can now sign in with another account."

@@ -3,9 +3,7 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     }
   },
   "include": [
@@ -13,6 +11,13 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
-    "nativewind-env.d.ts"
+    "nativewind-env.d.ts",
+    "src/app/(user)/_layout.jsx",
+    "src/app/(user)/index.jsx",
+    "src/app/(user)/menu/_layout.jsx",
+    "src/app/(user)/menu/index.jsx",
+    "src/app/_layout.jsx",
+    "src/constants/Colors.js",
+    "src/app/(user)/marketPlace/index.jsx"
   ]
 }

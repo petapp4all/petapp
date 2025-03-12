@@ -2,7 +2,6 @@ import { apiUrl } from "./utils.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const registerUser = async (userData) => {
-  console.log(apiUrl);
   const response = await fetch(`${apiUrl}/users/signup`, {
     method: "POST",
     headers: {
@@ -11,11 +10,13 @@ export const registerUser = async (userData) => {
     body: JSON.stringify(userData),
   });
 
+  const data = await response.json();
+
   if (!response.ok) {
-    throw new Error("Registration failed");
+    throw new Error(data.message || "Registration failed");
   }
 
-  return response.json();
+  return data;
 };
 
 export const loginUser = async (credentials) => {
@@ -25,20 +26,14 @@ export const loginUser = async (credentials) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(credentials),
     });
-
-    if (!response.ok) {
-      throw new Error("Login failed");
-    }
-
     const data = await response.json();
-    console.log(data.token);
-    // Store updated user details & token
+    if (!response.ok) {
+      throw new Error(data.message || "Login failed");
+    }
     await AsyncStorage.setItem("userDetails", JSON.stringify(data));
-    await AsyncStorage.setItem("userToken", data.token);
-
-    return data; // Return user data
+    return data;
   } catch (error) {
-    console.error("Login error:", error);
+    console.error("Login error:", error.message);
     throw error;
   }
 };
@@ -46,7 +41,6 @@ export const loginUser = async (credentials) => {
 export const logoutUser = async () => {
   try {
     await AsyncStorage.removeItem("userDetails");
-    await AsyncStorage.removeItem("userToken");
   } catch (error) {
     console.error("Error logging out:", error);
   }
@@ -62,11 +56,70 @@ export const getUserDetails = async () => {
   }
 };
 
-export const getUserToken = async () => {
+export const deleteUser = async (email, password) => {
   try {
-    return await AsyncStorage.getItem("userToken");
+    const userDetails = await AsyncStorage.getItem("userDetails");
+    if (!userDetails) {
+      throw new Error("User details not found. Please log in again.");
+    }
+
+    const { _id } = JSON.parse(userDetails);
+
+    const response = await fetch(`${apiUrl}/users/${_id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to delete account");
+    }
+
+    await AsyncStorage.removeItem("userDetails");
+    return data;
   } catch (error) {
-    console.error("Error fetching user token:", error);
-    return null;
+    console.error("Error deleting account:", error.message);
+    throw error;
+  }
+};
+
+// ✅ Function to Update User Details
+export const updateUser = async (updatedData) => {
+  try {
+    const token = await AsyncStorage.getItem("");
+    const userDetails = await AsyncStorage.getItem("userDetails");
+
+    if (!userDetails) {
+      throw new Error("User details not found. Please log in again.");
+    }
+
+    const { _id } = JSON.parse(userDetails);
+
+    const response = await fetch(`${apiUrl}/users/${_id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(updatedData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to update user details");
+    }
+
+    // Update the user details in AsyncStorage
+    await AsyncStorage.setItem("userDetails", JSON.stringify(data));
+
+    return data;
+  } catch (error) {
+    console.error("Error updating user details:", error.message);
+    throw error;
   }
 };

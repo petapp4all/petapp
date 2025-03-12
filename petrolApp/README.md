@@ -1,4 +1,5 @@
 npm start --reset-cache
+
 npx expo start --clear
 
 npx expo install --check
@@ -54,8 +55,9 @@ npx expo start --android
 
 npx expo run android
 
-Run the following to check for unused dependencies:
-
-npx depcheck
-
-npx expo start --dev-client
+npx expo install expo-av
+npx expo install firebase
+npx expo install expo-dev-client
+npx expo install react-native-svg
+npx expo install expo-image-picker
+npm install @react-native-community/blur
