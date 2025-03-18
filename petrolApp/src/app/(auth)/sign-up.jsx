@@ -22,7 +22,7 @@ const SignUpScreen = () => {
   const router = useRouter();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phone, setphone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -40,7 +40,7 @@ const SignUpScreen = () => {
   });
 
   const handleSignUp = () => {
-    if (!fullName || !email || !phoneNumber || !password || !confirmPassword) {
+    if (!fullName || !email || !phone || !password || !confirmPassword) {
       Alert.alert("Error", "Please fill all fields");
       return;
     }
@@ -49,7 +49,7 @@ const SignUpScreen = () => {
       return;
     }
 
-    mutation.mutate({ fullName, email, phoneNumber, password });
+    mutation.mutate({ name: fullName, email, phone, password });
   };
 
   return (
@@ -74,7 +74,7 @@ const SignUpScreen = () => {
               Create an Account
             </Text>
             <View className="bg-white/10 p-6  rounded-2xl w-full shadow-lg border border-white/20 backdrop-blur-md">
-              <View className="flex-row items-center bg-white/20  px-4 py-4 rounded-lg mb-4 border border-white/30">
+              <View className="flex-row items-center bg-white/20  px-4 py-3 rounded-lg mb-4 border border-white/30">
                 <FontAwesome name="user" size={20} color="#ddd" />
                 <TextInput
                   className="flex-1 ml-3 text-white text-lg font-bold"
@@ -82,10 +82,11 @@ const SignUpScreen = () => {
                   placeholderTextColor="#ddd"
                   value={fullName}
                   onChangeText={setFullName}
+                  style={{ height: 45 }}
                 />
               </View>
 
-              <View className="flex-row items-center bg-white/20 px-4 py-4 rounded-lg mb-4 border border-white/30">
+              <View className="flex-row items-center bg-white/20 px-4 py-3 rounded-lg mb-4 border border-white/30">
                 <FontAwesome name="envelope" size={20} color="#ddd" />
                 <TextInput
                   className="flex-1 ml-3 text-white text-lg font-bold"
@@ -94,22 +95,24 @@ const SignUpScreen = () => {
                   keyboardType="email-address"
                   value={email}
                   onChangeText={setEmail}
+                  style={{ height: 45 }}
                 />
               </View>
 
-              <View className="flex-row items-center bg-white/20 px-4 py-4 rounded-lg mb-4 border border-white/30">
+              <View className="flex-row items-center bg-white/20 px-4 py-3 rounded-lg mb-4 border border-white/30">
                 <FontAwesome name="phone" size={20} color="#ddd" />
                 <TextInput
                   className="flex-1 ml-3 text-white text-lg font-bold"
                   placeholder="Phone Number"
                   placeholderTextColor="#ddd"
                   keyboardType="phone-pad"
-                  value={phoneNumber}
-                  onChangeText={setPhoneNumber}
+                  value={phone}
+                  onChangeText={setphone}
+                  style={{ height: 45 }}
                 />
               </View>
 
-              <View className="flex-row items-center bg-white/20 px-4 py-4 rounded-lg mb-4 border border-white/30">
+              <View className="flex-row items-center bg-white/20 px-4 py-3 rounded-lg mb-4 border border-white/30">
                 <Ionicons name="lock-closed" size={20} color="#ddd" />
                 <TextInput
                   className="flex-1 ml-3 text-white text-lg font-bold"
@@ -118,10 +121,11 @@ const SignUpScreen = () => {
                   secureTextEntry
                   value={password}
                   onChangeText={setPassword}
+                  style={{ height: 45 }}
                 />
               </View>
 
-              <View className="flex-row items-center bg-white/20 px-4 py-4 rounded-lg mb-6 border border-white/30">
+              <View className="flex-row items-center bg-white/20 px-4 py-3 rounded-lg mb-6 border border-white/30">
                 <Ionicons name="lock-closed" size={20} color="#ddd" />
                 <TextInput
                   className="flex-1 ml-3 text-white text-lg font-bold"
@@ -130,6 +134,7 @@ const SignUpScreen = () => {
                   secureTextEntry
                   value={confirmPassword}
                   onChangeText={setConfirmPassword}
+                  style={{ height: 45 }}
                 />
               </View>
 

@@ -15,7 +15,7 @@ import { useRouter } from "expo-router";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import * as LocalAuthentication from "expo-local-authentication";
 import { useMutation } from "@tanstack/react-query";
-import { loginUser, logoutUser } from "../../components/utils/auth";
+import { loginUser } from "../../components/utils/auth";
 
 const SignInScreen = () => {
   const router = useRouter();
@@ -43,6 +43,8 @@ const SignInScreen = () => {
 
   useEffect(() => {
     const checkBiometricSupport = async () => {
+      // await AsyncStorage.removeItem("userDetails");
+      // setUserLoggedIn(false);
       const compatible = await LocalAuthentication.hasHardwareAsync();
       setIsBiometricSupported(compatible);
     };
@@ -59,7 +61,11 @@ const SignInScreen = () => {
         const userDetails = await AsyncStorage.getItem("userDetails");
         if (userDetails) {
           Alert.alert("Success", "Authenticated successfully!");
-          router.push("/dashboard");
+          if (userDetails.role === "USER") {
+            router.push("/users/dashboard");
+          } else {
+            router.push("/admin/dashboard");
+          }
         }
       } else {
         Alert.alert("Error", "Authentication failed.");
@@ -74,8 +80,13 @@ const SignInScreen = () => {
     mutationFn: loginUser,
     onSuccess: (data) => {
       Alert.alert("Success", "Login successful!");
-      router.push("/(user)/menu");
+      if (data.role === "USER") {
+        router.push("/users/dashboard");
+      } else {
+        router.push("/admin/dashboard");
+      }
     },
+
     onError: (error) => {
       const errorMessage =
         error.message || "Something went wrong, please try again";
@@ -118,7 +129,7 @@ const SignInScreen = () => {
         <View className="bg-white/10 p-6 rounded-3xl w-full shadow-lg backdrop-blur-md border border-white/20">
           {/* Show password input only if user is already logged in */}
           {!userLoggedIn && (
-            <View className="flex-row items-center bg-white/20 px-4 py-4 rounded-xl mb-4 border border-white/30">
+            <View className="flex-row items-center bg-white/20 px-4 py-3 rounded-xl mb-4 border border-white/30">
               <FontAwesome name="envelope" size={20} color="#ddd" />
               <TextInput
                 className="flex-1 ml-3 text-white text-lg font-bold"
@@ -127,12 +138,13 @@ const SignInScreen = () => {
                 keyboardType="email-address"
                 value={email}
                 onChangeText={setEmail}
+                style={{ height: 45 }}
               />
             </View>
           )}
 
           {/* Password Input */}
-          <View className="flex-row items-center bg-white/20 px-4 py-4 rounded-xl mb-6 border border-white/30">
+          <View className="flex-row items-center bg-white/20 px-4 py-3 rounded-xl mb-6 border border-white/30">
             <Ionicons name="lock-closed" size={24} color="#ddd" />
             <TextInput
               className="flex-1 ml-3 text-white text-lg font-bold"
@@ -141,6 +153,7 @@ const SignInScreen = () => {
               secureTextEntry={!showPassword}
               value={password}
               onChangeText={setPassword}
+              style={{ height: 45 }}
             />
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
               <Ionicons

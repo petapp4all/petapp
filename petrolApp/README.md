@@ -4,6 +4,8 @@ npx expo start --clear
 
 npx expo install --check
 
+rm -rf .expo .expo-shared node_modules/.cache
+
 npx expo start
 
 npm install -g eas-cli
@@ -61,3 +63,10 @@ npx expo install expo-dev-client
 npx expo install react-native-svg
 npx expo install expo-image-picker
 npm install @react-native-community/blur
+
+cd android
+./gradlew clean
+cd ..
+npx react-native run-android
+
+rm -rf ~/.gradle/caches

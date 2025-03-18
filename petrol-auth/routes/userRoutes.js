@@ -1,8 +1,8 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import expressAsyncHandler from "express-async-handler";
-import User from "../models/userModel.js";
 import { generateToken } from "../utils.js";
+import prisma from "../prisma/prisma.js";
 
 const userRouter = express.Router();
 
@@ -11,57 +11,70 @@ userRouter.post(
   "/signup",
   expressAsyncHandler(async (req, res) => {
     console.log(req.body);
-    const { fullName, email, phoneNumber, image, password } = req.body;
-    const foundUser = await User.findOne({ email });
+    const { name, email, phone, image, password } = req.body;
+
+    // Check if user already exists
+    const foundUser = await prisma.user.findUnique({ where: { email } });
     if (foundUser) {
-      res.status(401).send({ message: `User with ${email} already exists` });
-    } else {
-      const newUser = new User({
-        fullName,
-        phoneNumber,
-        email,
-        image,
-        password: bcrypt.hashSync(password, 10),
-      });
-      const user = await newUser.save();
-      res.send({
-        _id: user._id,
-        fullName: user.fullName,
-        email: user.email,
-        image: user.image,
-        phoneNumber: user.phoneNumber,
-        role: user.role,
-        token: generateToken(user),
-      });
+      return res
+        .status(401)
+        .json({ message: `User with ${email} already exists` });
     }
+
+    // Hash the password
+    const hashedPassword = bcrypt.hashSync(password, 10);
+
+    // Create new user in the database
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        phone,
+        image,
+        password: hashedPassword,
+      },
+    });
+
+    // Send response with token
+    res.json({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      image: user.image,
+      phone: user.phone,
+      role: user.role,
+      token: generateToken(user),
+    });
   })
 );
 
-//signIn
+// SignIn
 userRouter.post(
   "/signin",
   expressAsyncHandler(async (req, res) => {
-    const user = await User.findOne({ email: req.body.email });
-    console.log(user);
-    if (!user)
-      res
+    const user = await prisma.user.findUnique({
+      where: { email: req.body.email },
+    });
+
+    if (!user) {
+      return res
         .status(404)
-        .send({ message: `user with Email: ${req.body.email} does not exist` });
-    else {
-      if (bcrypt.compareSync(req.body.password, user.password)) {
-        res.send({
-          _id: user._id,
-          fullName: user.fullName,
-          email: user.email,
-          role: user.role,
-          image: user.image,
-          phoneNumber: user.phoneNumber,
-          token: generateToken(user),
-        });
-        return;
-      }
+        .json({ message: `User with Email: ${req.body.email} does not exist` });
     }
-    res.status(401).send({ message: "Invalid email or password" });
+
+    if (!bcrypt.compareSync(req.body.password, user.password)) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    res.json({
+      id: user.id,
+      name: user.fullName,
+      email: user.email,
+      role: user.role,
+      image: user.image,
+      phone: user.phoneNumber,
+      token: generateToken(user),
+    });
   })
 );
 
@@ -69,26 +82,33 @@ userRouter.post(
 userRouter.put(
   "/:id",
   expressAsyncHandler(async (req, res) => {
-    const user = await User.findById(req.params.id);
-    console.log("user=", user);
+    const user = await prisma.user.findUnique({
+      where: { id: req.params.id },
+    });
+
     if (!user) {
-      return res.status(404).send({ message: "User not found" });
-    }
-    user.fullName = req.body.fullName || user.fullName;
-    user.email = req.body.email || user.email;
-    user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
-    user.image = req.body.image || user.image;
-    user.role = req.body.role || user.role;
-    if (req.body.password) {
-      user.password = bcrypt.hashSync(req.body.password, 10);
+      return res.status(404).json({ message: "User not found" });
     }
 
-    const updatedUser = await user.save();
-    res.send({
-      _id: updatedUser._id,
-      fullName: updatedUser.fullName,
+    const updatedUser = await prisma.user.update({
+      where: { id: req.params.id },
+      data: {
+        fullName: req.body.name || user.fullName,
+        email: req.body.email || user.email,
+        phoneNumber: req.body.phone || user.phoneNumber,
+        image: req.body.image || user.image,
+        role: req.body.role || user.role,
+        password: req.body.password
+          ? bcrypt.hashSync(req.body.password, 10)
+          : user.password,
+      },
+    });
+
+    res.json({
+      id: updatedUser.id,
+      name: updatedUser.fullName,
       email: updatedUser.email,
-      phoneNumber: updatedUser.phoneNumber,
+      phone: updatedUser.phoneNumber,
       image: updatedUser.image,
       role: updatedUser.role,
       token: generateToken(updatedUser),
@@ -96,23 +116,25 @@ userRouter.put(
   })
 );
 
+// Delete User
 userRouter.delete(
   "/:id",
   expressAsyncHandler(async (req, res) => {
     const { email, password } = req.body;
-    const user = await User.findById(req.params.id);
+    const user = await prisma.user.findUnique({ where: { id: req.params.id } });
 
     if (!user) {
-      return res.status(404).send({ message: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = bcrypt.compareSync(password, user.password);
     if (!isMatch || user.email !== email) {
-      return res.status(400).send({ message: "Invalid credentials" });
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    await User.deleteOne({ _id: req.params.id });
-    res.send({ message: "User deleted successfully" });
+    await prisma.user.delete({ where: { id: req.params.id } });
+
+    res.json({ message: "User deleted successfully" });
   })
 );
 
