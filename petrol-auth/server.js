@@ -16,6 +16,8 @@ connectDB();
 
 app.use("/api/users", userRouter);
 
+app.get("/", (req, res) => res.send("welcome to Splantom PetrolApp API"));
+
 app.use((err, req, res, next) => {
   res.status(500).send({ message: err.message });
 });

@@ -25,6 +25,7 @@ const SignInScreen = () => {
   const [password, setPassword] = useState("");
   const [isBiometricSupported, setIsBiometricSupported] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
+
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
@@ -43,8 +44,8 @@ const SignInScreen = () => {
 
   useEffect(() => {
     const checkBiometricSupport = async () => {
-      // await AsyncStorage.removeItem("userDetails");
-      // setUserLoggedIn(false);
+      await AsyncStorage.removeItem("userDetails");
+      setUserLoggedIn(false);
       const compatible = await LocalAuthentication.hasHardwareAsync();
       setIsBiometricSupported(compatible);
     };
@@ -61,6 +62,7 @@ const SignInScreen = () => {
         const userDetails = await AsyncStorage.getItem("userDetails");
         if (userDetails) {
           Alert.alert("Success", "Authenticated successfully!");
+          console.log("userDetails=", userDetails);
           if (userDetails.role === "USER") {
             router.push("/users/dashboard");
           } else {

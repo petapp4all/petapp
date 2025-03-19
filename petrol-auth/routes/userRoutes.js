@@ -55,7 +55,7 @@ userRouter.post(
     const user = await prisma.user.findUnique({
       where: { email: req.body.email },
     });
-
+    console.log("user=", user);
     if (!user) {
       return res
         .status(404)
@@ -75,6 +75,32 @@ userRouter.post(
       phone: user.phoneNumber,
       token: generateToken(user),
     });
+  })
+);
+
+// Get All Users
+userRouter.get(
+  "/",
+  expressAsyncHandler(async (req, res) => {
+    try {
+      const users = await prisma.user.findMany({
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          image: true,
+          role: true,
+          createdAt: true,
+        },
+      });
+
+      res.json(users);
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Failed to fetch users", error: error.message });
+    }
   })
 );
 

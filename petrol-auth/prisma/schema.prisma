@@ -42,7 +42,7 @@ model Station {
   sales       Int      @default(0)
   rating      Float    @default(0.0)
   pms         Float?
-  ago         Float? // Diesel (AGO) available in liters (nullable)
+  ago         Float?
   infomation  String?
   ownerId     String   @db.ObjectId // Station owner's ID (foreign key)
   owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
