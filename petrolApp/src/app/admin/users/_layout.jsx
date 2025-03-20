@@ -9,7 +9,6 @@ export default function Layout() {
           title: "All Users",
           headerTitleAlign: "center",
           headerTitleStyle: {
-            fontSize: 25,
             fontWeight: "bold",
           },
         }}
@@ -20,7 +19,6 @@ export default function Layout() {
           title: "User Info",
           headerTitleAlign: "center",
           headerTitleStyle: {
-            fontSize: 25,
             fontWeight: "bold",
           },
         }}

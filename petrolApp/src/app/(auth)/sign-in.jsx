@@ -44,8 +44,8 @@ const SignInScreen = () => {
 
   useEffect(() => {
     const checkBiometricSupport = async () => {
-      await AsyncStorage.removeItem("userDetails");
-      setUserLoggedIn(false);
+      // await AsyncStorage.removeItem("userDetails");
+      // setUserLoggedIn(false);
       const compatible = await LocalAuthentication.hasHardwareAsync();
       setIsBiometricSupported(compatible);
     };
@@ -83,9 +83,10 @@ const SignInScreen = () => {
     onSuccess: (data) => {
       Alert.alert("Success", "Login successful!");
       if (data.role === "USER") {
-        router.push("/users/dashboard");
+        router.replace("/users/dashboard");
       } else {
-        router.push("/admin/dashboard");
+        // router.push("/admin/dashboard");
+        router.replace("/admin/dashboard");
       }
     },
 

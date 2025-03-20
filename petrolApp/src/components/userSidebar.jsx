@@ -155,7 +155,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, navigation }) => {
           {/* User Info */}
           <View style={{ alignItems: "center", marginTop: 10 }}>
             <Text style={{ fontSize: 18, fontWeight: "bold", color: "black" }}>
-              {loggedInUser?.fullName}
+              {loggedInUser?.name}
             </Text>
             <Text style={{ fontSize: 14, color: "gray" }}>
               {loggedInUser?.email}
@@ -171,10 +171,6 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, navigation }) => {
             icon={<Feather name="headphones" size={20} color="black" />}
             text="Contact Support"
             onPress={() => handleNavigation("/users-screen/contact")}
-          />
-          <SidebarItem
-            icon={<Feather name="gift" size={20} color="black" />}
-            text="Refer & Win"
           />
 
           {/* Divider */}

@@ -9,7 +9,7 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useCallback } from "react";
+import { useCallback } from "react";
 import { View } from "react-native";
 import "react-native-reanimated";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -19,7 +19,6 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { GestureHandlerRootView } from "react-native-gesture-handler"; // Import it here
 import "./global.css";
 
-// Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {

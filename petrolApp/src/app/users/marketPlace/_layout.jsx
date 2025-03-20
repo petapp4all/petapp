@@ -9,7 +9,6 @@ export default function Layout() {
           title: "Market Place",
           headerTitleAlign: "center",
           headerTitleStyle: {
-            fontSize: 25,
             fontWeight: "bold",
           },
         }}
@@ -17,10 +16,9 @@ export default function Layout() {
       <Stack.Screen
         name="[id]"
         options={{
-          title: "Place Order",
+          title: "Station details",
           headerTitleAlign: "center",
           headerTitleStyle: {
-            fontSize: 25,
             fontWeight: "bold",
           },
         }}

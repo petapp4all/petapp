@@ -68,7 +68,7 @@ userRouter.post(
 
     res.json({
       id: user.id,
-      name: user.fullName,
+      name: user.name,
       email: user.email,
       role: user.role,
       image: user.image,

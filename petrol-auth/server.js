@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/users", userRouter);
 
-app.get("/", (req, res) => res.send("welcome to Splantom PetrolApp API"));
+app.get("/", (req, res) => res.send("Welcome to Splantom PetrolApp API"));
 
 app.use((err, req, res, next) => {
   res.status(500).send({ message: err.message });

@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { View, Image, Pressable, StyleSheet, Dimensions } from "react-native";
-import { Colors } from "@/src/constants/Colors";
-import { FontAwesome } from "@expo/vector-icons";
 import { Stack } from "expo-router";
 import { ThemedText } from "@/src/components/ThemedText";
 import Sidebar from "@/src/components/userSidebar";
@@ -58,18 +56,18 @@ export default function MenuLayout({ navigation }) {
                 </ThemedText>
               </View>
             ),
-            headerRight: () => (
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="bell"
-                    size={25}
-                    color={Colors.light.tint}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            ),
+            // headerRight: () => (
+            //   <Pressable>
+            //     {({ pressed }) => (
+            //       <FontAwesome
+            //         name="bell"
+            //         size={25}
+            //         color={Colors.light.tint}
+            //         style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+            //       />
+            //     )}
+            //   </Pressable>
+            // ),
           }}
         />
 

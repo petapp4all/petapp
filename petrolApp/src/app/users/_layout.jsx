@@ -1,8 +1,9 @@
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
-import { useColorScheme } from "react-native";
+import { Keyboard, Platform, useColorScheme } from "react-native";
 
 import { Colors } from "@/src/constants/Colors";
+import { useEffect, useState } from "react";
 
 const TabBarIcon = ({ name, color }) => {
   return (
@@ -17,14 +18,35 @@ const TabBarIcon = ({ name, color }) => {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => setIsKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => setIsKeyboardVisible(false)
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-        tabBarStyle: { height: 55 },
         tabBarLabelStyle: { fontSize: 11 },
+        tabBarStyle: {
+          height: 55,
+          position: Platform.OS === "ios" ? "absolute" : "relative",
+          display: isKeyboardVisible ? "none" : "flex",
+        },
       }}
     >
       <Tabs.Screen
@@ -60,13 +82,16 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="payment"
+        name="news"
         options={{
-          title: "Payment",
-          tabBarIcon: ({ color }) => <TabBarIcon name="money" color={color} />,
+          title: "News",
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="newspaper-o" color={color} />
+          ),
         }}
       />
-      <Tabs.Screen
+
+      {/* <Tabs.Screen
         name="orders"
         options={{
           title: "Orders",
@@ -74,7 +99,7 @@ export default function TabLayout() {
             <TabBarIcon name="shopping-cart" color={color} />
           ),
         }}
-      />
+      /> */}
     </Tabs>
   );
 }

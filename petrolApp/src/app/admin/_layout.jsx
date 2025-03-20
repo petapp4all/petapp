@@ -1,8 +1,9 @@
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
-import { useColorScheme } from "react-native";
+import { Keyboard, Platform, useColorScheme } from "react-native";
 
 import { Colors } from "@/src/constants/Colors";
+import { useEffect, useState } from "react";
 
 const TabBarIcon = ({ name, color, type = "FontAwesome" }) => {
   const IconComponent = type === "FontAwesome5" ? FontAwesome5 : FontAwesome;
@@ -18,13 +19,34 @@ const TabBarIcon = ({ name, color, type = "FontAwesome" }) => {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => setIsKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => setIsKeyboardVisible(false)
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-        tabBarStyle: { height: 55 },
+        tabBarStyle: {
+          height: 55,
+          position: Platform.OS === "ios" ? "absolute" : "relative",
+          display: isKeyboardVisible ? "none" : "flex",
+        },
         tabBarLabelStyle: { fontSize: 11 },
       }}
     >

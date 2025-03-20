@@ -9,7 +9,6 @@ export default function Layout() {
           title: "About",
           headerTitleAlign: "center",
           headerTitleStyle: {
-            fontSize: 25,
             fontWeight: "bold",
           },
         }}
@@ -20,7 +19,16 @@ export default function Layout() {
           title: "Contact Support",
           headerTitleAlign: "center",
           headerTitleStyle: {
-            fontSize: 25,
+            fontWeight: "bold",
+          },
+        }}
+      />
+      <Stack.Screen
+        name="FullArticle"
+        options={{
+          title: "Full Article",
+          headerTitleAlign: "center",
+          headerTitleStyle: {
             fontWeight: "bold",
           },
         }}
@@ -31,7 +39,6 @@ export default function Layout() {
           title: "Privacy & Policy",
           headerTitleAlign: "center",
           headerTitleStyle: {
-            fontSize: 25,
             fontWeight: "bold",
           },
         }}
@@ -42,7 +49,6 @@ export default function Layout() {
           title: "Terms & Condition",
           headerTitleAlign: "center",
           headerTitleStyle: {
-            fontSize: 25,
             fontWeight: "bold",
           },
         }}
@@ -53,7 +59,6 @@ export default function Layout() {
           title: "Edit User Details",
           headerTitleAlign: "center",
           headerTitleStyle: {
-            fontSize: 25,
             fontWeight: "bold",
           },
         }}
@@ -64,7 +69,6 @@ export default function Layout() {
           title: "Delete Account",
           headerTitleAlign: "center",
           headerTitleStyle: {
-            fontSize: 25,
             fontWeight: "bold",
           },
         }}

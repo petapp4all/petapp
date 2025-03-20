@@ -16,8 +16,6 @@ const About = () => {
         updates, effortless ordering, and nearby petrol station comparisons. Our
         goal is to provide a seamless experience for all fuel consumers.
       </Text>
-
-      {/* Features List */}
       {[
         {
           title: "Why Choose Us?",

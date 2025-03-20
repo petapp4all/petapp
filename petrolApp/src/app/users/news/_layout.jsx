@@ -6,10 +6,19 @@ export default function Layout() {
       <Stack.Screen
         name="index"
         options={{
-          title: "Payment",
+          title: "Oil & Gas related News",
           headerTitleAlign: "center",
           headerTitleStyle: {
-            fontSize: 25,
+            fontWeight: "bold",
+          },
+        }}
+      />
+      <Stack.Screen
+        name="[id]"
+        options={{
+          title: "Article Details",
+          headerTitleAlign: "center",
+          headerTitleStyle: {
             fontWeight: "bold",
           },
         }}

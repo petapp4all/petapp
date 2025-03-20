@@ -12,6 +12,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import OilGasNews from "@/src/components/OilGasNews";
 import { useRouter, useSegments } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import ImageSlider from "../../../components/ImageSlider";
 
 const Menu = () => {
   const router = useRouter();
@@ -23,7 +24,7 @@ const Menu = () => {
       // Check if user is at the main dashboard and trying to go back
       if (
         segments.length === 2 &&
-        segments[0] === "(user)" &&
+        segments[0] === "users" &&
         segments[1] === "dashboard"
       ) {
         Alert.alert(
@@ -63,9 +64,10 @@ const Menu = () => {
   return (
     <ScrollView className="flex-1 bg-gray-100 p-4">
       {/* Header Gradient */}
+      <ImageSlider />
       <LinearGradient
         colors={["#00C6FF", "#0072FF"]}
-        className="rounded-xl p-4 mb-4"
+        className="rounded-xl p-4 mb-4 mt-5"
       >
         <Text className="text-white text-xl font-semibold">
           Latest Market Price
@@ -91,36 +93,10 @@ const Menu = () => {
         </View>
       </View>
 
-      {/* Amount Spent */}
-      <View className="bg-red-600 p-4 rounded-lg my-4 flex-row justify-between items-center shadow-md">
-        <View>
-          <Text className="text-white text-lg font-semibold">Amount Spent</Text>
-          <Text className="text-white text-2xl font-bold">₦12,000.00</Text>
-        </View>
-        <MaterialIcons name="visibility-off" size={28} color="white" />
-      </View>
-
-      {/* Order Stats - FIXED */}
-      <View className="flex-row justify-between">
-        <View className="bg-white p-4 rounded-lg shadow-md flex-1 mr-2 items-center">
-          <FontAwesome5 name="shopping-cart" size={24} color="#0072FF" />
-          <Text className="text-gray-600 font-semibold">Total Orders</Text>
-          <Text className="text-2xl font-bold text-gray-800">10</Text>
-        </View>
-
-        <View className="bg-white p-4 rounded-lg shadow-md flex-1 ml-2 items-center">
-          <FontAwesome5 name="box" size={24} color="#0072FF" />
-          <Text className="text-gray-600 text-center font-semibold">
-            Orders Completed
-          </Text>
-          <Text className="text-2xl font-bold text-gray-800">7</Text>
-        </View>
-      </View>
-
       {/* Quick Actions - FIXED */}
       <View className="flex-row justify-between my-4">
         <TouchableOpacity
-          onPress={() => router.push("/(user)/marketPlace")}
+          onPress={() => router.push("/users/marketPlace")}
           className="bg-white p-4 rounded-lg shadow-md flex-1 items-center mr-2"
         >
           <FontAwesome5 name="store" size={24} color="#0072FF" />
@@ -128,23 +104,23 @@ const Menu = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => router.push("/(user)/nearbyStation")}
+          onPress={() => router.push("/users/nearbyStation")}
           className="bg-white p-4 rounded-lg shadow-md flex-1 items-center mx-2"
         >
           <FontAwesome5 name="gas-pump" size={24} color="#0072FF" />
           <Text className="text-gray-600 text-center">Nearby Station</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity className="bg-white p-4 rounded-lg shadow-md flex-1 items-center ml-2">
+        <TouchableOpacity
+          onPress={() => router.push("/users/news")}
+          className="bg-white p-4 rounded-lg shadow-md flex-1 items-center ml-2"
+        >
           <FontAwesome5 name="newspaper" size={24} color="#0072FF" />
           <Text className="text-gray-600">News</Text>
         </TouchableOpacity>
       </View>
       {/* Oil & Gas News Section */}
       <View className="my-4">
-        <Text className="text-gray-700 text-lg font-semibold mb-2">
-          Oil & Gas News
-        </Text>
         <OilGasNews />
       </View>
     </ScrollView>
