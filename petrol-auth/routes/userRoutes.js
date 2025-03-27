@@ -56,7 +56,6 @@ userRouter.post(
     const user = await prisma.user.findUnique({
       where: { email: req.body.email },
     });
-    console.log("user=", user);
     if (!user) {
       return res
         .status(404)
@@ -112,7 +111,7 @@ userRouter.put(
     const user = await prisma.user.findUnique({
       where: { id: req.params.id },
     });
-
+    console.log("user:", user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -130,7 +129,7 @@ userRouter.put(
           : user.password,
       },
     });
-
+    console.log("updatedUser=", updatedUser);
     res.json({
       id: updatedUser.id,
       name: updatedUser.name,
@@ -165,6 +164,7 @@ userRouter.delete(
   })
 );
 
+//forgot-password
 userRouter.post(
   "/forgot-password",
   expressAsyncHandler(async (req, res) => {
@@ -204,6 +204,7 @@ userRouter.post(
   })
 );
 
+//reset-password
 userRouter.post(
   "/reset-password",
   expressAsyncHandler(async (req, res) => {

@@ -63,9 +63,9 @@ export const deleteUser = async (email, password) => {
       throw new Error("User details not found. Please log in again.");
     }
 
-    const { _id } = JSON.parse(userDetails);
+    const { id } = JSON.parse(userDetails);
 
-    const response = await fetch(`${apiUrl}/users/${_id}`, {
+    const response = await fetch(`${apiUrl}/users/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -96,10 +96,9 @@ export const updateUser = async (updatedData) => {
     if (!userDetails) {
       throw new Error("User details not found. Please log in again.");
     }
+    const { id } = JSON.parse(userDetails);
 
-    const { _id } = JSON.parse(userDetails);
-
-    const response = await fetch(`${apiUrl}/users/${_id}`, {
+    const response = await fetch(`${apiUrl}/users/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

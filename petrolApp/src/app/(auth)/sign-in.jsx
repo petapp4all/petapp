@@ -185,7 +185,7 @@ const SignInScreen = () => {
               style={{ opacity: mutation.isPending ? 0.5 : 1 }}
             >
               {mutation.isPending ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color="#fff" size="large" />
               ) : (
                 <Text className="text-white text-lg text-center font-semibold tracking-wide">
                   Sign In

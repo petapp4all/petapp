@@ -31,7 +31,11 @@ const UserDetails = () => {
   const handleUpdate = async () => {
     setLoading(true);
     try {
-      const updatedUser = { name: fullName, email, phone: phoneNumber };
+      const updatedUser = {
+        name: fullName,
+        email,
+        phone: phoneNumber,
+      };
       await updateUser(updatedUser);
       Alert.alert("Success", "User details updated successfully!");
     } catch (error) {
