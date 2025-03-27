@@ -51,15 +51,15 @@ const SearchAndSort = () => {
 
       {/* Dropdown Options */}
       {showSortOptions && (
-        <View className="absolute top-14 left-3 bg-white w-[100px] p-3 rounded-lg shadow-2xl shadow-black">
-          <Text className="font-bold mb-2">Sort By</Text>
+        <View className="absolute top-14 left-3 bg-white w-[150px] p-3 rounded-lg shadow-2xl shadow-black ">
+          <Text className="font-bold mb-2 text-3xl">Sort By</Text>
           {["name", "email", "status"].map((field) => (
             <TouchableOpacity
               key={field}
               onPress={() => handleSort(field)}
               className="p-2"
             >
-              <Text className="text-black capitalize text-lg">
+              <Text className="text-black capitalize text-3xl">
                 {field}{" "}
                 {sortBy === field ? (sortOrder === "asc" ? "▲" : "▼") : ""}
               </Text>

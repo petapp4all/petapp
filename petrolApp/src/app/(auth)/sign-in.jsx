@@ -59,14 +59,17 @@ const SignInScreen = () => {
       });
 
       if (result.success) {
-        const userDetails = await AsyncStorage.getItem("userDetails");
-        if (userDetails) {
+        const userDetailsString = await AsyncStorage.getItem("userDetails");
+        if (userDetailsString) {
+          const userDetails = JSON.parse(userDetailsString); // Parse the string to an object
           Alert.alert("Success", "Authenticated successfully!");
           console.log("userDetails=", userDetails);
+          console.log(userDetails.role === "USER"); // Should now log `true`
+
           if (userDetails.role === "USER") {
-            router.push("/users/dashboard");
+            router.replace("/users/dashboard");
           } else {
-            router.push("/admin/dashboard");
+            router.replace("/admin/dashboard");
           }
         }
       } else {
@@ -85,7 +88,6 @@ const SignInScreen = () => {
       if (data.role === "USER") {
         router.replace("/users/dashboard");
       } else {
-        // router.push("/admin/dashboard");
         router.replace("/admin/dashboard");
       }
     },
@@ -179,7 +181,7 @@ const SignInScreen = () => {
           >
             <LinearGradient
               colors={["#0072FF", "#00C6FF"]}
-              className="px-6 py-4 rounded-lg"
+              className="px-6 py-5 rounded-lg"
               style={{ opacity: mutation.isPending ? 0.5 : 1 }}
             >
               {mutation.isPending ? (
@@ -195,7 +197,7 @@ const SignInScreen = () => {
           {isBiometricSupported && userLoggedIn && (
             <View className="mt-4">
               <TouchableOpacity
-                className="mt-3 px-6 py-4 bg-blue-600 rounded-lg"
+                className="mt-3 px-6 py-6 text-lg bg-blue-600 rounded-lg"
                 onPress={handleLoginWithBiometrics}
               >
                 <Text className="text-white text-center font-semibold">
@@ -207,7 +209,7 @@ const SignInScreen = () => {
           {/* Switch Account Button */}
           {userLoggedIn && (
             <TouchableOpacity
-              className="mt-4 px-6 py-4 bg-red-600 rounded-lg"
+              className="mt-4 px-6 py-6 bg-red-600 rounded-lg"
               onPress={() => {
                 Alert.alert(
                   "Warning",
@@ -235,7 +237,7 @@ const SignInScreen = () => {
                 );
               }}
             >
-              <Text className="text-white text-center font-semibold">
+              <Text className="text-white text-center text-lg font-semibold">
                 Switch Account
               </Text>
             </TouchableOpacity>

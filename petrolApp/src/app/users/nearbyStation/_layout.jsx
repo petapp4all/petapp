@@ -9,7 +9,6 @@ export default function Layout() {
           title: "Nearby Station",
           headerTitleAlign: "center",
           headerTitleStyle: {
-            fontSize: 25,
             fontWeight: "bold",
           },
         }}

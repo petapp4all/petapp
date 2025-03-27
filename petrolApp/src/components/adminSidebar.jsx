@@ -155,7 +155,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
           {/* User Info */}
           <View style={{ alignItems: "center", marginTop: 10 }}>
             <Text style={{ fontSize: 18, fontWeight: "bold", color: "black" }}>
-              {loggedInUser?.fullName}
+              {loggedInUser?.name}
             </Text>
             <Text style={{ fontSize: 14, color: "gray" }}>
               {loggedInUser?.email}
@@ -164,30 +164,14 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
 
           <SidebarItem
             icon={<Feather name="user" size={20} color="black" />}
-            text="You Personal Details"
+            text="Your Personal Details"
             onPress={() => handleNavigation("/admin-screen/user-details")}
           />
-          {/* <SidebarItem
-            icon={
-              <MaterialCommunityIcons
-                name="chart-bar"
-                size={20}
-                color="black"
-              />
-            }
-            text="Report"
-            onPress={() => handleNavigation("/admin-screen/report")}
-          /> */}
           <SidebarItem
             icon={<Feather name="headphones" size={20} color="black" />}
             text="Contact Support"
             onPress={() => handleNavigation("/users-screen/contact")}
           />
-          <SidebarItem
-            icon={<Feather name="gift" size={20} color="black" />}
-            text="Refer & Win"
-          />
-
           {/* Divider */}
           <View
             style={{

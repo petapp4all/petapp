@@ -39,13 +39,37 @@ const SignUpScreen = () => {
     },
   });
 
+  // const handleSignUp = () => {
+  //   if (!fullName || !email || !phone || !password || !confirmPassword) {
+  //     Alert.alert("Error", "Please fill all fields");
+  //     return;
+  //   }
+  //   if (password !== confirmPassword) {
+  //     Alert.alert("Error", "Passwords do not match");
+  //     return;
+  //   }
+
+  //   mutation.mutate({ name: fullName, email, phone, password });
+  // };
   const handleSignUp = () => {
     if (!fullName || !email || !phone || !password || !confirmPassword) {
       Alert.alert("Error", "Please fill all fields");
       return;
     }
+
     if (password !== confirmPassword) {
       Alert.alert("Error", "Passwords do not match");
+      return;
+    }
+
+    // Password validation regex: At least 8 characters, one letter, and one number
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      Alert.alert(
+        "Password Validation failed",
+        "Password must be at least 8 characters long and include at least one letter and one number"
+      );
       return;
     }
 

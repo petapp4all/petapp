@@ -4,7 +4,7 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 const images = [
   require("@/assets/images/promotion1.png"),
   require("@/assets/images/promotion2.png"),
-  require("@/assets/images/promotion3.png"),
+  // require("@/assets/images/promotion3.png"),
   require("@/assets/images/promotion4.png"),
 ];
 

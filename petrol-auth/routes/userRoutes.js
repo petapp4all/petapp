@@ -1,8 +1,9 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import expressAsyncHandler from "express-async-handler";
-import { generateToken } from "../utils.js";
+import { generateToken, sendMail } from "../utils.js";
 import prisma from "../prisma/prisma.js";
+import jwt from "jsonwebtoken";
 
 const userRouter = express.Router();
 
@@ -176,5 +177,141 @@ userRouter.delete(
 //     res.send({ message: "User deleted successfully" });
 //   })
 // );
+
+// userRouter.post(
+//   "/forget-password",
+//   expressAsyncHandler(async (req, res) => {
+//     const { email } = req.body;
+//     const user = await User.findOne({ email });
+//     if (user) {
+//       const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+//         expiresIn: "3h",
+//       });
+//       user.resetToken = token;
+//       await user.save();
+//       try {
+//         const reply_to = email;
+//         const subject = "Reset Password";
+//         const sent_from = process.env.EMAIL_USER;
+//         const sent_to = `${user.name} <${user.email}>`;
+//         const message = `
+//         <a href="${baseUrl()}/reset-password/${token}"}>Reset Password</a>
+//          <p>Please Click the following link to reset your password:</p>
+//          `;
+//         await sendMail(subject, message, sent_to, sent_from, reply_to);
+//         (error, body) => {
+//           console.log("error", error);
+//         };
+//         res.send({
+//           message: `We sent reset password link to ${email}.`,
+//           resetLink: `${baseUrl()}/reset-password/${token}`,
+//         });
+//       } catch (err) {
+//         res.status(500).json("err from outlook", err.message);
+//       }
+//     } else {
+//       res.status(404).send({ message: "User not found" });
+//     }
+//   })
+// );
+
+// userRouter.post(
+//   "/reset-password",
+//   expressAsyncHandler(async (req, res) => {
+//     jwt.verify(req.body.token, process.env.JWT_SECRET, async (err, decode) => {
+//       if (err) {
+//         res.status(401).send({ message: "Invalid Token" });
+//       } else {
+//         const user = await User.findOne({ resetToken: req.body.token });
+//         console.log("user", user);
+//         if (user) {
+//           if (req.body.password) {
+//             user.password = bcrypt.hashSync(req.body.password, 8);
+//             await user.save();
+//             res.status(201).json({
+//               message: "Password reseted successfully",
+//             });
+//             res.end("ok");
+//           }
+//         } else {
+//           res.status(404).json({ message: "User not found" });
+//         }
+//       }
+//     });
+//   })
+// );
+
+userRouter.post(
+  "/forgot-password",
+  expressAsyncHandler(async (req, res) => {
+    const { email } = req.body;
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Generate a token (Valid for 3 hours)
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: "3h",
+    });
+
+    // Store the token in the database
+    await prisma.user.update({
+      where: { email },
+      data: { resetToken: token },
+    });
+
+    try {
+      const subject = "Password Reset Code";
+      const sent_to = user.email;
+      const sent_from = process.env.EMAIL_USER;
+      const reply_to = email;
+      const message = `Your password reset token is: ${token}. Use this token in the app to reset your password.`;
+
+      await sendMail(subject, message, sent_to, sent_from, reply_to);
+
+      res.json({ message: `Password reset token sent to ${user.email}.` });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Email sending failed", error: error.message });
+    }
+  })
+);
+
+userRouter.post(
+  "/reset-password",
+  expressAsyncHandler(async (req, res) => {
+    const { token, password } = req.body;
+
+    try {
+      // Verify token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      // Find user with the reset token
+      const user = await prisma.user.findUnique({
+        where: { id: decoded.id, resetToken: token },
+      });
+
+      if (!user) {
+        return res.status(400).json({ message: "Invalid or expired token" });
+      }
+
+      // Hash the new password
+      const hashedPassword = bcrypt.hashSync(password, 10);
+
+      // Update user password & remove the reset token
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { password: hashedPassword, resetToken: null },
+      });
+
+      res.json({ message: "Password reset successfully" });
+    } catch (error) {
+      res.status(400).json({ message: "Invalid or expired token" });
+    }
+  })
+);
 
 export default userRouter;

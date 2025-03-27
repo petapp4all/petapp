@@ -6,18 +6,18 @@ const faqData = [
   {
     question: "What is Splantom PetrolApp?",
     answer:
-      "Splantom PetrolApp provides real-time fuel price updates, ordering, and station comparisons to help users make informed fuel purchasing decisions.",
+      "Splantom PetrolApp provides real-time fuel price updates and station comparisons to help users make informed fuel purchasing decisions.",
   },
   {
     question: "How do I compare petrol prices nearby?",
     answer:
       "Our app fetches real-time fuel prices from nearby petrol stations, allowing you to compare prices and choose the best option.",
   },
-  {
-    question: "Is fuel ordering available?",
-    answer:
-      "Yes! You can order fuel directly from participating stations within the app for convenient delivery or pickup.",
-  },
+  // {
+  //   question: "Is fuel ordering available?",
+  //   answer:
+  //     "Yes! You can order fuel directly from participating stations within the app for convenient delivery or pickup.",
+  // },
 ];
 
 const FAQs = () => {

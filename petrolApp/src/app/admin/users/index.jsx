@@ -12,7 +12,7 @@ const Users = () => {
     <View className="flex-1 bg-gray-100 p-2">
       <SearchAndSort />
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View className="w-full bg-white shadow-md rounded-lg">
+        <View className="w-full bg-white shadow-md rounded-lg ">
           {/* Table Header */}
           <View className="flex-row border-b border-gray-300 p-3 bg-gray-200">
             <Text className="w-1/3 px-4 font-bold text-gray-700 text-left">

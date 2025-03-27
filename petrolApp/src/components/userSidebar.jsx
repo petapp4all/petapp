@@ -164,7 +164,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, navigation }) => {
 
           <SidebarItem
             icon={<Feather name="user" size={20} color="black" />}
-            text="You Personal Details"
+            text="Your Personal Details"
             onPress={() => handleNavigation("/users-screen/user-details")}
           />
           <SidebarItem

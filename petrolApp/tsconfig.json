@@ -19,6 +19,7 @@
     "src/app/_layout.jsx",
     "src/constants/Colors.js",
     "src/app/user/marketPlace/index.jsx",
-    "src/app/users/news/index.jsx"
+    "src/app/users/news/index.jsx",
+    "src/app/users/nearbyStation/index.jsx"
   ]
 }

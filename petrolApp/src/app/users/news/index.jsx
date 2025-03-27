@@ -38,7 +38,7 @@ const OilGasNews = () => {
   }, []);
 
   return (
-    <View className="mt-3 px-4 mb-4">
+    <View className="mt-3 px-4 pb-7">
       {/* Header */}
       <Text className="text-lg font-bold text-gray-800 m-4">
         Daily Oil & Gas News
@@ -52,7 +52,8 @@ const OilGasNews = () => {
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            className="mt-2"
+            className="my-1 p-2"
+            contentContainerStyle={{ height: 200 }}
           >
             {news.slice(0, 10).map((item, index) => (
               <TouchableOpacity
@@ -111,7 +112,7 @@ const OilGasNews = () => {
           {/* Bottom - Vertical Scroll */}
           <ScrollView
             showsVerticalScrollIndicator={false}
-            className="max-h-[300px]"
+            className="flex-grow"
           >
             {news.slice(5).map((item, index) => (
               <TouchableOpacity

@@ -49,41 +49,64 @@ export const isAdmin = (req, res, next) => {
   }
 };
 
-export const sendMail = async (
-  subject,
-  message,
-  sent_to,
-  sent_from,
-  reply_to
-) => {
+// export const sendMail = async (
+//   subject,
+//   message,
+//   sent_to,
+//   sent_from,
+//   reply_to
+// ) => {
+//   const transporter = nodemailer.createTransport({
+//     host: process.env.EMAIL_HOST,
+//     port: "587",
+//     service: "Outlook365",
+//     auth: {
+//       user: process.env.EMAIL_USER,
+//       pass: process.env.EMAIL_PASS,
+//     },
+//     tls: {
+//       rejectUnauthorized: true,
+//     },
+//   });
+//   const options = {
+//     from: sent_from,
+//     to: sent_to,
+//     replyTo: reply_to,
+//     subject: subject,
+//     html: message,
+//   };
+//   transporter.sendMail(options, function (err, info) {
+//     if (err) {
+//       console.log("error from sendMail", err);
+//     } else {
+//       console.log(info);
+//     }
+//   });
+// };
+
+export const sendMail = async (sent_to, sent_from, number) => {
   const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: "587",
-    service: "Outlook365",
+    service: "gmail",
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
-    tls: {
-      rejectUnauthorized: true,
-    },
   });
-  const options = {
+
+  const mailOptions = {
     from: sent_from,
     to: sent_to,
-    replyTo: reply_to,
-    subject: subject,
-    html: message,
+    subject: "Splantom PetrolApp",
+    text: `Use this number to reset your password: ${number}`,
   };
-  transporter.sendMail(options, function (err, info) {
-    if (err) {
-      console.log("error from sendMail", err);
-    } else {
-      console.log(info);
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return console.log(`Error occurred:`, error);
     }
+    console.log(`Email sent successfully:`, info.response);
   });
 };
-
 export const payOrderEmailTemplate = (order) => {
   console.log(order);
   return `<h1>Thanks for shopping with us</h1>

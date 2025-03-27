@@ -13,8 +13,8 @@ const About = () => {
 
       <Text className="text-base text-gray-700 mb-6">
         Splantom PetrolApp is your go-to solution for real-time fuel price
-        updates, effortless ordering, and nearby petrol station comparisons. Our
-        goal is to provide a seamless experience for all fuel consumers.
+        updates and nearby petrol station comparisons. Our goal is to provide a
+        seamless experience for all fuel consumers.
       </Text>
       {[
         {
@@ -35,12 +35,7 @@ const About = () => {
           description:
             "Get instant fuel price updates from nearby petrol stations, so you always get the best deals.",
         },
-        {
-          title: "Effortless Ordering Process",
-          icon: "cart-outline",
-          description:
-            "Order petrol for delivery directly from your phone with just a few taps.",
-        },
+
         {
           title: "Nearby Petrol Station Price Comparison",
           icon: "map-marker-radius-outline",
