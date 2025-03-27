@@ -7,7 +7,7 @@ import {
   setOrders,
   approveOrder,
   rejectOrder,
-} from "../../redux/slices/ordersSlice";
+} from "../redux/slices/ordersSlice";
 
 const ApproveOrders = () => {
   const dispatch = useDispatch();

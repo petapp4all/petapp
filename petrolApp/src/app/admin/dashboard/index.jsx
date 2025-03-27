@@ -141,14 +141,6 @@ const AdminDashboard = () => {
       <View className="p-4 bg-white rounded-lg shadow-lg mb-4">
         <View className="flex-row justify-between">
           <TouchableOpacity
-            className="bg-blue-600 p-5 rounded-lg shadow-md flex-1 mr-2 items-center"
-            onPress={() => router.push("/admin-screen/fuel-restock")}
-          >
-            <FontAwesome5 name="gas-pump" size={24} color="white" />
-            <Text className="text-white text-center">Restock Fuel</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
             className="bg-green-600 p-5 rounded-lg shadow-md flex-1 mx-2 items-center"
             onPress={() => router.push("/admin/users")}
           >

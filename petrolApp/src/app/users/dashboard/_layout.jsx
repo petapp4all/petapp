@@ -43,7 +43,7 @@ export default function MenuLayout({ navigation }) {
               >
                 <Pressable>
                   <Image
-                    source={require("@/assets/images/profileImage.jpeg")}
+                    source={require("@/assets/images/admin.jpg")}
                     style={styles.profileImage}
                   />
                 </Pressable>
@@ -87,15 +87,16 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   profileImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 60,
+    width: 50,
+    height: 50,
+    borderRadius: 50,
   },
   titleContainer: {
-    flexDirection: "row",
+    // flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    width: "100%",
+    // width: "100%",
+    marginRight: 50,
   },
   titleText: {
     fontSize: 18,
@@ -106,8 +107,8 @@ const styles = StyleSheet.create({
     left: 0,
     top: 0,
     bottom: 0,
-    width: EDGE_ZONE, // Only the leftmost 20 pixels
-    zIndex: 10, // Ensure it is above the scrollable content
+    width: EDGE_ZONE,
+    zIndex: 10,
   },
   touchableArea: {
     flex: 1, // Fill the gesture area

@@ -17,6 +17,7 @@ app.use("/api/users", userRouter);
 
 app.get("/", (req, res) => res.send("Welcome to Splantom PetrolApp API"));
 
+// sendMail("ojomathew7654@gmail.com", "mathewadeyemi7654@gmail.com", 556677);
 // sendMail("mathewadeyemi7654@gmail.com", "mathewadeyemi7654@gmail.com", 556677);
 
 app.use((err, req, res, next) => {

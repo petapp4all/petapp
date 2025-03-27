@@ -1,7 +1,26 @@
-import { View, Text, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Linking,
+} from "react-native";
 import React from "react";
+import { AntDesign, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 
 const PrivacyPolicy = () => {
+  const phoneNumber = "09130370265";
+
+  const handleWhatsApp = () => {
+    const url = `https://wa.me/234${phoneNumber.slice(1)}`;
+    Linking.openURL(url).catch(() => alert("Failed to open WhatsApp"));
+  };
+
+  const handleCall = () => {
+    const url = `tel:${phoneNumber}`;
+    Linking.openURL(url).catch(() => alert("Failed to make a call"));
+  };
+
   return (
     <ScrollView className="flex-1 bg-white px-5 py-6">
       <Text className="text-2xl font-bold text-gray-900 mb-3">
@@ -29,7 +48,7 @@ const PrivacyPolicy = () => {
           "Email address",
           "State and zone",
           "Profile photos",
-          "Delivery address",
+          // "Delivery address",
         ].map((item, index) => (
           <Text key={index} className="text-base text-gray-700 mb-1">
             • {item}
@@ -66,9 +85,55 @@ const PrivacyPolicy = () => {
         If you have any questions about this policy, please contact us at:
       </Text>
 
-      <Text className="text-base font-bold text-blue-600">
-        splantom@gmail.com
-      </Text>
+      {/* WhatsApp Contact */}
+      <TouchableOpacity
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          backgroundColor: "white",
+          borderWidth: 1,
+          borderColor: "#ccc",
+          borderRadius: 10,
+          padding: 12,
+          marginBottom: 10,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.2,
+          shadowRadius: 4,
+          elevation: 3,
+        }}
+        onPress={handleWhatsApp}
+      >
+        <FontAwesome name="whatsapp" size={30} color="#25D366" />
+        <Text style={{ fontSize: 18, marginLeft: 15, flex: 1 }}>
+          WhatsApp us
+        </Text>
+        <MaterialIcons name="open-in-new" size={24} color="gray" />
+      </TouchableOpacity>
+
+      {/* Call Contact */}
+      <TouchableOpacity
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          backgroundColor: "white",
+          borderWidth: 1,
+          borderColor: "#ccc",
+          borderRadius: 10,
+          padding: 12,
+          marginBottom: 40,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.2,
+          shadowRadius: 4,
+          elevation: 3,
+        }}
+        onPress={handleCall}
+      >
+        <FontAwesome name="phone" size={30} color="gray" />
+        <Text style={{ fontSize: 18, marginLeft: 15, flex: 1 }}>Call us</Text>
+        <MaterialIcons name="open-in-new" size={24} color="gray" />
+      </TouchableOpacity>
     </ScrollView>
   );
 };

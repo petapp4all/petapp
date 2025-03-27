@@ -73,7 +73,7 @@ userRouter.post(
       email: user.email,
       role: user.role,
       image: user.image,
-      phone: user.phoneNumber,
+      phone: user.phone,
       token: generateToken(user),
     });
   })
@@ -120,9 +120,9 @@ userRouter.put(
     const updatedUser = await prisma.user.update({
       where: { id: req.params.id },
       data: {
-        fullName: req.body.name || user.fullName,
+        name: req.body.name || user.name,
         email: req.body.email || user.email,
-        phoneNumber: req.body.phone || user.phoneNumber,
+        phone: req.body.phone || user.phone,
         image: req.body.image || user.image,
         role: req.body.role || user.role,
         password: req.body.password
@@ -133,9 +133,9 @@ userRouter.put(
 
     res.json({
       id: updatedUser.id,
-      name: updatedUser.fullName,
+      name: updatedUser.name,
       email: updatedUser.email,
-      phone: updatedUser.phoneNumber,
+      phone: updatedUser.phone,
       image: updatedUser.image,
       role: updatedUser.role,
       token: generateToken(updatedUser),
@@ -164,82 +164,6 @@ userRouter.delete(
     res.json({ message: "User deleted successfully" });
   })
 );
-
-// // Delete User
-// userRouter.delete(
-//   "/:id",
-//   expressAsyncHandler(async (req, res) => {
-//     const user = await User.findById(req.params.id);
-//     if (!user) {
-//       return res.status(404).send({ message: "User not found" });
-//     }
-//     await User.deleteOne({ _id: req.params.id });
-//     res.send({ message: "User deleted successfully" });
-//   })
-// );
-
-// userRouter.post(
-//   "/forget-password",
-//   expressAsyncHandler(async (req, res) => {
-//     const { email } = req.body;
-//     const user = await User.findOne({ email });
-//     if (user) {
-//       const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-//         expiresIn: "3h",
-//       });
-//       user.resetToken = token;
-//       await user.save();
-//       try {
-//         const reply_to = email;
-//         const subject = "Reset Password";
-//         const sent_from = process.env.EMAIL_USER;
-//         const sent_to = `${user.name} <${user.email}>`;
-//         const message = `
-//         <a href="${baseUrl()}/reset-password/${token}"}>Reset Password</a>
-//          <p>Please Click the following link to reset your password:</p>
-//          `;
-//         await sendMail(subject, message, sent_to, sent_from, reply_to);
-//         (error, body) => {
-//           console.log("error", error);
-//         };
-//         res.send({
-//           message: `We sent reset password link to ${email}.`,
-//           resetLink: `${baseUrl()}/reset-password/${token}`,
-//         });
-//       } catch (err) {
-//         res.status(500).json("err from outlook", err.message);
-//       }
-//     } else {
-//       res.status(404).send({ message: "User not found" });
-//     }
-//   })
-// );
-
-// userRouter.post(
-//   "/reset-password",
-//   expressAsyncHandler(async (req, res) => {
-//     jwt.verify(req.body.token, process.env.JWT_SECRET, async (err, decode) => {
-//       if (err) {
-//         res.status(401).send({ message: "Invalid Token" });
-//       } else {
-//         const user = await User.findOne({ resetToken: req.body.token });
-//         console.log("user", user);
-//         if (user) {
-//           if (req.body.password) {
-//             user.password = bcrypt.hashSync(req.body.password, 8);
-//             await user.save();
-//             res.status(201).json({
-//               message: "Password reseted successfully",
-//             });
-//             res.end("ok");
-//           }
-//         } else {
-//           res.status(404).json({ message: "User not found" });
-//         }
-//       }
-//     });
-//   })
-// );
 
 userRouter.post(
   "/forgot-password",

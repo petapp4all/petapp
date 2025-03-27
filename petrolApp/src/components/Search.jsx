@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, TextInput, TouchableOpacity } from "react-native";
 import { Feather, AntDesign } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
-import { searchStations } from "../../redux/slices/stationSlice";
+import { searchStations } from "../redux/slices/stationSlice";
 
 const Search = () => {
   const [query, setQuery] = useState("");

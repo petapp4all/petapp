@@ -19,9 +19,9 @@ const UserDetails = () => {
     const fetchUserDetails = async () => {
       const user = await getUserDetails();
       if (user) {
-        setFullName(user.fullName || "");
+        setFullName(user.name || "");
         setEmail(user.email || "");
-        setPhoneNumber(user.phoneNumber || "");
+        setPhoneNumber(user.phone || "");
       }
     };
     fetchUserDetails();
@@ -30,7 +30,7 @@ const UserDetails = () => {
   const handleUpdate = async () => {
     setLoading(true);
     try {
-      const updatedUser = { fullName, email, phoneNumber };
+      const updatedUser = { name: fullName, email, phone: phoneNumber };
       await updateUser(updatedUser);
       Alert.alert("Success", "User details updated successfully!");
     } catch (error) {

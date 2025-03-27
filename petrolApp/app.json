@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/futuristic_petrol_station_splantom.png",
-      "resizeMode": "cover",
+      "resizeMode": "contain",
       "backgroundColor": "#000000"
     },
     "ios": {
@@ -85,7 +85,7 @@
     },
 
     "extra": {
-      "apiUrlDevelopment": "http://localhost:8000/api",
+      "apiUrlDevelopment": "https://petrol-auth.vercel.app/api",
       "apiUrlProduction": "https://petrol-auth.vercel.app/api",
       "router": {
         "origin": false

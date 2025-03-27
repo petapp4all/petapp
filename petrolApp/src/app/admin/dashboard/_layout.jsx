@@ -52,7 +52,7 @@ export default function MenuLayout() {
               >
                 <TouchableOpacity>
                   <Image
-                    source={require("@/assets/images/profileImage.jpeg")}
+                    source={require("@/assets/images/admin.jpg")}
                     style={styles.profileImage}
                   />
                 </TouchableOpacity>
@@ -96,9 +96,9 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   profileImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 60,
+    width: 50,
+    height: 50,
+    borderRadius: 50,
   },
   titleContainer: {
     flexDirection: "row",

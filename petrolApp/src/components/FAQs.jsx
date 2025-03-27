@@ -24,7 +24,7 @@ const FAQs = () => {
   const [activeIndex, setActiveIndex] = useState(null);
   const animations = useRef(faqData.map(() => new Animated.Value(0))).current;
 
-  const phoneNumber = "08109774285";
+  const phoneNumber = "09130370265";
 
   const handleWhatsApp = () => {
     const url = `https://wa.me/234${phoneNumber.slice(1)}`;

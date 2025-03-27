@@ -1,14 +1,46 @@
-import { View, Text, ScrollView } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { View, Text, ScrollView, TouchableOpacity, Alert } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteUser } from "../../../redux/slices/userSlice";
 
 const SingleUser = () => {
   const { id } = useLocalSearchParams();
+  const dispatch = useDispatch();
+  const router = useRouter();
+
   const user = useSelector((state) =>
     state.users.filteredUsers.find((u) => u.id === id)
   );
 
+  if (!user) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <Text className="text-2xl font-bold text-red-500">User not found</Text>
+      </View>
+    );
+  }
+
+  const handleDelete = () => {
+    Alert.alert(
+      "Confirm Delete",
+      `Are you sure you want to delete ${user.name}? This action cannot be undone.`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            dispatch(deleteUser(id));
+            router.back();
+          },
+        },
+      ]
+    );
+  };
   return (
     <ScrollView className="p-4 bg-gray-100">
       {/* User Basic Info */}
@@ -108,6 +140,15 @@ const SingleUser = () => {
           📧 Email: {user.notificationsSent.email}
         </Text>
       </View>
+      {/* Delete Button */}
+      <TouchableOpacity
+        onPress={handleDelete}
+        className="bg-red-500 p-4 rounded-lg shadow-lg mt-3 mb-6"
+      >
+        <Text className="text-xl text-white font-bold text-center">
+          Delete User
+        </Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };

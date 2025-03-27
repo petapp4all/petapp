@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, TextInput, TouchableOpacity, Text } from "react-native";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { searchUsers, sortUsers } from "../../redux/slices/userSlice";
+import { searchUsers, sortUsers } from "../redux/slices/userSlice";
 
 const SearchAndSort = () => {
   const [searchQuery, setSearchQuery] = useState("");
