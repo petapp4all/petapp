@@ -206,7 +206,7 @@ userRouter.post(
       await sendMail(subject, message, sent_to, sent_from, reply_to);
 
       res.json({
-        message: `Password reset code successfully sent to ${user.email}`,
+        token: token,
       });
     } catch (error) {
       res
