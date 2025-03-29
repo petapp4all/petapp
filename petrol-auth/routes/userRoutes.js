@@ -171,8 +171,6 @@ userRouter.post(
     const { email } = req.body;
 
     const user = await prisma.user.findUnique({ where: { email } });
-    console.log("email=", email);
-
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -225,8 +223,6 @@ userRouter.post(
     try {
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      console.log("resetCode", resetCode);
-      console.log("token", token);
       // Find user with matching token and reset code
       const user = await prisma.user.findFirst({
         where: { resetToken: token, resetCode },
@@ -249,7 +245,7 @@ userRouter.post(
 
       res.json({ message: "Password reset successfully" });
     } catch (error) {
-      res.status(400).json({ message: "Invalid or expired token/code" });
+      res.status(400).json({ message: "Invalid or expired code" });
     }
   })
 );

@@ -11,38 +11,43 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
+import { useRouter } from "expo-router"; // Import useRouter
 import { apiUrl } from "../../components/utils/utils";
-
-const ForgetPasswordScreen = ({ navigation }) => {
+import axios from "axios";
+const ForgetPasswordScreen = () => {
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false); // Track loading state
+  const [loading, setLoading] = useState(false);
+  const router = useRouter(); // Use router from Expo Router
 
   const handleForgetPassword = async () => {
     if (!email.trim()) {
       Alert.alert("Error", "Please enter your email.");
       return;
     }
-
-    setLoading(true); // Start loading
+    setLoading(true);
     try {
-      const response = await fetch(`${apiUrl}/users/forgot-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+      const { data } = await axios.post(`${apiUrl}/users/forgot-password`, {
+        email,
       });
-
-      const data = await response.json();
-      if (response.ok) {
-        console.log("Done");
-        Alert.alert("Success", "Check your email for the reset code.");
-        navigation.replace("reset-password");
-      } else {
-        Alert.alert("Error", data.message);
-      }
+      Alert.alert(
+        "Success",
+        "Check your email for the reset code. If you don't see it, check your spam folder."
+      );
+      router.push({
+        pathname: "/reset-password",
+        params: { token: data.token },
+      });
+      console.log("data=", data);
     } catch (error) {
-      Alert.alert("Error", "Something went wrong.");
+      console.log("error=", error);
+
+      if (error.response && error.response.status === 404) {
+        Alert.alert("Error", `User with email: ${email} not found.`);
+      } else {
+        Alert.alert("Error", "Something went wrong.");
+      }
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
@@ -81,7 +86,7 @@ const ForgetPasswordScreen = ({ navigation }) => {
           activeOpacity={0.8}
           className="rounded-lg overflow-hidden shadow-xl mt-4"
           onPress={handleForgetPassword}
-          disabled={loading} // Disable button when loading
+          disabled={loading}
         >
           <LinearGradient
             colors={["#0072FF", "#00C6FF"]}

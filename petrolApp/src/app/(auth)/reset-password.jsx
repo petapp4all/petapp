@@ -10,14 +10,18 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
+import { useRouter, useLocalSearchParams } from "expo-router"; // Import router and params
 import { apiUrl } from "../../components/utils/utils";
 
-const ResetPassword = ({ navigation }) => {
+const ResetPasswordScreen = () => {
   const [resetCode, setResetCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [secureNewPassword, setSecureNewPassword] = useState(true);
   const [secureConfirmPassword, setSecureConfirmPassword] = useState(true);
+
+  const { token } = useLocalSearchParams(); // Get token from URL params
+  const router = useRouter(); // Use Expo Router
 
   const handleResetPassword = async () => {
     if (!resetCode || !newPassword || !confirmPassword) {
@@ -32,13 +36,13 @@ const ResetPassword = ({ navigation }) => {
       const response = await fetch(`${apiUrl}/users/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resetCode, newPassword }),
+        body: JSON.stringify({ resetCode, password: newPassword, token }),
       });
 
       const data = await response.json();
       if (response.ok) {
         Alert.alert("Success", "Your password has been reset!");
-        navigation.replace("Login");
+        router.replace("/sign-in");
       } else {
         Alert.alert("Error", data.message);
       }
@@ -123,7 +127,6 @@ const ResetPassword = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Submit Button */}
         <TouchableOpacity
           activeOpacity={0.8}
           className="rounded-lg overflow-hidden shadow-xl mt-4"
@@ -143,4 +146,4 @@ const ResetPassword = ({ navigation }) => {
   );
 };
 
-export default ResetPassword;
+export default ResetPasswordScreen;

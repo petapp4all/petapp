@@ -44,8 +44,8 @@ const SignInScreen = () => {
 
   useEffect(() => {
     const checkBiometricSupport = async () => {
-      await AsyncStorage.removeItem("userDetails");
-      setUserLoggedIn(false);
+      // await AsyncStorage.removeItem("userDetails");
+      // setUserLoggedIn(false);
       const compatible = await LocalAuthentication.hasHardwareAsync();
       setIsBiometricSupported(compatible);
     };
