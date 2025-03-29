@@ -1,5 +1,8 @@
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export const baseUrl = () =>
   process.env.BASE_URL
@@ -58,16 +61,18 @@ export const isAdmin = (req, res, next) => {
 // ) => {
 //   const transporter = nodemailer.createTransport({
 //     host: process.env.EMAIL_HOST,
-//     port: "587",
-//     service: "Outlook365",
+//     port: 587, // Ensure this is a number, not a string
+//     secure: false, // Use TLS
 //     auth: {
 //       user: process.env.EMAIL_USER,
 //       pass: process.env.EMAIL_PASS,
 //     },
 //     tls: {
-//       rejectUnauthorized: true,
+//       ciphers: "SSLv3",
+//       rejectUnauthorized: false,
 //     },
 //   });
+
 //   const options = {
 //     from: sent_from,
 //     to: sent_to,
@@ -84,18 +89,49 @@ export const isAdmin = (req, res, next) => {
 //   });
 // };
 
-export const sendMail = async (sent_to, sent_from, number) => {
-  // const transporter = nodemailer.createTransport({
-  //   service: "gmail",
-  //   auth: {
-  //     user: process.env.EMAIL_USER,
-  //     pass: process.env.EMAIL_PASS,
-  //   },
-  // });
+// export const sendMail = async (sent_to, sent_from, number) => {
+//   // const transporter = nodemailer.createTransport({
+//   //   service: "gmail",
+//   //   auth: {
+//   //     user: process.env.EMAIL_USER,
+//   //     pass: process.env.EMAIL_PASS,
+//   //   },
+//   // });
+//   const transporter = nodemailer.createTransport({
+//     host: "smtp.gmail.com",
+//     port: 465, // Use 587 if TLS is required instead of SSL
+//     secure: true,
+//     auth: {
+//       user: process.env.EMAIL_USER,
+//       pass: process.env.EMAIL_PASS,
+//     },
+//   });
+
+//   const mailOptions = {
+//     from: sent_from,
+//     to: sent_to,
+//     subject: "Splantom PetrolApp",
+//     text: `Use this number to reset your password: ${number}`,
+//   };
+
+//   transporter.sendMail(mailOptions, (error, info) => {
+//     if (error) {
+//       return console.log(`Error occurred:`, error);
+//     }
+//     console.log(`Email sent successfully:`, info.response);
+//   });
+// };
+
+export const sendMail = async (
+  subject,
+  message,
+  sent_to,
+  sent_from,
+  reply_to
+) => {
+  console.log("process.env.EMAIL_PASS=", process.env.EMAIL_PASS);
   const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465, // Use 587 if TLS is required instead of SSL
-    secure: true,
+    service: "gmail",
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
@@ -105,17 +141,19 @@ export const sendMail = async (sent_to, sent_from, number) => {
   const mailOptions = {
     from: sent_from,
     to: sent_to,
-    subject: "Splantom PetrolApp",
-    text: `Use this number to reset your password: ${number}`,
+    replyTo: reply_to,
+    subject: subject,
+    html: message,
   };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      return console.log(`Error occurred:`, error);
-    }
-    console.log(`Email sent successfully:`, info.response);
-  });
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent: ", info);
+  } catch (err) {
+    console.error("Error sending email:", err);
+  }
 };
+
 export const payOrderEmailTemplate = (order) => {
   console.log(order);
   return `<h1>Thanks for shopping with us</h1>

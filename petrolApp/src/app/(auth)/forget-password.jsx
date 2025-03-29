@@ -1,11 +1,29 @@
 import { useState } from "react";
-import { View, TextInput, Button, Text, Alert } from "react-native";
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  Text,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ActivityIndicator,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { Feather } from "@expo/vector-icons";
 import { apiUrl } from "../../components/utils/utils";
 
 const ForgetPasswordScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false); // Track loading state
 
   const handleForgetPassword = async () => {
+    if (!email.trim()) {
+      Alert.alert("Error", "Please enter your email.");
+      return;
+    }
+
+    setLoading(true); // Start loading
     try {
       const response = await fetch(`${apiUrl}/users/forgot-password`, {
         method: "POST",
@@ -14,32 +32,72 @@ const ForgetPasswordScreen = ({ navigation }) => {
       });
 
       const data = await response.json();
-      console.log(data);
       if (response.ok) {
+        console.log("Done");
         Alert.alert("Success", "Check your email for the reset code.");
-        navigation.navigate("ResetPassword", { resetToken: data.resetToken });
+        navigation.replace("reset-password");
       } else {
         Alert.alert("Error", data.message);
       }
     } catch (error) {
       Alert.alert("Error", "Something went wrong.");
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
   return (
-    <View>
-      <TextInput
-        placeholder="Enter your email"
-        value={email}
-        onChangeText={setEmail}
-        style={{
-          borderBottomWidth: 1,
-          marginBottom: 20,
-          backgroundColor: "white",
-        }}
-      />
-      <Button title="Send Reset Code" onPress={handleForgetPassword} />
-    </View>
+    <LinearGradient
+      colors={["#0072FF", "#00C6FF"]}
+      className="flex-1 justify-center items-center px-6"
+    >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="w-full max-w-md bg-white p-8 rounded-3xl shadow-lg"
+      >
+        <Text className="text-2xl font-bold text-center text-gray-900 mb-4">
+          Forgot Password?
+        </Text>
+        <Text className="text-gray-600 text-center mb-6">
+          Enter your email and we'll send you a reset code.
+        </Text>
+
+        {/* Email Input */}
+        <View className="flex-row items-center bg-gray-100 px-4 py-3 rounded-xl mb-4 border border-gray-300">
+          <Feather name="mail" size={20} color="#555" />
+          <TextInput
+            className="flex-1 ml-3 text-gray-900 text-lg"
+            placeholder="Enter your email"
+            placeholderTextColor="#777"
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+            style={{ height: 45 }}
+          />
+        </View>
+
+        {/* Submit Button */}
+        <TouchableOpacity
+          activeOpacity={0.8}
+          className="rounded-lg overflow-hidden shadow-xl mt-4"
+          onPress={handleForgetPassword}
+          disabled={loading} // Disable button when loading
+        >
+          <LinearGradient
+            colors={["#0072FF", "#00C6FF"]}
+            className="px-6 py-5 rounded-lg flex items-center"
+          >
+            {loading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text className="text-white text-lg text-center font-semibold tracking-wide">
+                Send Reset Code
+              </Text>
+            )}
+          </LinearGradient>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 };
 

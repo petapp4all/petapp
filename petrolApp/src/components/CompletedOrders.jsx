@@ -10,7 +10,7 @@ const CompletedOrders = () => {
       fuelType: "Gasoline",
       quantity: "450L",
       price: "₦180,000",
-      paymentStatus: "Pending",
+      paymentStatus: "Paid",
       location: "5 Wuse Market Road, Abuja, Nigeria",
       deliveryDate: "2025-03-23",
       status: "Approved",

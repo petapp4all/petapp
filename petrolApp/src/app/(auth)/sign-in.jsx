@@ -44,8 +44,8 @@ const SignInScreen = () => {
 
   useEffect(() => {
     const checkBiometricSupport = async () => {
-      // await AsyncStorage.removeItem("userDetails");
-      // setUserLoggedIn(false);
+      await AsyncStorage.removeItem("userDetails");
+      setUserLoggedIn(false);
       const compatible = await LocalAuthentication.hasHardwareAsync();
       setIsBiometricSupported(compatible);
     };
@@ -193,6 +193,18 @@ const SignInScreen = () => {
               )}
             </LinearGradient>
           </TouchableOpacity>
+          {/* Forgot Password Link */}
+          {!userLoggedIn && (
+            <TouchableOpacity
+              className="mt-4"
+              onPress={() => router.push("/forget-password")}
+            >
+              <Text className="text-gray-300 text-center text-base">
+                Forgot your password?{" "}
+                <Text className="text-blue-300 font-semibold">Reset here</Text>
+              </Text>
+            </TouchableOpacity>
+          )}
 
           {isBiometricSupported && userLoggedIn && (
             <View className="mt-4">

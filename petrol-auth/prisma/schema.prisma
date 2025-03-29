@@ -17,6 +17,7 @@ model User {
   phone             String
   password          String
   resetToken        String?    @default("")
+  resetCode         String?    @default("")
   image             String?    @default("")
   role              Role       @default(USER)
   address           Address[]

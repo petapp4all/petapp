@@ -33,10 +33,10 @@ const SearchAndSort = () => {
         </TouchableOpacity>
 
         {/* Search Input */}
-        <View className="flex-1 flex-row items-center border border-gray-300 ml-3 rounded-lg px-2">
+        <View className="flex-1 flex-row items-center border border-gray-300 ml-3 rounded-lg px-2 ">
           <Feather name="search" size={20} color="gray" />
           <TextInput
-            className="flex-1 ml-1"
+            className="flex-1 ml-1 py-3"
             placeholder="Search users..."
             value={searchQuery}
             onChangeText={handleInputChange}

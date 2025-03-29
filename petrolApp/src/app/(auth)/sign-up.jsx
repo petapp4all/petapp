@@ -173,7 +173,7 @@ const SignUpScreen = () => {
                   style={{ opacity: mutation.isPending ? 0.5 : 1 }} // Reduce opacity when loading
                 >
                   {mutation.isPending ? (
-                    <ActivityIndicator color="#fff" />
+                    <ActivityIndicator color="#fff" size="large" />
                   ) : (
                     <Text className="text-white text-lg text-center font-semibold">
                       Sign Up

@@ -169,33 +169,45 @@ userRouter.post(
   "/forgot-password",
   expressAsyncHandler(async (req, res) => {
     const { email } = req.body;
+
     const user = await prisma.user.findUnique({ where: { email } });
+    console.log("email=", email);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Generate a token (Valid for 3 hours)
+    // Generate a 6-digit random number
+    const generatedNumber = Math.floor(100000 + Math.random() * 900000);
+
+    // Generate a secure token (valid for 3 hours)
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
       expiresIn: "3h",
     });
 
-    // Store the token in the database
+    // Store the token and reset code in the database
     await prisma.user.update({
       where: { email },
-      data: { resetToken: token },
+      data: { resetToken: token, resetCode: generatedNumber.toString() },
     });
 
     try {
       const subject = "Password Reset Code";
       const sent_to = user.email;
       const sent_from = process.env.EMAIL_USER;
-      const reply_to = email;
-      const message = `Your password reset token is: ${token}. Use this token in the app to reset your password.`;
+      const reply_to = sent_from;
+      const message = `
+        <p>You requested a password reset. Use the code below:</p>
+        <h2>${generatedNumber}</h2>
+        <p>This code is valid for 3 hours.</p>
+        <p>If you did not request this, please ignore this email.</p>
+      `;
 
       await sendMail(subject, message, sent_to, sent_from, reply_to);
 
-      res.json({ message: `Password reset token sent to ${user.email}.` });
+      res.json({
+        message: `Password reset code successfully sent to ${user.email}`,
+      });
     } catch (error) {
       res
         .status(500)
@@ -208,33 +220,36 @@ userRouter.post(
 userRouter.post(
   "/reset-password",
   expressAsyncHandler(async (req, res) => {
-    const { token, password } = req.body;
+    const { token, resetCode, password } = req.body;
 
     try {
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-      // Find user with the reset token
-      const user = await prisma.user.findUnique({
-        where: { id: decoded.id, resetToken: token },
+      console.log("resetCode", resetCode);
+      console.log("token", token);
+      // Find user with matching token and reset code
+      const user = await prisma.user.findFirst({
+        where: { resetToken: token, resetCode },
       });
 
       if (!user) {
-        return res.status(400).json({ message: "Invalid or expired token" });
+        return res
+          .status(400)
+          .json({ message: "Invalid or expired token/code" });
       }
 
       // Hash the new password
       const hashedPassword = bcrypt.hashSync(password, 10);
 
-      // Update user password & remove the reset token
+      // Update user password & remove reset token and code
       await prisma.user.update({
         where: { id: user.id },
-        data: { password: hashedPassword, resetToken: null },
+        data: { password: hashedPassword, resetToken: null, resetCode: null },
       });
 
       res.json({ message: "Password reset successfully" });
     } catch (error) {
-      res.status(400).json({ message: "Invalid or expired token" });
+      res.status(400).json({ message: "Invalid or expired token/code" });
     }
   })
 );
