@@ -33,6 +33,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, navigation }) => {
     };
     checkLoginStatus();
   }, []);
+
   useEffect(() => {
     if (isSidebarOpen) {
       openSidebar();

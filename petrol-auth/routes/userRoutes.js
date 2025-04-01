@@ -12,7 +12,7 @@ userRouter.post(
   "/signup",
   expressAsyncHandler(async (req, res) => {
     console.log(req.body);
-    const { name, email, phone, image, password } = req.body;
+    const { name, email, phone, image, password, country } = req.body;
 
     // Check if user already exists
     const foundUser = await prisma.user.findUnique({ where: { email } });
@@ -32,6 +32,7 @@ userRouter.post(
         email,
         phone,
         image,
+        country,
         password: hashedPassword,
       },
     });
@@ -44,6 +45,7 @@ userRouter.post(
       image: user.image,
       phone: user.phone,
       role: user.role,
+      country: user.country,
       token: generateToken(user),
     });
   })
@@ -73,6 +75,7 @@ userRouter.post(
       role: user.role,
       image: user.image,
       phone: user.phone,
+      country: user.country,
       token: generateToken(user),
     });
   })

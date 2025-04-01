@@ -8,17 +8,30 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
+import { getUserDetails } from "../../../components/utils/auth";
 
 const OilGasNews = () => {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const [loggedInUser, setLoggedInUser] = useState(null);
 
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      const user = await getUserDetails();
+      if (user) {
+        setLoggedInUser(user);
+      }
+    };
+    fetchUserDetails();
+  }, []);
+  console.log("loggedInUser", loggedInUser);
   useEffect(() => {
     const fetchNews = async () => {
       try {
+        const encodedCountry = encodeURIComponent(loggedInUser?.country);
         const response = await fetch(
-          "https://newsapi.org/v2/everything?q=oil+AND+gas+AND+Nigeria&apiKey=19fa4e57e51f46908f98d448ca4184f1"
+          `https://newsapi.org/v2/everything?q=oil+AND+gas+AND+${encodedCountry}&apiKey=19fa4e57e51f46908f98d448ca4184f1`
         );
         const data = await response.json();
 

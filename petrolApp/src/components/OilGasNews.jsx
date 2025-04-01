@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,28 +7,40 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-
 import { useRouter } from "expo-router";
+import { getUserDetails } from "./utils/auth";
 
 const OilGasNews = () => {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const [loggedInUser, setLoggedInUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      const user = await getUserDetails();
+      if (user) {
+        setLoggedInUser(user);
+      }
+    };
+    fetchUserDetails();
+  }, []);
 
   useEffect(() => {
     const fetchNews = async () => {
       try {
+        const encodedCountry = encodeURIComponent(loggedInUser?.country);
         const response = await fetch(
-          "https://newsapi.org/v2/everything?q=oil+AND+gas+AND+Nigeria&apiKey=19fa4e57e51f46908f98d448ca4184f1"
+          `https://newsapi.org/v2/everything?q=oil+AND+gas+AND+${encodedCountry}&apiKey=19fa4e57e51f46908f98d448ca4184f1`
         );
         const data = await response.json();
 
-        // Sort articles by published date (most recent first) and select top 5
-        const sortedArticles = data.articles
-          .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))
-          .slice(0, 5);
-        setNews(sortedArticles);
+        if (data.articles) {
+          const sortedArticles = data.articles
+            .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))
+            .slice(0, 5);
+          setNews(sortedArticles);
+        }
       } catch (error) {
         console.error("Error fetching news:", error);
       } finally {
@@ -39,22 +52,35 @@ const OilGasNews = () => {
   }, []);
 
   return (
-    <View className="my-4 px-4">
+    <View style={{ marginVertical: 16, paddingHorizontal: 16 }}>
       {/* Header */}
-      <View className="flex-row justify-between items-center mb-5">
-        <Text className="text-lg font-bold text-gray-800">Oil & Gas News</Text>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 16,
+        }}
+      >
+        <Text style={{ fontSize: 18, fontWeight: "bold", color: "#333" }}>
+          Oil & Gas News
+        </Text>
         <TouchableOpacity onPress={() => router.push("/users/news")}>
-          <Text className="text-blue-600">See all</Text>
+          <Text style={{ color: "blue" }}>See all</Text>
         </TouchableOpacity>
       </View>
 
       {loading ? (
-        <ActivityIndicator size="large" color="blue" className="mt-4" />
+        <ActivityIndicator
+          size="large"
+          color="blue"
+          style={{ marginTop: 16 }}
+        />
       ) : (
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          className="mt-2"
+          style={{ marginTop: 8 }}
         >
           {news.map((item, index) => (
             <TouchableOpacity
@@ -73,7 +99,7 @@ const OilGasNews = () => {
                     title: item.title,
                     author: item.author,
                     content: item.content
-                      ? item.content.split(" [+")[0] // Remove truncated part
+                      ? item.content.split(" [+")[0]
                       : item.description || "Content not available.",
                     image: item.urlToImage,
                     publishedAt: item.publishedAt,
@@ -85,8 +111,8 @@ const OilGasNews = () => {
               {/* Image Container with Overlay Text */}
               <View
                 style={{
-                  width: 250, // Increased width
-                  height: 150, // Increased height
+                  width: 250,
+                  height: 150,
                   position: "relative",
                   borderRadius: 8,
                   overflow: "hidden",
@@ -117,7 +143,7 @@ const OilGasNews = () => {
                     }}
                   >
                     {item.title.length > 50
-                      ? item.title.substring(0, 50) + "..."
+                      ? `${item.title.substring(0, 50)}...`
                       : item.title}
                   </Text>
                 </View>

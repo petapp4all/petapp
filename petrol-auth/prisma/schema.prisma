@@ -16,6 +16,7 @@ model User {
   email             String     @unique
   phone             String
   password          String
+  country           String
   resetToken        String?    @default("")
   resetCode         String?    @default("")
   image             String?    @default("")

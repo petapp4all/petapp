@@ -16,7 +16,31 @@ import { useRouter } from "expo-router";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useMutation } from "@tanstack/react-query";
 import { registerUser } from "../../components/utils/auth";
-import { getError } from "../../components/utils/utils";
+
+import RNPickerSelect from "react-native-picker-select";
+
+const countries = [
+  { label: "Nigeria", value: "Nigeria" },
+  { label: "Ghana", value: "Ghana" },
+  { label: "Ivory Coast", value: "Ivory Coast" },
+  { label: "South Africa", value: "South Africa" },
+  { label: "Benin", value: "Benin" },
+  { label: "Gambia", value: "Gambia" },
+  { label: "Algeria", value: "Algeria" },
+  { label: "Liberia", value: "Liberia" },
+  { label: "Uganda", value: "Uganda" },
+  { label: "Cameroon", value: "Cameroon" },
+  { label: "USA", value: "USA" },
+  { label: "Canada", value: "Canada" },
+  { label: "Australia", value: "Australia" },
+  { label: "United Kingdom", value: "United Kingdom" },
+  { label: "Libya", value: "Libya" },
+  { label: "Saudi Arabia", value: "Saudi Arabia" },
+  { label: "Kenya", value: "Kenya" },
+  { label: "Zimbabwe", value: "Zimbabwe" },
+  { label: "Mexico", value: "Mexico" },
+  { label: "Angola", value: "Angola" },
+];
 
 const SignUpScreen = () => {
   const router = useRouter();
@@ -25,6 +49,7 @@ const SignUpScreen = () => {
   const [phone, setphone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [country, setCountry] = useState("");
 
   const mutation = useMutation({
     mutationFn: registerUser,
@@ -39,20 +64,15 @@ const SignUpScreen = () => {
     },
   });
 
-  // const handleSignUp = () => {
-  //   if (!fullName || !email || !phone || !password || !confirmPassword) {
-  //     Alert.alert("Error", "Please fill all fields");
-  //     return;
-  //   }
-  //   if (password !== confirmPassword) {
-  //     Alert.alert("Error", "Passwords do not match");
-  //     return;
-  //   }
-
-  //   mutation.mutate({ name: fullName, email, phone, password });
-  // };
   const handleSignUp = () => {
-    if (!fullName || !email || !phone || !password || !confirmPassword) {
+    if (
+      !fullName ||
+      !email ||
+      !phone ||
+      !country ||
+      !password ||
+      !confirmPassword
+    ) {
       Alert.alert("Error", "Please fill all fields");
       return;
     }
@@ -73,7 +93,7 @@ const SignUpScreen = () => {
       return;
     }
 
-    mutation.mutate({ name: fullName, email, phone, password });
+    mutation.mutate({ name: fullName, email, phone, country, password });
   };
 
   return (
@@ -109,7 +129,6 @@ const SignUpScreen = () => {
                   style={{ height: 45 }}
                 />
               </View>
-
               <View className="flex-row items-center bg-white/20 px-4 py-3 rounded-lg mb-4 border border-white/30">
                 <FontAwesome name="envelope" size={20} color="#ddd" />
                 <TextInput
@@ -121,6 +140,40 @@ const SignUpScreen = () => {
                   onChangeText={setEmail}
                   style={{ height: 45 }}
                 />
+              </View>
+              <View className="flex-row items-center bg-white/20 px-4 py-3 rounded-lg mb-4 border border-white/30">
+                <FontAwesome name="globe" size={20} color="#ddd" />
+                <View style={{ flex: 1 }}>
+                  <RNPickerSelect
+                    onValueChange={(value) => setCountry(value)}
+                    items={countries}
+                    style={{
+                      inputIOS: {
+                        color: "white",
+                        fontSize: 16,
+                        // height: 50,
+                        paddingLeft: 10,
+                        textAlignVertical: "center",
+                      },
+                      inputAndroid: {
+                        color: "white",
+                        fontSize: 16,
+                        paddingLeft: 14,
+                        // height: 50,
+                        textAlignVertical: "center",
+                      },
+                      placeholder: {
+                        color: "#ddd",
+                      },
+                    }}
+                    placeholder={{
+                      label: "Select Country",
+                      value: null,
+                    }}
+                    useNativeAndroidPickerStyle={false}
+                    touchableWrapperProps={{ activeOpacity: 1 }}
+                  />
+                </View>
               </View>
 
               <View className="flex-row items-center bg-white/20 px-4 py-3 rounded-lg mb-4 border border-white/30">
@@ -135,7 +188,6 @@ const SignUpScreen = () => {
                   style={{ height: 45 }}
                 />
               </View>
-
               <View className="flex-row items-center bg-white/20 px-4 py-3 rounded-lg mb-4 border border-white/30">
                 <Ionicons name="lock-closed" size={20} color="#ddd" />
                 <TextInput
@@ -148,7 +200,6 @@ const SignUpScreen = () => {
                   style={{ height: 45 }}
                 />
               </View>
-
               <View className="flex-row items-center bg-white/20 px-4 py-3 rounded-lg mb-6 border border-white/30">
                 <Ionicons name="lock-closed" size={20} color="#ddd" />
                 <TextInput
@@ -161,7 +212,6 @@ const SignUpScreen = () => {
                   style={{ height: 45 }}
                 />
               </View>
-
               <TouchableOpacity
                 className="rounded-lg overflow-hidden"
                 onPress={handleSignUp}
@@ -181,7 +231,6 @@ const SignUpScreen = () => {
                   )}
                 </LinearGradient>
               </TouchableOpacity>
-
               <TouchableOpacity
                 className="mt-4"
                 onPress={() => router.push("/sign-in")}

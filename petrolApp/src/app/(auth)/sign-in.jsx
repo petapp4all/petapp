@@ -15,31 +15,29 @@ import { useRouter } from "expo-router";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import * as LocalAuthentication from "expo-local-authentication";
 import { useMutation } from "@tanstack/react-query";
-import { loginUser } from "../../components/utils/auth";
+import { getUserDetails, loginUser } from "../../components/utils/auth";
 
 const SignInScreen = () => {
   const router = useRouter();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
+  const [loggedInUser, setLoggedInUser] = useState(null);
+
   const [password, setPassword] = useState("");
   const [isBiometricSupported, setIsBiometricSupported] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
 
   useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        const userDetails = await AsyncStorage.getItem("userDetails");
-        if (userDetails) {
-          const parsedUser = JSON.parse(userDetails);
-          setEmail(parsedUser.email);
-          setUserLoggedIn(true);
-        }
-      } catch (error) {
-        console.log("Error checking login status:", error);
+    const fetchUserDetails = async () => {
+      const user = await getUserDetails();
+      if (user) {
+        setEmail(user.email);
+        setUserLoggedIn(true);
+        setLoggedInUser(user);
       }
     };
-    checkLoginStatus();
+    fetchUserDetails();
   }, []);
 
   useEffect(() => {
@@ -122,9 +120,14 @@ const SignInScreen = () => {
       >
         {/* Show welcome message if user is already logged in */}
         {userLoggedIn ? (
-          <Text className="text-white text-2xl font-extrabold text-center mb-6 tracking-wide">
-            Welcome Back, {email.split("@")[0]}
-          </Text>
+          <>
+            <Text className="text-white text-3xl font-extrabold text-center tracking-wide">
+              Welcome Back
+            </Text>
+            <Text className="text-white capitalize text-2xl font-extrabold text-center mb-6 tracking-wide">
+              {loggedInUser.name}
+            </Text>
+          </>
         ) : (
           <Text className="text-white text-4xl font-extrabold text-center mb-6 tracking-wide">
             Sign In
@@ -168,6 +171,18 @@ const SignInScreen = () => {
               />
             </TouchableOpacity>
           </View>
+          {/* Forgot Password Link */}
+          {!userLoggedIn && (
+            <TouchableOpacity
+              className="mb-6"
+              onPress={() => router.push("/forgot-password")}
+            >
+              <Text className="text-gray-300 text-center text-base">
+                Forgot your password?{" "}
+                <Text className="text-blue-300 font-semibold">Reset here</Text>
+              </Text>
+            </TouchableOpacity>
+          )}
 
           {/* Sign-In Button */}
           <TouchableOpacity
@@ -193,18 +208,6 @@ const SignInScreen = () => {
               )}
             </LinearGradient>
           </TouchableOpacity>
-          {/* Forgot Password Link */}
-          {!userLoggedIn && (
-            <TouchableOpacity
-              className="mt-4"
-              onPress={() => router.push("/forget-password")}
-            >
-              <Text className="text-gray-300 text-center text-base">
-                Forgot your password?{" "}
-                <Text className="text-blue-300 font-semibold">Reset here</Text>
-              </Text>
-            </TouchableOpacity>
-          )}
 
           {isBiometricSupported && userLoggedIn && (
             <View className="mt-4">
@@ -219,7 +222,7 @@ const SignInScreen = () => {
             </View>
           )}
           {/* Switch Account Button */}
-          {userLoggedIn && (
+          {/* {userLoggedIn && (
             <TouchableOpacity
               className="mt-4 px-6 py-6 bg-red-600 rounded-lg"
               onPress={() => {
@@ -251,6 +254,45 @@ const SignInScreen = () => {
             >
               <Text className="text-white text-center text-lg font-semibold">
                 Switch Account
+              </Text>
+            </TouchableOpacity>
+          )} */}
+
+          {userLoggedIn && (
+            <TouchableOpacity
+              className="mt-5"
+              onPress={() => {
+                Alert.alert(
+                  "Warning",
+                  "This action will clear your saved email, password, and other saved settings from this device. Do you want to continue?",
+                  [
+                    {
+                      text: "CANCEL",
+                      style: "cancel",
+                    },
+                    {
+                      text: "PROCEED",
+                      onPress: async () => {
+                        await AsyncStorage.removeItem("userDetails");
+                        setUserLoggedIn(false);
+                        setEmail("");
+                        setPassword("");
+                        Alert.alert(
+                          "Success",
+                          "All saved data has been cleared. You can now sign in with another account."
+                        );
+                        router.replace("/sign-in");
+                      },
+                    },
+                  ]
+                );
+              }}
+            >
+              <Text className="text-gray-300 text-center text-base">
+                Not {loggedInUser.name}?{" "}
+                <Text className="text-blue-300 font-semibold">
+                  Switch Account
+                </Text>
               </Text>
             </TouchableOpacity>
           )}
