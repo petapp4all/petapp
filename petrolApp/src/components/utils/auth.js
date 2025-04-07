@@ -76,6 +76,32 @@ export const sendExpoPushToken = async (expoPushToken) => {
   }
 };
 
+export const sendNotificationToUser = async ({
+  recipientId,
+  title,
+  body,
+  data = {},
+}) => {
+  try {
+    const response = await fetch(`${apiUrl}/users/send-notification`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ recipientId, title, body, data }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || "Failed to send notification");
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Notification Error:", error);
+    throw error;
+  }
+};
+
 export const getUserDetails = async () => {
   try {
     const userDetails = await AsyncStorage.getItem("userDetails");

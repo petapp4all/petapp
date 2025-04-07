@@ -145,8 +145,6 @@ userRouter.put(
   })
 );
 
-import { isAuth } from "../middleware/auth.js"; // Make sure the path is correct
-
 // Save Expo Push Token
 userRouter.post(
   "/push-token",
@@ -163,6 +161,44 @@ userRouter.post(
     });
 
     res.json({ success: true, message: "Push token saved successfully" });
+  })
+);
+
+// Send Notification
+userRouter.post(
+  "/send-notification",
+  expressAsyncHandler(async (req, res) => {
+    const { recipientId, title, body, data = {} } = req.body;
+
+    const recipient = await prisma.user.findUnique({
+      where: { id: recipientId },
+    });
+
+    if (!recipient || !recipient.expoPushToken) {
+      return res.status(404).json({ message: "User or push token not found" });
+    }
+
+    const message = {
+      to: recipient.expoPushToken,
+      sound: "default",
+      title,
+      body,
+      data,
+    };
+
+    const response = await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+    });
+
+    const result = await response.json();
+
+    res.json({ success: true, result });
   })
 );
 
