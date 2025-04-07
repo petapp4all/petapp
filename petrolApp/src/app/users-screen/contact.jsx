@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, Linking } from "react-native";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 
 const Contact = () => {
-  const phoneNumber = "08109774285";
+  const phoneNumber = "07032429235";
 
   const handleWhatsApp = () => {
     const url = `https://wa.me/234${phoneNumber.slice(1)}`;

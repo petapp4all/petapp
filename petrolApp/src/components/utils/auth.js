@@ -45,6 +45,36 @@ export const logoutUser = async () => {
     console.error("Error logging out:", error);
   }
 };
+export const sendExpoPushToken = async (expoPushToken) => {
+  try {
+    const userData = await AsyncStorage.getItem("userDetails");
+    const parsedUser = JSON.parse(userData);
+
+    if (!parsedUser?.id) {
+      throw new Error("User ID not found");
+    }
+
+    const response = await fetch(`${apiUrl}/users/push-token`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: parsedUser.id,
+        expoPushToken,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to send push token");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error sending push token:", error);
+    throw error;
+  }
+};
 
 export const getUserDetails = async () => {
   try {

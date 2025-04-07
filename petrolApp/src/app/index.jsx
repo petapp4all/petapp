@@ -33,7 +33,7 @@ const WelcomeScreen = () => {
         >
           <LinearGradient
             colors={["#00C6FF", "#0072FF"]}
-            className="px-6 py-5 rounded-lg"
+            className="px-6 py-3 rounded-lg"
           >
             <Text className="text-white text-lg text-center font-semibold">
               Get Started

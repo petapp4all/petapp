@@ -11,78 +11,23 @@ datasource db {
 }
 
 model User {
-  id                String     @id @default(auto()) @map("_id") @db.ObjectId
+  id                String             @id @default(auto()) @map("_id") @db.ObjectId
   name              String
-  email             String     @unique
+  email             String             @unique
   phone             String
   password          String
   country           String
-  resetToken        String?    @default("")
-  resetCode         String?    @default("")
-  image             String?    @default("")
-  role              Role       @default(USER)
-  address           Address[]
-  totalTransactions Int        @default(0)
+  resetToken        String?            @default("")
+  resetCode         String?            @default("")
+  image             String?            @default("")
+  role              Role               @default(USER)
+  address           String?
   lastActive        DateTime?
-  status            UserStatus @default(ACTIVE)
-
-  transactionHistory TransactionHistory[]
-  loyaltyRewards     LoyaltyRewards?
-  notificationsSent  NotificationsSent?
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  Order     Order?
-  Station   Station[]
-}
-
-model Station {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  logo        String?
-  lastUpdated DateTime @updatedAt
-  sales       Int      @default(0)
-  rating      Float    @default(0.0)
-  pms         Float?
-  ago         Float?
-  infomation  String?
-  ownerId     String   @db.ObjectId // Station owner's ID (foreign key)
-  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Address {
-  id        String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String  @db.ObjectId
-  street    String
-  city      String
-  state     String
-  country   String
-  zipCode   String
-  phone     String
-  isDefault Boolean @default(false)
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model TransactionHistory {
-  id            String            @id @default(auto()) @map("_id") @db.ObjectId
-  userId        String            @db.ObjectId
-  date          DateTime
-  amount        Int
-  paymentMethod PaymentMethod
-  status        TransactionStatus
-  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model LoyaltyRewards {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId          String   @unique @db.ObjectId
-  pointsEarned    Int
-  redeemedRewards String[]
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status            UserStatus         @default(ACTIVE)
+  expoPushToken     String? // <-- Added field
+  notificationsSent NotificationsSent?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
 }
 
 model NotificationsSent {
@@ -93,50 +38,9 @@ model NotificationsSent {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model Order {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
-  customerName  String
-  fuelType      String
-  quantity      String
-  price         String
-  paymentStatus PaymentStatus
-  location      String
-  deliveryDate  DateTime
-  status        OrderStatus
-  time          String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId    String   @unique @db.ObjectId
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-enum PaymentStatus {
-  PAID
-  PENDING
-}
-
-enum OrderStatus {
-  PENDING
-  COMPLETED
-  CANCELLED
-}
-
 enum UserStatus {
   ACTIVE
   INACTIVE
-}
-
-enum PaymentMethod {
-  CREDIT_CARD
-  DEBIT_CARD
-  BANK_TRANSFER
-  MOBILE_PAYMENT
-}
-
-enum TransactionStatus {
-  PENDING
-  COMPLETED
 }
 
 enum Role {

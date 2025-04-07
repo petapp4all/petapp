@@ -26,6 +26,7 @@ const OilGasNews = () => {
     fetchUserDetails();
   }, []);
   console.log("loggedInUser", loggedInUser);
+  console.log("test");
   useEffect(() => {
     const fetchNews = async () => {
       try {
@@ -48,7 +49,7 @@ const OilGasNews = () => {
     };
 
     fetchNews();
-  }, []);
+  }, [loggedInUser]);
 
   return (
     <View className="mt-3 px-4 pb-7">

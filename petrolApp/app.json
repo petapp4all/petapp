@@ -57,26 +57,12 @@
     "plugins": [
       "expo-router",
       [
-        "react-native-fbsdk-next",
+        "expo-splash-screen",
         {
-          "appID": "2136844630105343",
-          "clientToken": "9271eafe761f2fce1ee641ab3a9ac495",
-          "displayName": "petrolApp",
-          "scheme": "fb515500594406996",
-          "advertiserIDCollectionEnabled": false,
-          "autoLogAppEventsEnabled": false,
-          "isAutoInitEnabled": true,
-          "iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
-        }
-      ],
-      "@react-native-firebase/app",
-      "@react-native-firebase/auth",
-      [
-        "expo-build-properties",
-        {
-          "ios": {
-            "useFrameworks": "static"
-          }
+          "image": "./assets/images/money.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
         }
       ]
     ],
@@ -85,7 +71,7 @@
     },
 
     "extra": {
-      "apiUrlDevelopment": "http://localhost:8000/api",
+      "apiUrlDevelopment": "https://petrol-auth.vercel.app/api",
       "apiUrlProduction": "https://petrol-auth.vercel.app/api",
       "router": {
         "origin": false
@@ -96,6 +82,7 @@
     },
     "owner": "mathew4567",
     "updates": {
+      "fallbackToCacheTimeout": 0,
       "url": "https://u.expo.dev/c1a1ca7f-c8d2-4fb3-b0dd-8275b251c83a"
     }
   }

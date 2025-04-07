@@ -9,7 +9,7 @@ import React from "react";
 import { AntDesign, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 
 const PrivacyPolicy = () => {
-  const phoneNumber = "09130370265";
+  const phoneNumber = "07032429235";
 
   const handleWhatsApp = () => {
     const url = `https://wa.me/234${phoneNumber.slice(1)}`;

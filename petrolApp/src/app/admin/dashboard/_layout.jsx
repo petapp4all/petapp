@@ -65,18 +65,18 @@ export default function MenuLayout() {
                 </ThemedText>
               </View>
             ),
-            headerRight: () => (
-              <Pressable onPress={() => setIsSidebarOpen((prev) => !prev)}>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="bell"
-                    size={25}
-                    color={Colors.light.tint}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            ),
+            // headerRight: () => (
+            //   <Pressable onPress={() => setIsSidebarOpen((prev) => !prev)}>
+            //     {({ pressed }) => (
+            //       <FontAwesome
+            //         name="bell"
+            //         size={25}
+            //         color={Colors.light.tint}
+            //         style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+            //       />
+            //     )}
+            //   </Pressable>
+            // ),
           }}
         />
 
@@ -104,7 +104,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    width: "100%",
+    // width: "100%",
+    marginRight: 50,
   },
   titleText: {
     fontSize: 18,

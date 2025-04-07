@@ -145,6 +145,27 @@ userRouter.put(
   })
 );
 
+import { isAuth } from "../middleware/auth.js"; // Make sure the path is correct
+
+// Save Expo Push Token
+userRouter.post(
+  "/push-token",
+  expressAsyncHandler(async (req, res) => {
+    const { expoPushToken } = req.body;
+
+    if (!expoPushToken) {
+      return res.status(400).json({ message: "expoPushToken is required" });
+    }
+
+    await prisma.user.update({
+      where: { id: req.user.id },
+      data: { expoPushToken },
+    });
+
+    res.json({ success: true, message: "Push token saved successfully" });
+  })
+);
+
 // Delete User
 userRouter.delete(
   "/:id",

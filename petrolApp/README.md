@@ -2,6 +2,10 @@ npm start --reset-cache
 
 npx expo start --clear
 
+npx expo start --tunnel
+
+expo r -c
+
 npx expo install --check
 
 rm -rf .expo .expo-shared node_modules/.cache
@@ -13,6 +17,7 @@ npm install -g eas-cli
 eas build -p android
 
 eas build -p android --profile preview
+eas update --channel preview --platform android --message "My second OTA with Expo"
 
 eas build -p android --profile preview --local --output=apk
 
@@ -63,10 +68,3 @@ npx expo install expo-dev-client
 npx expo install react-native-svg
 npx expo install expo-image-picker
 npm install @react-native-community/blur
-
-cd android
-./gradlew clean
-cd ..
-npx react-native run-android
-
-rm -rf ~/.gradle/caches

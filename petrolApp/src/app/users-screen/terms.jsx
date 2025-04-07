@@ -56,8 +56,8 @@ const TermsAndCondition = () => {
         terms.
       </Text>
 
-      <Text className="text-lg font-bold text-black">7. Changes to Terms</Text>
-      <Text className="text-gray-700 mb-4">
+      <Text className="text-lg font-bold text-black ">7. Changes to Terms</Text>
+      <Text className="text-gray-700 mb-14">
         We reserve the right, at our sole discretion, to modify or replace these
         terms at any time. If a revision is material, we will try to provide at
         least 30 days' notice prior to new terms taking effect.

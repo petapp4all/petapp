@@ -49,7 +49,7 @@ const OilGasNews = () => {
     };
 
     fetchNews();
-  }, []);
+  }, [loggedInUser]);
 
   return (
     <View style={{ marginVertical: 16, paddingHorizontal: 16 }}>

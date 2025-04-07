@@ -11,7 +11,7 @@ const MarketPlace = () => {
   return (
     <>
       <Search />
-      <View className="p-4 bg-gray-50 ">
+      <View className="p-4 bg-gray-50 pb-14">
         <FlatList
           data={stations}
           keyExtractor={(item) => item.id}

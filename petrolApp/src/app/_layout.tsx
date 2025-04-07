@@ -1,23 +1,20 @@
+import * as Updates from "expo-updates";
+import { useEffect, useState, useCallback } from "react";
+import { Alert, Button, SafeAreaView, View } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { Asset } from "expo-asset";
+import * as SplashScreen from "expo-splash-screen";
+import { useFonts } from "expo-font";
 import { Provider } from "react-redux";
 import { store } from "../redux/store";
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
-import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
-import { StatusBar } from "expo-status-bar";
-import { useCallback } from "react";
-import { View } from "react-native";
-import "react-native-reanimated";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { Asset } from "expo-asset";
-import { queryClient } from "../components/utils/utils";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { GestureHandlerRootView } from "react-native-gesture-handler"; // Import it here
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "../components/utils/utils";
+import { Stack } from "expo-router";
 import "./global.css";
+import { sendExpoPushToken } from "../components/utils/auth";
+import { registerForPushNotificationsAsync } from "../components/usePushNotifications";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -26,6 +23,9 @@ export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     SpaceMono: require("../../assets/fonts/SpaceMono-Regular.ttf"),
   });
+
+  const [isUpdateAvailable, setIsUpdateAvailable] = useState(false);
+  const [isUpdatePending, setIsUpdatePending] = useState(false);
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
@@ -36,6 +36,60 @@ export default function RootLayout() {
     }
   }, [fontsLoaded]);
 
+  // Check for updates on mount
+  useEffect(() => {
+    const checkForUpdates = async () => {
+      try {
+        const update = await Updates.checkForUpdateAsync();
+        if (update.isAvailable) {
+          setIsUpdateAvailable(true);
+          Alert.alert(
+            "Update Available",
+            "A new update is available. Download now?",
+            [
+              { text: "Cancel", style: "cancel" },
+              {
+                text: "Download",
+                onPress: async () => {
+                  await Updates.fetchUpdateAsync();
+                  setIsUpdatePending(true);
+                },
+              },
+            ]
+          );
+        }
+      } catch (e) {
+        console.error("Error checking for updates:", e);
+      }
+    };
+
+    checkForUpdates();
+  }, []);
+
+  // Push notification setup
+  useEffect(() => {
+    const initNotifications = async () => {
+      try {
+        const token = await registerForPushNotificationsAsync();
+        console.log("token=", token);
+        if (token) {
+          await sendExpoPushToken(token); // Send to backend
+        }
+      } catch (error) {
+        console.error("Push notification setup failed:", error);
+      }
+    };
+
+    initNotifications();
+  }, []);
+
+  // Apply update when ready
+  useEffect(() => {
+    if (isUpdatePending) {
+      Updates.reloadAsync();
+    }
+  }, [isUpdatePending]);
+
   if (!fontsLoaded) {
     return null;
   }
@@ -43,10 +97,8 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Provider store={store}>
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-          <QueryClientProvider client={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
             <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
               <Stack>
                 <Stack.Screen
@@ -65,10 +117,24 @@ export default function RootLayout() {
                   options={{ title: "Home", headerShown: false }}
                 />
               </Stack>
-              <StatusBar style="auto" />
+
+              {/* Visible fallback update button */}
+              {isUpdateAvailable && !isUpdatePending && (
+                <View style={{ padding: 10 }}>
+                  <Button
+                    title="Download Update"
+                    onPress={async () => {
+                      await Updates.fetchUpdateAsync();
+                      setIsUpdatePending(true);
+                    }}
+                  />
+                </View>
+              )}
+
+              <StatusBar style="dark" />
             </View>
-          </QueryClientProvider>
-        </ThemeProvider>
+          </SafeAreaView>
+        </QueryClientProvider>
       </Provider>
     </GestureHandlerRootView>
   );

@@ -206,7 +206,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
           />
           <SidebarItem
             icon={<AntDesign name="delete" size={20} color="red" />}
-            text="Deletion My Account"
+            text="Delete Account"
             onPress={() => handleNavigation("/users-screen/delete-account")}
           />
           <SidebarItem
