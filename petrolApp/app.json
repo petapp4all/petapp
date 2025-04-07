@@ -59,7 +59,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/money.png",
+          "image": "./assets/images/app-logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"

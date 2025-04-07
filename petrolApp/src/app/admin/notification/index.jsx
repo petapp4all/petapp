@@ -14,7 +14,6 @@ export default function NotificationScreen() {
     if (!userId) {
       return Alert.alert("Validation", "Please enter a User ID.");
     }
-
     try {
       const res = await sendNotificationToUser({
         recipientId: userId,
