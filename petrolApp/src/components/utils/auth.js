@@ -129,7 +129,7 @@ export const sendNotificationToManyUsers = async ({
   data = {},
 }) => {
   try {
-    const response = await fetch(`${apiUrl}/users/send-notification`, {
+    const response = await fetch(`${apiUrl}/users/send-notifications`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title, body, data }),
