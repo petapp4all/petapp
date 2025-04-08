@@ -149,14 +149,14 @@ userRouter.put(
 userRouter.post(
   "/push-token",
   expressAsyncHandler(async (req, res) => {
-    const { expoPushToken } = req.body;
+    const { expoPushToken, userId } = req.body;
 
     if (!expoPushToken) {
       return res.status(400).json({ message: "expoPushToken is required" });
     }
 
     await prisma.user.update({
-      where: { id: req.user.id },
+      where: { id: userId },
       data: { expoPushToken },
     });
 

@@ -31,6 +31,7 @@ export const loginUser = async (credentials) => {
       throw new Error(data.message || "Login failed");
     }
     await AsyncStorage.setItem("userDetails", JSON.stringify(data));
+    await linkPushTokenToUser();
     return data;
   } catch (error) {
     console.error("Login error:", error.message);
@@ -41,10 +42,28 @@ export const loginUser = async (credentials) => {
 export const logoutUser = async () => {
   try {
     await AsyncStorage.removeItem("userDetails");
+    await AsyncStorage.removeItem("userDetails");
   } catch (error) {
     console.error("Error logging out:", error);
   }
 };
+
+export const linkPushTokenToUser = async () => {
+  try {
+    const token = await AsyncStorage.getItem("expoPushToken");
+    console.log("expoPushToken=", token);
+    const userData = await AsyncStorage.getItem("userDetails");
+    const parsedUser = JSON.parse(userData);
+
+    if (token && parsedUser?.id) {
+      await sendExpoPushToken(token);
+      console.log("Push token linked to user");
+    }
+  } catch (error) {
+    console.error("Error linking push token to user:", error);
+  }
+};
+
 export const sendExpoPushToken = async (expoPushToken) => {
   try {
     const userData = await AsyncStorage.getItem("userDetails");
@@ -53,7 +72,7 @@ export const sendExpoPushToken = async (expoPushToken) => {
     if (!parsedUser?.id) {
       throw new Error("User ID not found");
     }
-
+    console.log("userId:", parsedUser.id);
     const response = await fetch(`${apiUrl}/users/push-token`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

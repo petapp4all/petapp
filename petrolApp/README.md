@@ -17,7 +17,7 @@ npm install -g eas-cli
 eas build -p android
 
 eas build -p android --profile preview
-eas update --channel preview --platform android --message "My second OTA with Expo"
+eas update --channel preview --platform android --message "My third OTA with Expo"
 
 eas build -p android --profile preview --local --output=apk
 

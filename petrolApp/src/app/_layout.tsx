@@ -13,8 +13,8 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "../components/utils/utils";
 import { Stack } from "expo-router";
 import "./global.css";
-import { sendExpoPushToken } from "../components/utils/auth";
 import { registerForPushNotificationsAsync } from "../components/usePushNotifications";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -67,13 +67,29 @@ export default function RootLayout() {
   }, []);
 
   // Push notification setup
+  // useEffect(() => {
+  //   const initNotifications = async () => {
+  //     try {
+  //       const token = await registerForPushNotificationsAsync();
+  //       console.log("token=", token);
+  //       if (token) {
+  //         await sendExpoPushToken(token); // Send to backend
+  //       }
+  //     } catch (error) {
+  //       console.error("Push notification setup failed:", error);
+  //     }
+  //   };
+
+  //   initNotifications();
+  // }, []);
+
   useEffect(() => {
     const initNotifications = async () => {
       try {
         const token = await registerForPushNotificationsAsync();
-        console.log("token=", token);
+        console.log("Push token received but not sent:", token);
         if (token) {
-          await sendExpoPushToken(token); // Send to backend
+          await AsyncStorage.setItem("expoPushToken", token);
         }
       } catch (error) {
         console.error("Push notification setup failed:", error);
