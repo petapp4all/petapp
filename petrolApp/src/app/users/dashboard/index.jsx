@@ -61,6 +61,22 @@ const Menu = () => {
     return () => backHandler.remove(); // Cleanup listener on unmount
   }, [segments]);
 
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const userDetails = await AsyncStorage.getItem("userDetails");
+        if (!userDetails) {
+          router.replace("/sign-in");
+        }
+      } catch (error) {
+        console.log("Error checking login status:", error);
+        // Fallback in case of error
+        router.replace("/sign-in");
+      }
+    };
+    checkLoginStatus();
+  }, []);
+
   return (
     <ScrollView className="flex-1 bg-gray-100 p-4">
       {/* Header Gradient */}

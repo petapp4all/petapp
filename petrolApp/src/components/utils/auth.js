@@ -42,7 +42,6 @@ export const loginUser = async (credentials) => {
 export const logoutUser = async () => {
   try {
     await AsyncStorage.removeItem("userDetails");
-    await AsyncStorage.removeItem("userDetails");
   } catch (error) {
     console.error("Error logging out:", error);
   }
@@ -72,7 +71,6 @@ export const sendExpoPushToken = async (expoPushToken) => {
     if (!parsedUser?.id) {
       throw new Error("User ID not found");
     }
-    console.log("userId:", parsedUser.id);
     const response = await fetch(`${apiUrl}/users/push-token`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
