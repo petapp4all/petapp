@@ -47,7 +47,7 @@
         "android.permission.INTERNET",
         "android.permission.INTERNET"
       ],
-      "runtimeVersion": "1.0.0"
+      "runtimeVersion": "1.0.1"
     },
     "web": {
       "bundler": "metro",

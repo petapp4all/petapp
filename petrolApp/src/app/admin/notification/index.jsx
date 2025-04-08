@@ -1,37 +1,49 @@
 import React, { useState } from "react";
 import { View, Text, Button, TextInput, StyleSheet, Alert } from "react-native";
-import { usePushNotifications } from "../../../components/usePushNotifications";
-import { sendNotificationToUser } from "../../../components/utils/auth";
+import {
+  sendNotificationToManyUsers,
+  sendNotificationToUser,
+} from "../../../components/utils/auth";
 
 export default function NotificationScreen() {
-  const { expoPushToken, notification } = usePushNotifications();
+  // const [userId, setUserId] = useState("");
+  // const [title, setTitle] = useState("Test Notification");
+  // const [body, setBody] = useState("This is a test message");
 
-  const [userId, setUserId] = useState("");
-  const [title, setTitle] = useState("Test Notification");
-  const [body, setBody] = useState("This is a test message");
+  // const handleSendNotification = async () => {
+  //   if (!userId) {
+  //     return Alert.alert("Validation", "Please enter a User ID.");
+  //   }
+  //   try {
+  //     const res = await sendNotificationToUser({
+  //       recipientId: userId,
+  //       title,
+  //       body,
+  //     });
+  //     Alert.alert("Success", "Notification sent!");
+  //   } catch (err) {
+  //     Alert.alert("Error", err.message || "Failed to send notification");
+  //   }
+  // };
 
-  const handleSendNotification = async () => {
-    if (!userId) {
-      return Alert.alert("Validation", "Please enter a User ID.");
-    }
+  const handleSend = async () => {
     try {
-      const res = await sendNotificationToUser({
-        recipientId: userId,
-        title,
-        body,
+      await sendNotificationToManyUsers({
+        title: "🛢️ Petrol News Update (Test)",
+        body: "Click to see the latest petrol updates.",
+        data: { screen: "/users/news" },
       });
-      Alert.alert("Success", "Notification sent!");
-    } catch (err) {
-      Alert.alert("Error", err.message || "Failed to send notification");
+      alert("Notification sent!");
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Failed to send notification");
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text>Your Expo Push Token:</Text>
-      <Text selectable>{expoPushToken}</Text>
-
-      <TextInput
+      <Button title="Send Test Notification" onPress={handleSend} />;
+      {/* <TextInput
         style={styles.input}
         placeholder="Enter User ID"
         value={userId}
@@ -52,15 +64,7 @@ export default function NotificationScreen() {
         onChangeText={setBody}
       />
 
-      <Button title="Send Notification" onPress={handleSendNotification} />
-
-      {notification && (
-        <View style={{ marginTop: 20 }}>
-          <Text>📨 Received Notification:</Text>
-          <Text>Title: {notification.request.content.title}</Text>
-          <Text>Body: {notification.request.content.body}</Text>
-        </View>
-      )}
+      <Button title="Send Notification" onPress={handleSendNotification} /> */}
     </View>
   );
 }

@@ -102,6 +102,8 @@ export const sendNotificationToUser = async ({
   data = {},
 }) => {
   try {
+    console.log("test", recipientId, body);
+    console.log("test", title);
     const response = await fetch(`${apiUrl}/users/send-notification`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -112,6 +114,33 @@ export const sendNotificationToUser = async ({
 
     if (!response.ok) {
       throw new Error(result.message || "Failed to send notification");
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Notification Error:", error);
+    throw error;
+  }
+};
+
+export const sendNotificationToManyUsers = async ({
+  title,
+  body,
+  data = {},
+}) => {
+  try {
+    const response = await fetch(`${apiUrl}/users/send-notification`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title, body, data }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        result.message || "Failed to send notification to all users"
+      );
     }
 
     return result;

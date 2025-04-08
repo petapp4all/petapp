@@ -11,7 +11,8 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "../components/utils/utils";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
+import * as Notifications from "expo-notifications";
 import "./global.css";
 import { registerForPushNotificationsAsync } from "../components/usePushNotifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -26,7 +27,7 @@ export default function RootLayout() {
 
   const [isUpdateAvailable, setIsUpdateAvailable] = useState(false);
   const [isUpdatePending, setIsUpdatePending] = useState(false);
-
+  const router = useRouter();
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
       await Asset.loadAsync(
@@ -66,23 +67,6 @@ export default function RootLayout() {
     checkForUpdates();
   }, []);
 
-  // Push notification setup
-  // useEffect(() => {
-  //   const initNotifications = async () => {
-  //     try {
-  //       const token = await registerForPushNotificationsAsync();
-  //       console.log("token=", token);
-  //       if (token) {
-  //         await sendExpoPushToken(token); // Send to backend
-  //       }
-  //     } catch (error) {
-  //       console.error("Push notification setup failed:", error);
-  //     }
-  //   };
-
-  //   initNotifications();
-  // }, []);
-
   useEffect(() => {
     const initNotifications = async () => {
       try {
@@ -97,6 +81,21 @@ export default function RootLayout() {
     };
 
     initNotifications();
+  }, []);
+
+  useEffect(() => {
+    const subscription = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        const screen = response?.notification?.request?.content?.data?.screen;
+        console.log("🔔 Notification clicked. Navigating to:", screen);
+
+        if (screen) {
+          router.push(screen); // Ensure the screen path exists, e.g. "/users/news"
+        }
+      }
+    );
+
+    return () => subscription.remove();
   }, []);
 
   // Apply update when ready
