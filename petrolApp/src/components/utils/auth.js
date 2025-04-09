@@ -38,12 +38,53 @@ export const loginUser = async (credentials) => {
     throw error;
   }
 };
-
-export const logoutUser = async () => {
+export const getUserById = async (userId) => {
   try {
-    await AsyncStorage.removeItem("userDetails");
+    console.log("userId", userId);
+    const response = await fetch(`${apiUrl}/users/${userId}`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch user");
+    }
+
+    return data;
   } catch (error) {
-    console.error("Error logging out:", error);
+    console.error("Error fetching user:", error);
+    throw error;
+  }
+};
+export const deleteUserById = async (id) => {
+  try {
+    const response = await fetch(`${apiUrl}/users/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to delete account");
+    }
+    return data;
+  } catch (error) {
+    console.error("Error deleting account:", error.message);
+    throw error;
+  }
+};
+export const getAllUsers = async () => {
+  try {
+    const response = await fetch(`${apiUrl}/users`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch users");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching all users:", error);
+    throw error;
   }
 };
 
@@ -167,7 +208,7 @@ export const deleteUser = async (email, password) => {
 
     const { id } = JSON.parse(userDetails);
 
-    const response = await fetch(`${apiUrl}/users/${id}`, {
+    const response = await fetch(`${apiUrl}/details/users/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

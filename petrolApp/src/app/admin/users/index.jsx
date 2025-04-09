@@ -1,12 +1,35 @@
-import React from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "expo-router";
 import SearchAndSort from "../../../components/SearchAndSort";
+import { fetchUsers } from "../../../redux/slices/userSlice";
 
 const Users = () => {
-  const users = useSelector((state) => state.users.filteredUsers);
+  const dispatch = useDispatch();
   const router = useRouter();
+
+  const users = useSelector((state) => state.users.filteredUsers);
+  const loading = useSelector((state) => state.users.loading); // <-- Get loading state
+  console.log("loading=", loading);
+  useEffect(() => {
+    dispatch(fetchUsers());
+  }, [dispatch]);
+
+  if (loading) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text className="mt-2 text-xl">Loading users...</Text>
+      </View>
+    );
+  }
 
   return (
     <View className="flex-1 bg-gray-100 p-2">

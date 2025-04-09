@@ -57,6 +57,21 @@ const AdminDashboard = () => {
     return () => backHandler.remove(); // Cleanup listener on unmount
   }, [segments]);
 
+  // useEffect(() => {
+  //   const checkLoginStatus = async () => {
+  //     try {
+  //       const userDetails = await AsyncStorage.getItem("userDetails");
+  //       console.log("userDetails=", userDetails);
+  //       if (!userDetails) {
+  //         router.replace("/sign-in");
+  //       }
+  //     } catch (error) {
+  //       console.log("Error checking login status:", error);
+  //       router.replace("/sign-in");
+  //     }
+  //   };
+  //   checkLoginStatus();
+  // }, []);
   return (
     <ScrollView
       contentContainerStyle={{

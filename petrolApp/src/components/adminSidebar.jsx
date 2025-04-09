@@ -33,6 +33,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
     };
     checkLoginStatus();
   }, []);
+
   useEffect(() => {
     if (isSidebarOpen) {
       openSidebar();
@@ -76,8 +77,9 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
             try {
               await AsyncStorage.removeItem("userDetails");
               closeSidebar();
-              setTimeout(() => {
-                router.push("/(auth)/sign-in");
+              setTimeout(async () => {
+                await AsyncStorage.removeItem("userDetails");
+                router.replace("/sign-in");
               }, 350);
             } catch (error) {
               console.error("Logout failed", error);

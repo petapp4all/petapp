@@ -4,46 +4,49 @@ import {
   sendNotificationToManyUsers,
   sendNotificationToUser,
 } from "../../../components/utils/auth";
+import { sendPushNotification } from "../../../components/sendPushNotification";
 
 export default function NotificationScreen() {
-  // const [userId, setUserId] = useState("");
-  // const [title, setTitle] = useState("Test Notification");
-  // const [body, setBody] = useState("This is a test message");
+  const [userId, setUserId] = useState("");
+  const [title, setTitle] = useState("Test Notification");
+  const [body, setBody] = useState("This is a test message");
 
-  // const handleSendNotification = async () => {
-  //   if (!userId) {
-  //     return Alert.alert("Validation", "Please enter a User ID.");
-  //   }
-  //   try {
-  //     const res = await sendNotificationToUser({
-  //       recipientId: userId,
-  //       title,
-  //       body,
-  //     });
-  //     Alert.alert("Success", "Notification sent!");
-  //   } catch (err) {
-  //     Alert.alert("Error", err.message || "Failed to send notification");
-  //   }
-  // };
-
-  const handleSend = async () => {
+  const handleSendNotification = async () => {
+    if (!userId) {
+      return Alert.alert("Validation", "Please enter a User ID.");
+    }
     try {
-      await sendNotificationToManyUsers({
-        title: "🛢️ Petrol News Update (Test)",
-        body: "Click to see the latest petrol updates.",
-        data: { screen: "/users/news" },
-      });
-      alert("Notification sent!");
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Failed to send notification");
+      // const res = await sendNotificationToUser({
+      //   recipientId: userId,
+      //   title,
+      //   body,
+      // });
+      const res = await sendPushNotification();
+      console.log("Success", "Notification sent!");
+      Alert.alert("Success", "Notification sent!");
+    } catch (err) {
+      Alert.alert("Error", err.message || "Failed to send notification");
     }
   };
 
+  // const handleSend = async () => {
+  //   try {
+  //     await sendNotificationToManyUsers({
+  //       title: "🛢️ Petrol News Update (Test)",
+  //       body: "Click to see the latest petrol updates.",
+  //       data: { screen: "/users/news" },
+  //     });
+  //     alert("Notification sent!");
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     alert("Failed to send notification");
+  //   }
+  // };
+
   return (
     <View style={styles.container}>
-      <Button title="Send Test Notification" onPress={handleSend} />;
-      {/* <TextInput
+      {/* <Button title="Send Test Notification" onPress={handleSend} />; */}
+      <TextInput
         style={styles.input}
         placeholder="Enter User ID"
         value={userId}
@@ -64,7 +67,7 @@ export default function NotificationScreen() {
         onChangeText={setBody}
       />
 
-      <Button title="Send Notification" onPress={handleSendNotification} /> */}
+      <Button title="Send Notification" onPress={handleSendNotification} />
     </View>
   );
 }

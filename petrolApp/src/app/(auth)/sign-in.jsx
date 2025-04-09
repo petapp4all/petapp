@@ -139,7 +139,7 @@ const SignInScreen = () => {
             icon="lock"
             label="Password"
             value={password}
-            onChangeText={setPassword}
+            onChangeText={(text) => setPassword(text.replace(/\s/g, ""))}
             isPassword
           />
 

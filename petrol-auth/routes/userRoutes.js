@@ -92,9 +92,12 @@ userRouter.get(
           name: true,
           email: true,
           phone: true,
-          image: true,
-          role: true,
-          createdAt: true,
+          status: true,
+          lastActive: true,
+          createdAt: true, // include if you want to show it on frontend
+        },
+        orderBy: {
+          createdAt: "desc", // 👈 sort by newest first
         },
       });
 
@@ -103,6 +106,33 @@ userRouter.get(
       res
         .status(500)
         .json({ message: "Failed to fetch users", error: error.message });
+    }
+  })
+);
+
+// Get Single User by ID
+userRouter.get(
+  "/:id",
+  expressAsyncHandler(async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const user = await prisma.user.findUnique({
+        where: { id },
+        include: {
+          notificationsSent: true, // optional: include related notification stats
+        },
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.json(user);
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Failed to fetch user", error: error.message });
     }
   })
 );
@@ -145,33 +175,17 @@ userRouter.put(
   })
 );
 
-// Save Expo Push Token
-userRouter.post(
-  "/push-token",
-  expressAsyncHandler(async (req, res) => {
-    const { expoPushToken, userId } = req.body;
-
-    if (!expoPushToken) {
-      return res.status(400).json({ message: "expoPushToken is required" });
-    }
-
-    await prisma.user.update({
-      where: { id: userId },
-      data: { expoPushToken },
-    });
-
-    res.json({ success: true, message: "Push token saved successfully" });
-  })
-);
-
-// Send Notification to a user
+// Send Notification to a single user
 userRouter.post(
   "/send-notification",
   expressAsyncHandler(async (req, res) => {
     const { recipientId, title, body, data = {} } = req.body;
-
+    console.log(recipientId, title, body);
     const recipient = await prisma.user.findUnique({
       where: { id: recipientId },
+      include: {
+        notificationsSent: true,
+      },
     });
 
     if (!recipient || !recipient.expoPushToken) {
@@ -197,6 +211,27 @@ userRouter.post(
     });
 
     const result = await response.json();
+    console.log("result:", result);
+    // Check for Expo success status
+    const pushDelivered = result?.data?.status === "ok";
+    console.log("pushDelivered:", pushDelivered);
+    if (pushDelivered) {
+      if (recipient.notificationsSent) {
+        // Update existing record
+        await prisma.notificationsSent.update({
+          where: { userId: recipientId },
+          data: { push: { increment: 1 } },
+        });
+      } else {
+        // Create new record
+        await prisma.notificationsSent.create({
+          data: {
+            userId: recipientId,
+            push: 1,
+          },
+        });
+      }
+    }
 
     res.json({ success: true, result });
   })
@@ -206,68 +241,80 @@ userRouter.post(
 userRouter.post(
   "/send-notifications",
   expressAsyncHandler(async (req, res) => {
-    const { title, body, data = {} } = req.body;
+    try {
+      const { title, body, data = {} } = req.body;
 
-    // 1. Get all users with Expo push tokens
-    const users = await prisma.user.findMany({
-      where: {
-        expoPushToken: {
-          not: null,
+      // 1. Get all users with Expo push tokens
+      const users = await prisma.user.findMany({
+        where: {
+          expoPushToken: {
+            not: null,
+          },
         },
-      },
-      select: {
-        expoPushToken: true,
-      },
-    });
-
-    if (!users.length) {
-      return res
-        .status(404)
-        .json({ message: "No users with push tokens found" });
-    }
-
-    // 2. Create messages for each user
-    const messages = users.map((user) => ({
-      to: user.expoPushToken,
-      sound: "default",
-      title,
-      body,
-      data,
-    }));
-
-    // 3. Split messages into batches (Expo allows max 100 per request)
-    const chunkSize = 100;
-    const batchedMessages = [];
-
-    for (let i = 0; i < messages.length; i += chunkSize) {
-      batchedMessages.push(messages.slice(i, i + chunkSize));
-    }
-
-    // 4. Send each batch and collect responses
-    const results = [];
-
-    for (const batch of batchedMessages) {
-      const response = await fetch("https://exp.host/--/api/v2/push/send", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Accept-encoding": "gzip, deflate",
-          "Content-Type": "application/json",
+        select: {
+          expoPushToken: true,
         },
-        body: JSON.stringify(batch),
       });
 
-      const result = await response.json();
-      results.push(result);
-    }
+      if (!users.length) {
+        return res
+          .status(404)
+          .json({ message: "No users with push tokens found" });
+      }
 
-    res.json({ success: true, totalRecipients: users.length, results });
+      // 2. Create messages for each user
+      const messages = users.map((user) => ({
+        to: user.expoPushToken,
+        sound: "default",
+        title,
+        body,
+        data,
+      }));
+
+      // 3. Split messages into batches (Expo allows max 100 per request)
+      const chunkSize = 100;
+      const batchedMessages = [];
+
+      for (let i = 0; i < messages.length; i += chunkSize) {
+        batchedMessages.push(messages.slice(i, i + chunkSize));
+      }
+
+      // 4. Send each batch and collect responses
+      const results = [];
+
+      for (const batch of batchedMessages) {
+        try {
+          const response = await fetch("https://exp.host/--/api/v2/push/send", {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Accept-encoding": "gzip, deflate",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(batch),
+          });
+
+          const result = await response.json();
+          console.log("result=", result);
+          results.push(result);
+        } catch (batchError) {
+          console.error("Error sending push batch:", batchError);
+          results.push({ error: "Failed to send batch", details: batchError });
+        }
+      }
+      res.json({ success: true, totalRecipients: users.length, results });
+    } catch (error) {
+      console.error("Error in /send-notifications:", error);
+      res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error", error });
+    }
   })
 );
 
-// Delete User
+// Delete User by Details
 userRouter.delete(
-  "/:id",
+  "/details/:id",
   expressAsyncHandler(async (req, res) => {
     const { email, password } = req.body;
     const user = await prisma.user.findUnique({ where: { id: req.params.id } });
@@ -283,6 +330,15 @@ userRouter.delete(
 
     await prisma.user.delete({ where: { id: req.params.id } });
 
+    res.json({ message: "User deleted successfully" });
+  })
+);
+
+// Delete UserById
+userRouter.delete(
+  "/:id",
+  expressAsyncHandler(async (req, res) => {
+    await prisma.user.delete({ where: { id: req.params.id } });
     res.json({ message: "User deleted successfully" });
   })
 );

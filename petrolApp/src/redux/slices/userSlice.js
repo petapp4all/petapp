@@ -1,11 +1,47 @@
-import { userData } from "@/src/components/utils/utils";
-import { createSlice } from "@reduxjs/toolkit";
+import {
+  getAllUsers,
+  getUserById,
+  deleteUserById,
+} from "@/src/components/utils/auth";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
+// Async thunk: fetch all users
+export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
+  const users = await getAllUsers();
+  return users;
+});
+
+// Async thunk: fetch single user
+export const fetchUserById = createAsyncThunk(
+  "users/fetchUserById",
+  async (userId) => {
+    const user = await getUserById(userId);
+    return user;
+  }
+);
+
+// Async thunk: delete user
+export const removeUserById = createAsyncThunk(
+  "users/removeUserById",
+  async (userId, { rejectWithValue }) => {
+    try {
+      await deleteUserById(userId);
+      return userId;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// Initial state
 const initialState = {
-  users: userData,
-  filteredUsers: userData,
+  users: [],
+  filteredUsers: [],
+  selectedUser: null,
   sortBy: null,
   sortOrder: "asc",
+  loading: false,
+  error: null,
 };
 
 const userSlice = createSlice({
@@ -13,11 +49,13 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     searchUsers: (state, action) => {
-      if (!action.payload.trim()) {
+      const query = action.payload.trim().toLowerCase();
+
+      if (!query) {
         state.filteredUsers = state.users;
         return;
       }
-      const query = action.payload.toLowerCase();
+
       state.filteredUsers = state.users.filter(
         (user) =>
           user.name.toLowerCase().includes(query) ||
@@ -52,6 +90,53 @@ const userSlice = createSlice({
         (user) => user.id !== userId
       );
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      // Fetch all users
+      .addCase(fetchUsers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUsers.fulfilled, (state, action) => {
+        state.users = action.payload;
+        state.filteredUsers = action.payload;
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(fetchUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      // Fetch single user
+      .addCase(fetchUserById.pending, (state) => {
+        state.loading = true;
+        state.selectedUser = null;
+        state.error = null;
+      })
+      .addCase(fetchUserById.fulfilled, (state, action) => {
+        state.selectedUser = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchUserById.rejected, (state, action) => {
+        state.loading = false;
+        state.selectedUser = null;
+        state.error = action.error.message;
+      })
+
+      // Delete user
+      .addCase(removeUserById.fulfilled, (state, action) => {
+        const userId = action.payload;
+        state.users = state.users.filter((user) => user.id !== userId);
+        state.filteredUsers = state.filteredUsers.filter(
+          (user) => user.id !== userId
+        );
+        state.error = null;
+      })
+      .addCase(removeUserById.rejected, (state, action) => {
+        state.error = action.payload || "Failed to delete user";
+      });
   },
 });
 

@@ -71,19 +71,26 @@ const SignUpScreen = () => {
   });
 
   const handleSignUp = () => {
+    const trimmedName = fullName.trim();
+    const trimmedEmail = email.trim();
+    const trimmedPhone = phone.trim();
+    const trimmedCountry = country?.name?.trim();
+    const trimmedPassword = password.trim();
+    const trimmedConfirmPassword = confirmPassword.trim();
+
     if (
-      !fullName ||
-      !email ||
-      !phone ||
-      !country ||
-      !password ||
-      !confirmPassword
+      !trimmedName ||
+      !trimmedEmail ||
+      !trimmedPhone ||
+      !trimmedCountry ||
+      !trimmedPassword ||
+      !trimmedConfirmPassword
     ) {
       Alert.alert("Error", "Please fill all fields");
       return;
     }
 
-    if (password !== confirmPassword) {
+    if (trimmedPassword !== trimmedConfirmPassword) {
       Alert.alert("Error", "Passwords do not match");
       return;
     }
@@ -91,21 +98,20 @@ const SignUpScreen = () => {
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d\S]{8,15}$/;
 
-    if (!passwordRegex.test(password)) {
+    if (!passwordRegex.test(trimmedPassword)) {
       Alert.alert(
         "Password Validation Failed",
         "Password must be 8 to 15 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character."
       );
-
       return;
     }
 
     mutation.mutate({
-      name: fullName,
-      email,
-      phone,
-      country: country.name,
-      password,
+      name: trimmedName,
+      email: trimmedEmail,
+      phone: trimmedPhone,
+      country: trimmedCountry,
+      password: trimmedPassword,
     });
   };
 
@@ -194,7 +200,7 @@ const SignUpScreen = () => {
               icon="lock"
               label="Password"
               value={password}
-              onChangeText={setPassword}
+              onChangeText={(text) => setPassword(text.replace(/\s/g, ""))}
               isPassword
             />
 
@@ -202,9 +208,12 @@ const SignUpScreen = () => {
               icon="lock"
               label="Confirm Password"
               value={confirmPassword}
-              onChangeText={setConfirmPassword}
+              onChangeText={(text) =>
+                setConfirmPassword(text.replace(/\s/g, ""))
+              }
               isPassword
             />
+
             <TouchableOpacity
               className="rounded-lg overflow-hidden mt-6"
               onPress={handleSignUp}
