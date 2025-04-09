@@ -17,7 +17,7 @@ const Users = () => {
 
   const users = useSelector((state) => state.users.filteredUsers);
   const loading = useSelector((state) => state.users.loading); // <-- Get loading state
-  console.log("loading=", loading);
+
   useEffect(() => {
     dispatch(fetchUsers());
   }, [dispatch]);

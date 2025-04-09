@@ -5,11 +5,15 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  TextInput,
+  StyleSheet,
+  Button,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { deleteUserById, fetchUserById } from "../../../redux/slices/userSlice";
+import { fetchUserById, removeUserById } from "../../../redux/slices/userSlice";
+import { sendNotificationToUser } from "../../../components/utils/auth";
 
 const SingleUser = () => {
   const { id } = useLocalSearchParams();
@@ -34,6 +38,24 @@ const SingleUser = () => {
     fetchUser();
   }, [id]);
 
+  const [title, setTitle] = useState("Test Notification");
+  const [body, setBody] = useState("This is a test message");
+  const handleSendNotification = async () => {
+    if (!id) {
+      return Alert.alert("Validation", "No User ID.");
+    }
+    try {
+      const res = await sendNotificationToUser({
+        recipientId: id,
+        title,
+        body,
+      });
+      Alert.alert("Success", "Notification sent!");
+    } catch (err) {
+      Alert.alert("Error", err.message || "Failed to send notification");
+    }
+  };
+
   const handleDelete = () => {
     Alert.alert(
       "Confirm Delete",
@@ -44,7 +66,7 @@ const SingleUser = () => {
           text: "Delete",
           style: "destructive",
           onPress: () => {
-            dispatch(deleteUserById(id));
+            dispatch(removeUserById(id));
             router.back();
           },
         },
@@ -70,6 +92,7 @@ const SingleUser = () => {
       </View>
     );
   }
+  console.log("user=", user);
 
   return (
     <ScrollView className="p-4 bg-gray-100">
@@ -100,15 +123,35 @@ const SingleUser = () => {
       </View>
 
       {/* Notifications Sent */}
-      {/* <View className="bg-white p-6 rounded-lg shadow-lg mb-4">
-        <Text className="text-2xl font-bold mb-4">📢 Notifications Sent</Text>
+      <View className="bg-white p-6 rounded-lg shadow-lg mb-4">
+        <Text className="text-2xl font-bold mb-4">
+          📢 Notifications Received
+        </Text>
         <Text className="text-xl text-gray-700">
           📩 Push: {user.notificationsSent.push}
         </Text>
         <Text className="text-xl text-gray-700">
           📧 Email: {user.notificationsSent.email}
         </Text>
-      </View> */}
+      </View>
+
+      {/* Send Notification to a user*/}
+
+      <TextInput
+        style={styles.input}
+        placeholder="Enter Title"
+        value={title}
+        onChangeText={setTitle}
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Enter Body"
+        value={body}
+        onChangeText={setBody}
+      />
+
+      <Button title="Send Notification" onPress={handleSendNotification} />
 
       {/* Delete Button */}
       <TouchableOpacity
@@ -122,5 +165,16 @@ const SingleUser = () => {
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: { flex: 1, justifyContent: "center", padding: 20 },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 6,
+    padding: 10,
+    marginVertical: 8,
+  },
+});
 
 export default SingleUser;

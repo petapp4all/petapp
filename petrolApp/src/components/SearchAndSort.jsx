@@ -1,14 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, TextInput, TouchableOpacity, Text } from "react-native";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { searchUsers, sortUsers } from "../redux/slices/userSlice";
+import { searchUsers, sortUsers, resetUsers } from "../redux/slices/userSlice";
 
 const SearchAndSort = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSortOptions, setShowSortOptions] = useState(false);
   const dispatch = useDispatch();
   const { sortBy, sortOrder } = useSelector((state) => state.users);
+
+  // Reset search and sort on mount
+  useEffect(() => {
+    setSearchQuery("");
+    dispatch(resetUsers());
+  }, [dispatch]);
 
   const handleInputChange = (text) => {
     setSearchQuery(text);

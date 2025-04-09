@@ -48,6 +48,11 @@ const userSlice = createSlice({
   name: "users",
   initialState,
   reducers: {
+    resetUsers: (state) => {
+      state.filteredUsers = state.users;
+      state.sortBy = null;
+      state.sortOrder = null;
+    },
     searchUsers: (state, action) => {
       const query = action.payload.trim().toLowerCase();
 
@@ -140,5 +145,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { searchUsers, sortUsers, deleteUser } = userSlice.actions;
+export const { resetUsers, searchUsers, sortUsers } = userSlice.actions;
 export default userSlice.reducer;

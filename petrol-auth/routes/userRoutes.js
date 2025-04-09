@@ -230,10 +230,8 @@ userRouter.post(
     });
 
     const result = await response.json();
-    console.log("result:", result);
     // Check for Expo success status
     const pushDelivered = result?.data?.status === "ok";
-    console.log("pushDelivered:", pushDelivered);
     if (pushDelivered) {
       if (recipient.notificationsSent) {
         // Update existing record
@@ -262,7 +260,7 @@ userRouter.post(
   expressAsyncHandler(async (req, res) => {
     const { title, body, data = {} } = req.body;
 
-    // 1. Get all users with Expo push tokens
+    // 1. Get all users with push tokens (include user IDs)
     const users = await prisma.user.findMany({
       where: {
         expoPushToken: {
@@ -270,6 +268,7 @@ userRouter.post(
         },
       },
       select: {
+        id: true,
         expoPushToken: true,
       },
     });
@@ -280,27 +279,26 @@ userRouter.post(
         .json({ message: "No users with push tokens found" });
     }
 
-    // 2. Create messages for each user
+    // 2. Create messages and map userId for tracking
     const messages = users.map((user) => ({
       to: user.expoPushToken,
       sound: "default",
       title,
       body,
       data,
+      userId: user.id,
     }));
 
-    // 3. Split messages into batches (Expo allows max 100 per request)
     const chunkSize = 100;
     const batchedMessages = [];
-
     for (let i = 0; i < messages.length; i += chunkSize) {
       batchedMessages.push(messages.slice(i, i + chunkSize));
     }
 
-    // 4. Send each batch and collect responses
     const results = [];
 
     for (const batch of batchedMessages) {
+      const expoMessages = batch.map(({ userId, ...msg }) => msg);
       const response = await fetch("https://exp.host/--/api/v2/push/send", {
         method: "POST",
         headers: {
@@ -308,11 +306,35 @@ userRouter.post(
           "Accept-encoding": "gzip, deflate",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(batch),
+        body: JSON.stringify(expoMessages),
       });
 
       const result = await response.json();
       results.push(result);
+
+      // 3. Update notificationsSent for each user with status === "ok"
+      const responses = result.data || [];
+      await Promise.all(
+        responses.map(async (resItem, index) => {
+          if (resItem.status === "ok") {
+            const userId = batch[index].userId;
+            const existing = await prisma.notificationsSent.findUnique({
+              where: { userId },
+            });
+
+            if (existing) {
+              await prisma.notificationsSent.update({
+                where: { userId },
+                data: { push: { increment: 1 } },
+              });
+            } else {
+              await prisma.notificationsSent.create({
+                data: { userId, push: 1 },
+              });
+            }
+          }
+        })
+      );
     }
 
     res.json({ success: true, totalRecipients: users.length, results });

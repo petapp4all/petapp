@@ -9,6 +9,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { getUserDetails } from "../../../components/utils/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const OilGasNews = () => {
   const [news, setNews] = useState([]);
@@ -25,11 +26,14 @@ const OilGasNews = () => {
     };
     fetchUserDetails();
   }, []);
-  console.log("loggedInUser", loggedInUser);
-  console.log("test");
+
   useEffect(() => {
     const fetchNews = async () => {
       try {
+        const userDetails = await AsyncStorage.getItem("userDetails");
+        if (!userDetails) {
+          router.replace("/sign-in");
+        }
         const encodedCountry = encodeURIComponent(loggedInUser?.country);
         const response = await fetch(
           `https://newsapi.org/v2/everything?q=oil+AND+gas+AND+${encodedCountry}&apiKey=19fa4e57e51f46908f98d448ca4184f1`

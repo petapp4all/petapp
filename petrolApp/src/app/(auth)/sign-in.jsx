@@ -63,6 +63,7 @@ const SignInScreen = () => {
           const userDetails = JSON.parse(userDetailsString); // Parse the string to an object
           Alert.alert("Success", "Authenticated successfully!");
           await linkPushTokenToUser();
+          console.log("Push token linked to user using fingerprint");
           if (userDetails.role === "USER") {
             router.replace("/users/dashboard");
           } else {

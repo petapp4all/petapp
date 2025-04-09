@@ -33,6 +33,7 @@ export const loginUser = async (credentials) => {
     }
     await AsyncStorage.setItem("userDetails", JSON.stringify(data));
     await linkPushTokenToUser();
+    console.log("Push token linked to user when login");
     return data;
   } catch (error) {
     console.error("Login error:", error.message);
@@ -90,13 +91,11 @@ export const getAllUsers = async () => {
 export const linkPushTokenToUser = async () => {
   try {
     const token = await AsyncStorage.getItem("expoPushToken");
-    console.log("expoPushToken=", token);
     const userData = await AsyncStorage.getItem("userDetails");
     const parsedUser = JSON.parse(userData);
 
     if (token && parsedUser?.id) {
       await sendExpoPushToken(token);
-      console.log("Push token linked to user");
     }
   } catch (error) {
     console.error("Error linking push token to user:", error);
@@ -111,10 +110,6 @@ export const sendExpoPushToken = async (expoPushToken) => {
     if (!parsedUser?.id) {
       throw new Error("User ID not found");
     }
-    console.log(parsedUser.id);
-    console.log(apiUrl);
-    console.log(expoPushToken);
-    console.log(parsedUser.id);
     const response = await axios.post(`${apiUrl}/users/push-token`, {
       userId: parsedUser.id,
       expoPushToken,
