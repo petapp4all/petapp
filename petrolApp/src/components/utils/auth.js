@@ -1,5 +1,6 @@
 import { apiUrl } from "./utils.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 export const registerUser = async (userData) => {
   const response = await fetch(`${apiUrl}/users/signup`, {
@@ -38,16 +39,14 @@ export const loginUser = async (credentials) => {
     throw error;
   }
 };
+
 export const getUserById = async (userId) => {
   try {
-    console.log("userId", userId);
     const response = await fetch(`${apiUrl}/users/${userId}`);
     const data = await response.json();
-
     if (!response.ok) {
       throw new Error(data.message || "Failed to fetch user");
     }
-
     return data;
   } catch (error) {
     console.error("Error fetching user:", error);
@@ -112,24 +111,21 @@ export const sendExpoPushToken = async (expoPushToken) => {
     if (!parsedUser?.id) {
       throw new Error("User ID not found");
     }
-    const response = await fetch(`${apiUrl}/users/push-token`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        userId: parsedUser.id,
-        expoPushToken,
-      }),
+    console.log(parsedUser.id);
+    console.log(apiUrl);
+    console.log(expoPushToken);
+    console.log(parsedUser.id);
+    const response = await axios.post(`${apiUrl}/users/push-token`, {
+      userId: parsedUser.id,
+      expoPushToken,
     });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || "Failed to send push token");
-    }
-
-    return data;
+    return response.data;
   } catch (error) {
-    console.error("Error sending push token:", error);
+    console.error(
+      "Error sending push token:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -141,8 +137,6 @@ export const sendNotificationToUser = async ({
   data = {},
 }) => {
   try {
-    console.log("test", recipientId, body);
-    console.log("test", title);
     const response = await fetch(`${apiUrl}/users/send-notification`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

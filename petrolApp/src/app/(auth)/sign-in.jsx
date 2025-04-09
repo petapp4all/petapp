@@ -12,7 +12,11 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import * as LocalAuthentication from "expo-local-authentication";
 import { useMutation } from "@tanstack/react-query";
-import { getUserDetails, loginUser } from "../../components/utils/auth";
+import {
+  getUserDetails,
+  linkPushTokenToUser,
+  loginUser,
+} from "../../components/utils/auth";
 import ReusableInput from "../../components/ReuseAbleInput";
 
 const SignInScreen = () => {
@@ -58,6 +62,7 @@ const SignInScreen = () => {
         if (userDetailsString) {
           const userDetails = JSON.parse(userDetailsString); // Parse the string to an object
           Alert.alert("Success", "Authenticated successfully!");
+          await linkPushTokenToUser();
           if (userDetails.role === "USER") {
             router.replace("/users/dashboard");
           } else {

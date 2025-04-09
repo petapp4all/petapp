@@ -175,6 +175,25 @@ userRouter.put(
   })
 );
 
+// Save Expo Push Token
+userRouter.post(
+  "/push-token",
+  expressAsyncHandler(async (req, res) => {
+    const { expoPushToken, userId } = req.body;
+
+    if (!expoPushToken) {
+      return res.status(400).json({ message: "expoPushToken is required" });
+    }
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { expoPushToken },
+    });
+
+    res.json({ success: true, message: "Push token saved successfully" });
+  })
+);
+
 // Send Notification to a single user
 userRouter.post(
   "/send-notification",
@@ -241,74 +260,62 @@ userRouter.post(
 userRouter.post(
   "/send-notifications",
   expressAsyncHandler(async (req, res) => {
-    try {
-      const { title, body, data = {} } = req.body;
+    const { title, body, data = {} } = req.body;
 
-      // 1. Get all users with Expo push tokens
-      const users = await prisma.user.findMany({
-        where: {
-          expoPushToken: {
-            not: null,
-          },
+    // 1. Get all users with Expo push tokens
+    const users = await prisma.user.findMany({
+      where: {
+        expoPushToken: {
+          not: null,
         },
-        select: {
-          expoPushToken: true,
+      },
+      select: {
+        expoPushToken: true,
+      },
+    });
+
+    if (!users.length) {
+      return res
+        .status(404)
+        .json({ message: "No users with push tokens found" });
+    }
+
+    // 2. Create messages for each user
+    const messages = users.map((user) => ({
+      to: user.expoPushToken,
+      sound: "default",
+      title,
+      body,
+      data,
+    }));
+
+    // 3. Split messages into batches (Expo allows max 100 per request)
+    const chunkSize = 100;
+    const batchedMessages = [];
+
+    for (let i = 0; i < messages.length; i += chunkSize) {
+      batchedMessages.push(messages.slice(i, i + chunkSize));
+    }
+
+    // 4. Send each batch and collect responses
+    const results = [];
+
+    for (const batch of batchedMessages) {
+      const response = await fetch("https://exp.host/--/api/v2/push/send", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Accept-encoding": "gzip, deflate",
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify(batch),
       });
 
-      if (!users.length) {
-        return res
-          .status(404)
-          .json({ message: "No users with push tokens found" });
-      }
-
-      // 2. Create messages for each user
-      const messages = users.map((user) => ({
-        to: user.expoPushToken,
-        sound: "default",
-        title,
-        body,
-        data,
-      }));
-
-      // 3. Split messages into batches (Expo allows max 100 per request)
-      const chunkSize = 100;
-      const batchedMessages = [];
-
-      for (let i = 0; i < messages.length; i += chunkSize) {
-        batchedMessages.push(messages.slice(i, i + chunkSize));
-      }
-
-      // 4. Send each batch and collect responses
-      const results = [];
-
-      for (const batch of batchedMessages) {
-        try {
-          const response = await fetch("https://exp.host/--/api/v2/push/send", {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Accept-encoding": "gzip, deflate",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(batch),
-          });
-
-          const result = await response.json();
-          console.log("result=", result);
-          results.push(result);
-        } catch (batchError) {
-          console.error("Error sending push batch:", batchError);
-          results.push({ error: "Failed to send batch", details: batchError });
-        }
-      }
-      res.json({ success: true, totalRecipients: users.length, results });
-    } catch (error) {
-      console.error("Error in /send-notifications:", error);
-      res
-        .status(500)
-        .json({ success: false, message: "Internal Server Error", error });
+      const result = await response.json();
+      results.push(result);
     }
+
+    res.json({ success: true, totalRecipients: users.length, results });
   })
 );
 

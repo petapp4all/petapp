@@ -71,7 +71,7 @@
     },
 
     "extra": {
-      "apiUrlDevelopment": "http://localhost:8000/api",
+      "apiUrlDevelopment": "https://petrol-auth.vercel.app/api",
       "apiUrlProduction": "https://petrol-auth.vercel.app/api",
       "router": {
         "origin": false
