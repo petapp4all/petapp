@@ -379,12 +379,10 @@ userRouter.post(
   "/forgot-password",
   expressAsyncHandler(async (req, res) => {
     const { email } = req.body;
-
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
     // Generate a 6-digit random number
     const generatedNumber = Math.floor(100000 + Math.random() * 900000);
 
@@ -392,7 +390,6 @@ userRouter.post(
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
       expiresIn: "3h",
     });
-
     // Store the token and reset code in the database
     await prisma.user.update({
       where: { email },
@@ -456,6 +453,57 @@ userRouter.post(
       res.json({ message: "Password reset successfully" });
     } catch (error) {
       res.status(400).json({ message: "Invalid or expired code" });
+    }
+  })
+);
+
+//send-email
+userRouter.post(
+  "/send-email",
+  expressAsyncHandler(async (req, res) => {
+    const { email, subject, message } = req.body;
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    try {
+      const sent_to = user.email;
+      const sent_from = process.env.EMAIL_USER;
+      const reply_to = sent_from;
+
+      await sendMail(subject, message, sent_to, sent_from, reply_to);
+
+      // Update email count in NotificationsSent
+      const existingRecord = await prisma.notificationsSent.findUnique({
+        where: { userId: user.id },
+      });
+
+      if (existingRecord) {
+        await prisma.notificationsSent.update({
+          where: { userId: user.id },
+          data: {
+            email: { increment: 1 },
+          },
+        });
+        console.log("Create new");
+      } else {
+        await prisma.notificationsSent.create({
+          data: {
+            userId: user.id,
+            email: 1,
+          },
+        });
+        console.log("Increase");
+      }
+
+      res.json({ message: "Email sent successfully" });
+    } catch (error) {
+      console.error("Failed to send email:", error);
+      res
+        .status(500)
+        .json({ message: "Email sending failed", error: error.message });
     }
   })
 );
