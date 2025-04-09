@@ -216,6 +216,7 @@ userRouter.post(
       sound: "default",
       title,
       body,
+      image: data.image,
       data,
     };
 
