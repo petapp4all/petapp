@@ -90,7 +90,7 @@ export default function RootLayout() {
         console.log("🔔 Notification clicked. Navigating to:", screen);
 
         if (screen) {
-          router.push(screen); // Ensure the screen path exists, e.g. "/users/news"
+          router.push(screen);
         }
       }
     );

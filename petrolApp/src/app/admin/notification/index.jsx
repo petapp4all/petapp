@@ -6,10 +6,15 @@ export default function NotificationScreen() {
   const handleSend = async () => {
     try {
       await sendNotificationToManyUsers({
-        title: "🛢️ Petrol News Update (Test)",
+        title: "🛢️ Petrol News Update",
         body: "Click to see the latest petrol updates.",
-        data: { screen: "/users/news" },
+        data: {
+          screen: "/users/news",
+          image:
+            "https://leadership.ng/wp-content/uploads/2022/06/fuel-attendant.webp",
+        },
       });
+
       alert("Notification sent!");
     } catch (error) {
       console.error("Error:", error);
