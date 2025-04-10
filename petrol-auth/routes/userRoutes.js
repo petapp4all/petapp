@@ -123,6 +123,7 @@ userRouter.get(
 );
 
 // Get All Users summary
+
 userRouter.get(
   "/summary",
   expressAsyncHandler(async (req, res) => {
@@ -142,15 +143,6 @@ userRouter.get(
         },
       });
 
-      // Count active users (logged in within the past week)
-      const activeUsers = await prisma.user.count({
-        where: {
-          lastActive: {
-            gte: oneWeekAgo,
-          },
-        },
-      });
-
       // Count blocked users (where block is true)
       const blockedUsers = await prisma.user.count({
         where: {
@@ -158,11 +150,35 @@ userRouter.get(
         },
       });
 
+      // Get all active users who logged in within the past week
+      const activeUsers = await prisma.user.findMany({
+        where: {
+          lastActive: {
+            gte: oneWeekAgo,
+          },
+        },
+        select: {
+          lastActive: true,
+        },
+      });
+
+      // Prepare the data to match the days of the week (Mon, Tue, Wed, etc.)
+      const activeUsersPerDay = [0, 0, 0, 0, 0, 0, 0]; // Monday to Sunday
+
+      // Group active users by the date part (ignoring time)
+      activeUsers.forEach((user) => {
+        const date = new Date(user.lastActive);
+        const dateString = date.toISOString().split("T")[0]; // Get the date in YYYY-MM-DD format
+
+        const dayIndex = new Date(dateString).getDay(); // Get the day of the week (Mon=0, Tue=1, ..., Sun=6)
+        activeUsersPerDay[dayIndex] += 1;
+      });
+
       res.json({
         totalUsers,
         newUsers,
-        activeUsers,
-        blockedUsers, // Added blocked users count
+        blockedUsers,
+        activeUsersPerDay,
       });
     } catch (error) {
       res.status(500).json({

@@ -16,7 +16,7 @@ const Users = () => {
   const router = useRouter();
 
   const users = useSelector((state) => state.users.filteredUsers);
-  const loading = useSelector((state) => state.users.loading); // <-- Get loading state
+  const loading = useSelector((state) => state.users.loading);
 
   useEffect(() => {
     dispatch(fetchUsers());
@@ -71,7 +71,10 @@ const Users = () => {
                     {user.status}
                   </Text>
                   <Text className="text-gray-500 text-xs">
-                    Last login: {user.lastActive}
+                    Last login:{" "}
+                    {user.lastActive
+                      ? new Date(user.lastActive).toLocaleString()
+                      : "No login yet"}
                   </Text>
                 </View>
                 <View className="w-1/3 px-1">

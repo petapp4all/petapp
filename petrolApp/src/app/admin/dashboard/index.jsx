@@ -95,27 +95,28 @@ const AdminDashboard = () => {
       </LinearGradient>
 
       {/* User Statistics */}
+
       <View className="bg-white p-4 rounded-lg shadow-md mb-4">
         <Text className="text-lg font-semibold text-gray-700">
           User Statistics
         </Text>
-        <View className="flex-row justify-between mt-2">
-          <View className="items-center">
+        <View className="flex-row flex-wrap justify-between mt-2">
+          <View className="w-1/2 items-center mb-4">
             <FontAwesome5 name="users" size={24} color="#00509D" />
             <Text className="text-gray-600 font-semibold">Total Users</Text>
             <Text className="text-2xl font-bold">{users.totalUsers}</Text>
           </View>
-          <View className="items-center">
+          <View className="w-1/2 items-center mb-4">
             <FontAwesome5 name="user-check" size={24} color="#00509D" />
             <Text className="text-gray-600 font-semibold">Active Users</Text>
             <Text className="text-2xl font-bold">{users.activeUsers}</Text>
           </View>
-          <View className="items-center">
+          <View className="w-1/2 items-center mb-4">
             <FontAwesome5 name="user-plus" size={24} color="#00509D" />
             <Text className="text-gray-600 font-semibold">New Users</Text>
             <Text className="text-2xl font-bold">{users.newUsers}</Text>
           </View>
-          <View className="items-center">
+          <View className="w-1/2 items-center mb-4">
             <FontAwesome5 name="user-lock" size={24} color="#D9534F" />
             <Text className="text-gray-600 font-semibold">Blocked Users</Text>
             <Text className="text-2xl font-bold">
@@ -125,6 +126,11 @@ const AdminDashboard = () => {
         </View>
       </View>
 
+      <View className="mb-4">
+        <Text className="text-lg font-semibold text-gray-700">
+          Recent User Logins (Weekly)
+        </Text>
+      </View>
       <LineChart
         data={{
           labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],

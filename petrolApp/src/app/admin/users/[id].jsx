@@ -11,10 +11,11 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   blockUserById,
-  deleteUserById,
   fetchUserById,
+  removeUserById,
   unblockUserById,
 } from "../../../redux/slices/userSlice";
+import { deleteUserById } from "../../../components/utils/auth";
 
 const SingleUser = () => {
   const { id } = useLocalSearchParams();
@@ -39,6 +40,24 @@ const SingleUser = () => {
     fetchUser();
   }, [id]);
 
+  // const handleDelete = () => {
+  //   Alert.alert(
+  //     "Confirm Delete",
+  //     `Are you sure you want to delete ${user?.name}? This action cannot be undone.`,
+  //     [
+  //       { text: "Cancel", style: "cancel" },
+  //       {
+  //         text: "Delete",
+  //         style: "destructive",
+  //         onPress: () => {
+  //           dispatch(deleteUserById(id));
+  //           router.back();
+  //         },
+  //       },
+  //     ]
+  //   );
+  // };
+
   const handleDelete = () => {
     Alert.alert(
       "Confirm Delete",
@@ -49,7 +68,7 @@ const SingleUser = () => {
           text: "Delete",
           style: "destructive",
           onPress: () => {
-            dispatch(deleteUserById(id));
+            dispatch(removeUserById(id)); // Use the thunk here
             router.back();
           },
         },
