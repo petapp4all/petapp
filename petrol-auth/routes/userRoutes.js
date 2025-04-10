@@ -151,10 +151,18 @@ userRouter.get(
         },
       });
 
+      // Count blocked users (where block is true)
+      const blockedUsers = await prisma.user.count({
+        where: {
+          block: true,
+        },
+      });
+
       res.json({
         totalUsers,
         newUsers,
         activeUsers,
+        blockedUsers, // Added blocked users count
       });
     } catch (error) {
       res.status(500).json({

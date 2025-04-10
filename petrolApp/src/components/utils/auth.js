@@ -88,6 +88,21 @@ export const getAllUsers = async () => {
     throw error;
   }
 };
+export const getAllUsersSummary = async () => {
+  try {
+    const response = await fetch(`${apiUrl}/users/summary`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch users");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching all users:", error);
+    throw error;
+  }
+};
 
 export const linkPushTokenToUser = async () => {
   try {
