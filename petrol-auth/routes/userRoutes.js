@@ -58,15 +58,27 @@ userRouter.post(
     const user = await prisma.user.findUnique({
       where: { email: req.body.email },
     });
+
     if (!user) {
       return res
         .status(404)
         .json({ message: `User with Email: ${req.body.email} does not exist` });
     }
 
-    if (!bcrypt.compareSync(req.body.password, user.password)) {
+    const isPasswordValid = bcrypt.compareSync(
+      req.body.password,
+      user.password
+    );
+
+    if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
+
+    // Update lastActive timestamp
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { lastActive: new Date() },
+    });
 
     res.json({
       id: user.id,

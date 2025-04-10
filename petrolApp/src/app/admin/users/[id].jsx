@@ -58,12 +58,12 @@ const SingleUser = () => {
   };
 
   const handleBlockToggle = () => {
-    const action = user?.isBlocked ? unblockUserById : blockUserById;
-    const actionText = user?.isBlocked ? "Unblock" : "Block";
+    const action = user?.block ? unblockUserById : blockUserById;
+    const actionText = user?.block ? "Unblock" : "Block";
 
     Alert.alert(
       `Confirm ${actionText}`,
-      `Are you sure you want to ${actionText.toLowerCase()} this user?`,
+      `Are you sure you want to ${actionText.toLowerCase()} ${user.name}?`,
       [
         { text: "Cancel", style: "cancel" },
         {
@@ -112,6 +112,11 @@ const SingleUser = () => {
       {/* User Info */}
       <View className="bg-white p-6 rounded-lg shadow-lg mb-4">
         <Text className="text-3xl font-bold text-center mb-4">{user.name}</Text>
+        <Text className="text-xl text-gray-700">
+          🌍 Country: {user.country}
+        </Text>
+        <Text className="text-xl text-gray-700">🧑‍💼 Role: {user.role}</Text>
+
         <Text className="text-xl text-gray-700">📧 Email: {user.email}</Text>
         <Text className="text-xl text-gray-700">📞 Phone: {user.phone}</Text>
         <Text className="text-xl text-gray-700">
@@ -121,8 +126,12 @@ const SingleUser = () => {
           🏦 Total Transactions: {user.totalTransactions}
         </Text>
         <Text className="text-xl text-gray-700">
-          🗓 Registered: {user.registeredDate}
+          🗓 Registered Date: {new Date(user.createdAt).toLocaleString()}
         </Text>
+        <Text className="text-xl text-gray-700">
+          🔄 Updated Date: {new Date(user.updatedAt).toLocaleString()}
+        </Text>
+
         <Text
           className={`text-xl font-bold ${
             user.status === "Active" ? "text-green-500" : "text-red-500"
@@ -132,6 +141,9 @@ const SingleUser = () => {
         </Text>
         <Text className="text-xl text-gray-700">
           ⏳ Last Active: {user.lastActive}
+        </Text>
+        <Text className="text-xl text-gray-700">
+          🔒 Times Blocked: {user.blockCount}
         </Text>
       </View>
 
@@ -160,11 +172,11 @@ const SingleUser = () => {
       <TouchableOpacity
         onPress={handleBlockToggle}
         className={`${
-          user?.isBlocked ? "bg-green-500" : "bg-yellow-500"
+          user?.block ? "bg-green-500" : "bg-yellow-500"
         } p-4 rounded-lg shadow-lg mb-6`}
       >
         <Text className="text-xl text-white font-bold text-center">
-          {user?.isBlocked ? "Unblock User" : "Block User"}
+          {user?.block ? "Unblock User" : "Block User"}
         </Text>
       </TouchableOpacity>
     </ScrollView>
