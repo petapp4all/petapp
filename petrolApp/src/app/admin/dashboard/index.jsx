@@ -78,7 +78,7 @@ const AdminDashboard = () => {
     };
     fetchUsers();
   }, []);
-
+  console.log("activeUsersPerDay=", users.activeUsersPerDay);
   return (
     <ScrollView
       contentContainerStyle={{
@@ -128,20 +128,21 @@ const AdminDashboard = () => {
 
       <View className="mb-4">
         <Text className="text-lg font-semibold text-gray-700">
-          Recent User Logins (Weekly)
+          Active Users Per Day (Weekly)
         </Text>
       </View>
+
       <LineChart
         data={{
-          labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+          labels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
           datasets: [
             {
-              data: [5, 6, 4, 8, 2, 9, 3],
+              data: users.activeUsersPerDay,
             },
           ],
         }}
         width={screenWidth - 40} // minus padding
-        height={220}
+        height={200}
         chartConfig={{
           backgroundGradientFrom: "#00509D",
           backgroundGradientTo: "#002F63",
