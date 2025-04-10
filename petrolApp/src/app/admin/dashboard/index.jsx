@@ -11,6 +11,8 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter, useSegments } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getAllUsers } from "../../../components/utils/auth";
+
 const AdminDashboard = () => {
   const router = useRouter();
   const segments = useSegments();
@@ -57,21 +59,33 @@ const AdminDashboard = () => {
     return () => backHandler.remove(); // Cleanup listener on unmount
   }, [segments]);
 
-  // useEffect(() => {
-  //   const checkLoginStatus = async () => {
-  //     try {
-  //       const userDetails = await AsyncStorage.getItem("userDetails");
-  //       console.log("userDetails=", userDetails);
-  //       if (!userDetails) {
-  //         router.replace("/sign-in");
-  //       }
-  //     } catch (error) {
-  //       console.log("Error checking login status:", error);
-  //       router.replace("/sign-in");
-  //     }
-  //   };
-  //   checkLoginStatus();
-  // }, []);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const users = await getAllUsers();
+        console.log("users=", users);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchUsers();
+  }, []);
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const userDetails = await AsyncStorage.getItem("userDetails");
+        if (!userDetails) {
+          router.replace("/sign-in");
+        }
+      } catch (error) {
+        console.log("Error checking login status:", error);
+        router.replace("/sign-in");
+      }
+    };
+    checkLoginStatus();
+  }, []);
+
   return (
     <ScrollView
       contentContainerStyle={{

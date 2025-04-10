@@ -106,6 +106,14 @@ const SingleUser = () => {
       </View>
     );
   }
+  const lastActiveDate = new Date(user.lastActive);
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+  const isRecentlyActive = lastActiveDate > oneWeekAgo;
+  const displayStatus = isRecentlyActive ? "Active" : "Inactive";
+  const statusColor =
+    displayStatus === "Active" ? "text-green-500" : "text-red-500";
 
   return (
     <ScrollView className="p-4 bg-gray-100">
@@ -123,25 +131,23 @@ const SingleUser = () => {
           🏠 Address: {user.address}
         </Text>
         <Text className="text-xl text-gray-700">
-          🏦 Total Transactions: {user.totalTransactions}
-        </Text>
-        <Text className="text-xl text-gray-700">
           🗓 Registered Date: {new Date(user.createdAt).toLocaleString()}
         </Text>
         <Text className="text-xl text-gray-700">
           🔄 Updated Date: {new Date(user.updatedAt).toLocaleString()}
         </Text>
 
-        <Text
-          className={`text-xl font-bold ${
-            user.status === "Active" ? "text-green-500" : "text-red-500"
-          }`}
-        >
-          ⚡ Status: {user.status}
+        <Text className={`text-xl font-bold ${statusColor}`}>
+          ⚡ Status: {displayStatus}
         </Text>
+
         <Text className="text-xl text-gray-700">
-          ⏳ Last Active: {user.lastActive}
+          ⏳ Last Active:{" "}
+          {user.lastActive
+            ? new Date(user.lastActive).toLocaleString()
+            : "No activity yet"}
         </Text>
+
         <Text className="text-xl text-gray-700">
           🔒 Times Blocked: {user.blockCount}
         </Text>
