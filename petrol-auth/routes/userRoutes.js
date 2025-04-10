@@ -374,6 +374,81 @@ userRouter.delete(
   })
 );
 
+// Block a user
+userRouter.put(
+  "/:id/block",
+  expressAsyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    const user = await prisma.user.findUnique({ where: { id } });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.block) {
+      return res.status(400).json({ message: "User is already blocked" });
+    }
+
+    let updatedUser;
+
+    // If blockCount is null or 0, set it to 1
+    if (!user.blockCount || user.blockCount === 0) {
+      updatedUser = await prisma.user.update({
+        where: { id },
+        data: {
+          block: true,
+          blockCount: 1,
+        },
+      });
+    } else {
+      // Otherwise, increment blockCount
+      updatedUser = await prisma.user.update({
+        where: { id },
+        data: {
+          block: true,
+          blockCount: { increment: 1 },
+        },
+      });
+    }
+
+    res.json({
+      message: "User blocked successfully",
+      user: updatedUser,
+    });
+  })
+);
+
+// Unblock a user
+userRouter.put(
+  "/:id/unblock",
+  expressAsyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    const user = await prisma.user.findUnique({ where: { id } });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!user.block) {
+      return res.status(400).json({ message: "User is already unblocked" });
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id },
+      data: {
+        block: false,
+      },
+    });
+
+    res.json({
+      message: "User unblocked successfully",
+      user: updatedUser,
+    });
+  })
+);
+
 //forgot-password
 userRouter.post(
   "/forgot-password",

@@ -6,7 +6,17 @@ export default function Layout() {
       <Stack.Screen
         name="index"
         options={{
-          title: "Orders",
+          title: "Send Notification",
+          headerTitleAlign: "center",
+          headerTitleStyle: {
+            fontWeight: "bold",
+          },
+        }}
+      />
+      <Stack.Screen
+        name="[id]"
+        options={{
+          title: "Send Notification to a User",
           headerTitleAlign: "center",
           headerTitleStyle: {
             fontWeight: "bold",

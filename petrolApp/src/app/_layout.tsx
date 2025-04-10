@@ -1,6 +1,6 @@
 import * as Updates from "expo-updates";
 import { useEffect, useState, useCallback } from "react";
-import { Alert, Button, SafeAreaView, View } from "react-native";
+import { Alert, Button, Platform, SafeAreaView, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Asset } from "expo-asset";
 import * as SplashScreen from "expo-splash-screen";
@@ -90,7 +90,13 @@ export default function RootLayout() {
         console.log("🔔 Notification clicked. Navigating to:", screen);
 
         if (screen) {
-          router.push(screen);
+          // Add a slight delay to ensure navigation context is ready
+          setTimeout(
+            () => {
+              router.push(screen);
+            },
+            Platform.OS === "android" ? 500 : 0
+          );
         }
       }
     );

@@ -18,7 +18,9 @@ import { sendNotificationToManyUsers } from "../../../components/utils/auth";
 
 export default function NotificationScreen() {
   const [sending, setSending] = useState(false);
-  const handleSend = async () => {
+  const [isSending, setIsSending] = useState(false);
+
+  const SendNewsUpdate = async () => {
     try {
       setSending(true);
       await sendNotificationToManyUsers({
@@ -38,6 +40,27 @@ export default function NotificationScreen() {
       setSending(false);
     }
   };
+  const SendPriceUpdate = async () => {
+    try {
+      setIsSending(true);
+      await sendNotificationToManyUsers({
+        title: "🛢️ Petrol Price Update",
+        body: "Click to see the latest petrol price.",
+        data: {
+          screen: "/users/dashboard",
+          image:
+            "https://leadership.ng/wp-content/uploads/2022/06/fuel-attendant.webp",
+        },
+      });
+      Alert.alert("Success", "Notification sent!");
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Failed to send notification");
+    } finally {
+      setIsSending(false);
+    }
+  };
+
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -60,17 +83,35 @@ export default function NotificationScreen() {
   return (
     <View className="flex-1 bg-gray-100 p-2">
       <SearchAndSort />
+
       <TouchableOpacity
-        style={styles.button}
-        onPress={handleSend}
+        className="bg-blue-600 p-3 rounded-lg items-center mb-2"
+        onPress={SendNewsUpdate}
         disabled={sending}
       >
         {sending ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={styles.buttonText}>Send Notification to All</Text>
+          <Text className="text-white text-base">
+            Send News Notification to All
+          </Text>
         )}
       </TouchableOpacity>
+
+      <TouchableOpacity
+        className="bg-blue-600 p-3 rounded-lg items-center mb-4"
+        onPress={SendPriceUpdate}
+        disabled={isSending}
+      >
+        {isSending ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text className="text-white text-base">
+            Send Price Notification to All
+          </Text>
+        )}
+      </TouchableOpacity>
+
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="w-full bg-white shadow-md rounded-lg ">
           {/* Table Header */}
@@ -122,16 +163,3 @@ export default function NotificationScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    backgroundColor: "#007bff",
-    padding: 12,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
-});

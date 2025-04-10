@@ -73,11 +73,11 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="orders"
+        name="notification"
         options={{
-          title: "Orders",
+          title: "Notification",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="shopping-cart" color={color} />
+            <TabBarIcon name="bell" color={color} type="FontAwesome5" />
           ),
         }}
       />

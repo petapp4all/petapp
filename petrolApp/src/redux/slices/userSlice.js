@@ -2,6 +2,8 @@ import {
   getAllUsers,
   getUserById,
   deleteUserById,
+  unblockUser,
+  blockUser,
 } from "@/src/components/utils/auth";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
@@ -26,6 +28,32 @@ export const removeUserById = createAsyncThunk(
   async (userId, { rejectWithValue }) => {
     try {
       await deleteUserById(userId);
+      return userId;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// Block user
+export const blockUserById = createAsyncThunk(
+  "users/blockUserById",
+  async (userId, { rejectWithValue }) => {
+    try {
+      await blockUser(userId);
+      return userId;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// Unblock user
+export const unblockUserById = createAsyncThunk(
+  "users/unblockUserById",
+  async (userId, { rejectWithValue }) => {
+    try {
+      await unblockUser(userId);
       return userId;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -141,6 +169,35 @@ const userSlice = createSlice({
       })
       .addCase(removeUserById.rejected, (state, action) => {
         state.error = action.payload || "Failed to delete user";
+      })
+      // Block user
+      .addCase(blockUserById.fulfilled, (state, action) => {
+        const userId = action.payload;
+        const user = state.users.find((u) => u.id === userId);
+        if (user) user.isBlocked = true;
+
+        const filteredUser = state.filteredUsers.find((u) => u.id === userId);
+        if (filteredUser) filteredUser.isBlocked = true;
+
+        state.error = null;
+      })
+      .addCase(blockUserById.rejected, (state, action) => {
+        state.error = action.payload || "Failed to block user";
+      })
+
+      // Unblock user
+      .addCase(unblockUserById.fulfilled, (state, action) => {
+        const userId = action.payload;
+        const user = state.users.find((u) => u.id === userId);
+        if (user) user.isBlocked = false;
+
+        const filteredUser = state.filteredUsers.find((u) => u.id === userId);
+        if (filteredUser) filteredUser.isBlocked = false;
+
+        state.error = null;
+      })
+      .addCase(unblockUserById.rejected, (state, action) => {
+        state.error = action.payload || "Failed to unblock user";
       });
   },
 });

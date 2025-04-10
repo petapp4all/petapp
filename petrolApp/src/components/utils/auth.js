@@ -54,6 +54,7 @@ export const getUserById = async (userId) => {
     throw error;
   }
 };
+
 export const deleteUserById = async (id) => {
   try {
     const response = await fetch(`${apiUrl}/users/${id}`, {
@@ -274,6 +275,44 @@ export const updateUser = async (updatedData) => {
     return data;
   } catch (error) {
     console.error("Error updating user details:", error.message);
+    throw error;
+  }
+};
+
+export const blockUser = async (id) => {
+  try {
+    if (!id) {
+      throw new Error("User ID is required.");
+    }
+
+    const response = await axios.put(`${apiUrl}/users/${id}/block`);
+
+    if (response.status !== 200) {
+      throw new Error(response.data.message || "Failed to block user.");
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error("Error blocking user:", error.message);
+    throw error;
+  }
+};
+
+export const unblockUser = async (id) => {
+  try {
+    if (!id) {
+      throw new Error("User ID is required.");
+    }
+
+    const response = await axios.put(`${apiUrl}/users/${id}/unblock`);
+
+    if (response.status !== 200) {
+      throw new Error(response.data.message || "Failed to unblock user.");
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error("Error unblocking user:", error.message);
     throw error;
   }
 };

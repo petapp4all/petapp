@@ -22,6 +22,8 @@ model User {
   image             String?            @default("")
   role              Role               @default(USER)
   address           String?
+  block             Boolean            @default(false)
+  blockCount        Int                @default(0)
   lastActive        DateTime?
   status            UserStatus         @default(ACTIVE)
   expoPushToken     String?

@@ -9,7 +9,12 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { deleteUserById, fetchUserById } from "../../../redux/slices/userSlice";
+import {
+  blockUserById,
+  deleteUserById,
+  fetchUserById,
+  unblockUserById,
+} from "../../../redux/slices/userSlice";
 
 const SingleUser = () => {
   const { id } = useLocalSearchParams();
@@ -51,6 +56,36 @@ const SingleUser = () => {
       ]
     );
   };
+
+  const handleBlockToggle = () => {
+    const action = user?.isBlocked ? unblockUserById : blockUserById;
+    const actionText = user?.isBlocked ? "Unblock" : "Block";
+
+    Alert.alert(
+      `Confirm ${actionText}`,
+      `Are you sure you want to ${actionText.toLowerCase()} this user?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: actionText,
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await dispatch(action(id)).unwrap();
+              const updatedUser = await dispatch(fetchUserById(id)).unwrap();
+              setUser(updatedUser);
+            } catch (err) {
+              Alert.alert(
+                "Error",
+                `Failed to ${actionText.toLowerCase()} user.`
+              );
+            }
+          },
+        },
+      ]
+    );
+  };
+
   console.log("user:", user);
 
   if (loading) {
@@ -114,10 +149,22 @@ const SingleUser = () => {
       {/* Delete Button */}
       <TouchableOpacity
         onPress={handleDelete}
-        className="bg-red-500 p-4 rounded-lg shadow-lg mt-3 mb-6"
+        className="bg-red-500 p-4 rounded-lg shadow-lg mt-3 mb-4"
       >
         <Text className="text-xl text-white font-bold text-center">
           Delete User
+        </Text>
+      </TouchableOpacity>
+
+      {/* Block/Unblock Button */}
+      <TouchableOpacity
+        onPress={handleBlockToggle}
+        className={`${
+          user?.isBlocked ? "bg-green-500" : "bg-yellow-500"
+        } p-4 rounded-lg shadow-lg mb-6`}
+      >
+        <Text className="text-xl text-white font-bold text-center">
+          {user?.isBlocked ? "Unblock User" : "Block User"}
         </Text>
       </TouchableOpacity>
     </ScrollView>
