@@ -61,15 +61,26 @@ const Users = () => {
                   <Text className="text-gray-500 text-sm">{user.email}</Text>
                 </View>
                 <View className="w-1/3 px-1">
-                  <Text
-                    className={`font-bold text-lg ${
-                      user.status === "Active"
-                        ? "text-green-500"
-                        : "text-red-500"
-                    }`}
-                  >
-                    {user.status}
-                  </Text>
+                  {(() => {
+                    const lastActiveDate = new Date(user.lastActive);
+                    const oneWeekAgo = new Date();
+                    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+                    const isRecentlyActive = lastActiveDate > oneWeekAgo;
+                    const displayStatus = isRecentlyActive
+                      ? "Active"
+                      : "Inactive";
+                    const statusColor = isRecentlyActive
+                      ? "text-green-500"
+                      : "text-red-500";
+
+                    return (
+                      <Text className={`font-bold text-lg ${statusColor}`}>
+                        {displayStatus}
+                      </Text>
+                    );
+                  })()}
+
                   <Text className="text-gray-500 text-xs">
                     Last login:{" "}
                     {user.lastActive

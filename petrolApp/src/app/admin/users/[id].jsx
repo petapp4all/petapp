@@ -15,7 +15,6 @@ import {
   removeUserById,
   unblockUserById,
 } from "../../../redux/slices/userSlice";
-import { deleteUserById } from "../../../components/utils/auth";
 
 const SingleUser = () => {
   const { id } = useLocalSearchParams();

@@ -18,14 +18,14 @@ import { Dimensions } from "react-native";
 const AdminDashboard = () => {
   const router = useRouter();
   const segments = useSegments();
-  const [users, setUsers] = useState({});
+  const [users, setUsers] = useState(null);
   const screenWidth = Dimensions.get("window").width;
 
   useEffect(() => {
     const backAction = () => {
       // Check if user is at the main dashboard and trying to go back
       if (
-        segments.length === 2 &&
+        segments?.length === 2 &&
         segments[0] === "admin" &&
         segments[1] === "dashboard"
       ) {
@@ -78,7 +78,7 @@ const AdminDashboard = () => {
     };
     fetchUsers();
   }, []);
-  console.log("activeUsersPerDay=", users.activeUsersPerDay);
+
   return (
     <ScrollView
       contentContainerStyle={{
@@ -95,49 +95,84 @@ const AdminDashboard = () => {
       </LinearGradient>
 
       {/* User Statistics */}
-
-      <View className="bg-white p-4 rounded-lg shadow-md mb-4">
-        <Text className="text-lg font-semibold text-gray-700">
+      <View className="bg-white p-4 rounded-2xl shadow-md mb-6">
+        <Text className="text-xl font-bold text-gray-800 mb-4">
           User Statistics
         </Text>
-        <View className="flex-row flex-wrap justify-between mt-2">
-          <View className="w-1/2 items-center mb-4">
-            <FontAwesome5 name="users" size={24} color="#00509D" />
-            <Text className="text-gray-600 font-semibold">Total Users</Text>
-            <Text className="text-2xl font-bold">{users.totalUsers}</Text>
-          </View>
-          <View className="w-1/2 items-center mb-4">
-            <FontAwesome5 name="user-check" size={24} color="#00509D" />
-            <Text className="text-gray-600 font-semibold">Active Users</Text>
-            <Text className="text-2xl font-bold">{users.activeUsers}</Text>
-          </View>
-          <View className="w-1/2 items-center mb-4">
-            <FontAwesome5 name="user-plus" size={24} color="#00509D" />
-            <Text className="text-gray-600 font-semibold">New Users</Text>
-            <Text className="text-2xl font-bold">{users.newUsers}</Text>
-          </View>
-          <View className="w-1/2 items-center mb-4">
-            <FontAwesome5 name="user-lock" size={24} color="#D9534F" />
-            <Text className="text-gray-600 font-semibold">Blocked Users</Text>
-            <Text className="text-2xl font-bold">
-              {users.blockedUsers || 0}
-            </Text>
-          </View>
+
+        <View className="flex-row flex-wrap justify-between">
+          {[
+            {
+              icon: "users",
+              label: "Total Users",
+              value: users?.totalUsers || 0,
+              color: "#00509D",
+            },
+            {
+              icon: "user-check",
+              label: "Active Users",
+              value: users?.activeUsersCount || 0,
+              color: "#28a745",
+            },
+            {
+              icon: "user-plus",
+              label: "New Users",
+              value: users?.newUsers || 0,
+              color: "#17a2b8",
+            },
+            {
+              icon: "user-lock",
+              label: "Blocked Users",
+              value: users?.blockedUsers || 0,
+              color: "#D9534F",
+            },
+          ].map((item, index) => (
+            <View key={index} className="w-1/2 p-2">
+              <View className="items-center bg-gray-200 p-4 rounded-xl shadow-sm">
+                <FontAwesome5 name={item.icon} size={24} color={item.color} />
+                <Text className="text-sm text-gray-600 mt-1">{item.label}</Text>
+                <Text className="text-xl font-extrabold text-gray-800">
+                  {item.value}
+                </Text>
+              </View>
+            </View>
+          ))}
         </View>
       </View>
 
+      {/* Quick Actions */}
+      <View className="p-4 bg-white rounded-lg shadow-lg mb-4">
+        <View className="flex-row justify-between">
+          <TouchableOpacity
+            className="bg-green-600 p-5 rounded-lg shadow-md flex-1 mx-2 items-center"
+            onPress={() => router.push("/admin/users")}
+          >
+            <FontAwesome5 name="user-cog" size={24} color="white" />
+            <Text className="text-white text-center">Manage Users</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="bg-blue-500 p-5 rounded-lg shadow-md flex-1 mx-2 items-center"
+            onPress={() => router.push("/admin/notification")}
+          >
+            <FontAwesome5 name="bell" size={24} color="white" />
+            <Text className="text-white text-center">Send Notification</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      {/* Chart */}
       <View className="mb-4">
-        <Text className="text-lg font-semibold text-gray-700">
+        <Text className="text-xl font-bold text-gray-800 mb-4">
           Active Users Per Day (Weekly)
         </Text>
       </View>
-
       <LineChart
         data={{
           labels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
           datasets: [
             {
-              data: users.activeUsersPerDay,
+              // Provide a fallback value (e.g., an array of 0s) if activeUsersPerDay is undefined
+              data: users?.activeUsersPerDay || [0, 0, 0, 0, 0, 0, 0],
             },
           ],
         }}
@@ -159,35 +194,6 @@ const AdminDashboard = () => {
           borderRadius: 16,
         }}
       />
-
-      {/* Quick Actions */}
-      <View className="p-4 bg-white rounded-lg shadow-lg mb-4">
-        <View className="flex-row justify-between">
-          <TouchableOpacity
-            className="bg-green-600 p-5 rounded-lg shadow-md flex-1 mx-2 items-center"
-            onPress={() => router.push("/admin/users")}
-          >
-            <FontAwesome5 name="user-cog" size={24} color="white" />
-            <Text className="text-white text-center">Manage Users</Text>
-          </TouchableOpacity>
-          <View className="flex-row justify-between mt-4">
-            <TouchableOpacity
-              onPress={() => router.push("/admin/notifications")}
-              className="flex-1 mx-2 items-center bg-blue-500 p-4 rounded-lg"
-            >
-              <FontAwesome5 name="bell" size={20} color="white" />
-              <Text className="text-white">Send Notification</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => router.push("/admin/settings")}
-              className="flex-1 mx-2 items-center bg-purple-500 p-4 rounded-lg"
-            >
-              <FontAwesome5 name="cogs" size={20} color="white" />
-              <Text className="text-white">Manage Notification</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
     </ScrollView>
   );
 };

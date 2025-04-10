@@ -122,57 +122,6 @@ userRouter.get(
   })
 );
 
-// // Get All Users summary
-// userRouter.get(
-//   "/summary",
-//   expressAsyncHandler(async (req, res) => {
-//     try {
-//       const oneWeekAgo = new Date();
-//       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-//       // Count total users
-//       const totalUsers = await prisma.user.count();
-
-//       // Count new users (created within the past week)
-//       const newUsers = await prisma.user.count({
-//         where: {
-//           createdAt: {
-//             gte: oneWeekAgo,
-//           },
-//         },
-//       });
-
-//       // Count active users (logged in within the past week)
-//       const activeUsers = await prisma.user.count({
-//         where: {
-//           lastActive: {
-//             gte: oneWeekAgo,
-//           },
-//         },
-//       });
-
-//       // Count blocked users (where block is true)
-//       const blockedUsers = await prisma.user.count({
-//         where: {
-//           block: true,
-//         },
-//       });
-
-//       res.json({
-//         totalUsers,
-//         newUsers,
-//         activeUsers,
-//         blockedUsers,
-//       });
-//     } catch (error) {
-//       res.status(500).json({
-//         message: "Failed to fetch user summary",
-//         error: error.message,
-//       });
-//     }
-//   })
-// );
-
 userRouter.get(
   "/summary",
   expressAsyncHandler(async (req, res) => {
