@@ -43,18 +43,26 @@
       },
       "package": "com.mathew4567.petrolApp",
       "googleServicesFile": "./google-services.json",
-      "permissions": [
-        "android.permission.INTERNET",
-        "android.permission.INTERNET"
-      ],
+      "permissions": ["android.permission.INTERNET"],
       "runtimeVersion": "1.0.1"
     },
+
     "web": {
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
+
     "plugins": [
+      // [
+      //   "expo-notifications",
+      //   {
+      //     "icon": "./assets/notification-icon.png",
+      //     "color": "#ffffff",
+      //     "sounds": ["./assets/notification.wav"]
+      //   }
+      // ]
+
       "expo-router",
       [
         "expo-splash-screen",
@@ -66,6 +74,7 @@
         }
       ]
     ],
+
     "experiments": {
       "typedRoutes": true
     },

@@ -73,6 +73,7 @@ export const deleteUserById = async (id) => {
     throw error;
   }
 };
+
 export const getAllUsers = async () => {
   try {
     const response = await fetch(`${apiUrl}/users`);
@@ -88,6 +89,7 @@ export const getAllUsers = async () => {
     throw error;
   }
 };
+
 export const getAllUsersSummary = async () => {
   try {
     const response = await fetch(`${apiUrl}/users/summary`);
