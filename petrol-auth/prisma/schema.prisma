@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String             @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  email             String             @unique
+  phone             String
+  password          String
+  country           String
+  resetToken        String?            @default("")
+  resetCode         String?            @default("")
+  image             String?            @default("")
+  role              Role               @default(USER)
+  address           String?
+  block             Boolean            @default(false)
+  blockCount        Int                @default(0)
+  lastActive        DateTime?
+  status            UserStatus         @default(ACTIVE)
+  expoPushToken     String?
+  notificationsSent NotificationsSent?
+  loginHistory      LoginHistory[] // 👈 One-to-many relationship
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+}
+
+model LoginHistory {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId  String   @db.ObjectId // ✅ Fixes the type mismatch
+  loginAt DateTime @default(now())
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model NotificationsSent {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @unique @db.ObjectId
+  push   Int    @default(0)
+  email  Int    @default(0)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum Role {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
