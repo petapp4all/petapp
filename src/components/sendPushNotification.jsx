@@ -1,6 +1,6 @@
 export async function sendPushNotification(expoPushToken) {
   const message = {
-    to: "ExponentPushToken[5sAUAIJXSs_A46gCOLeZUB]",
+    to: "ExponentPushToken[0UScMBM6qlDbbQX5b5wnjq]",
     sound: "default",
     title: "Hello 👋",
     body: "This is a test notification.",

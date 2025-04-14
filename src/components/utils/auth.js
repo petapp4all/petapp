@@ -33,7 +33,6 @@ export const loginUser = async (credentials) => {
     }
     await AsyncStorage.setItem("userDetails", JSON.stringify(data));
     await linkPushTokenToUser();
-    console.log("Push token linked to user when login");
     return data;
   } catch (error) {
     console.error("Login error:", error.message);

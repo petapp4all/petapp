@@ -24,7 +24,6 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, navigation }) => {
         const userDetails = await AsyncStorage.getItem("userDetails");
         if (userDetails) {
           const parsedUser = JSON.parse(userDetails);
-          console.log(parsedUser);
           setLoggedInUser(parsedUser);
         }
       } catch (error) {

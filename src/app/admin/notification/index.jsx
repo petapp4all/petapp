@@ -10,9 +10,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  Button,
   Alert,
-  StyleSheet,
 } from "react-native";
 import { sendNotificationToManyUsers } from "../../../components/utils/auth";
 

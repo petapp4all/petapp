@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "884263635769",
+    "project_id": "newpetrolapp",
+    "storage_bucket": "newpetrolapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:884263635769:android:3c73b2798198882c2176e8",
+        "android_client_info": {
+          "package_name": "com.petrolapp.petrolApp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3qQGNsOBzzZECQWRCD_KNdJdl1eKbmn4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

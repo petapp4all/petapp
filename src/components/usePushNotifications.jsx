@@ -72,7 +72,7 @@ export async function registerForPushNotificationsAsync() {
     );
   }
 
-  const projectId = "c1a1ca7f-c8d2-4fb3-b0dd-8275b251c83a";
+  const projectId = "70b7c9ba-67cf-4d3c-828d-e1bdef15eba3";
   if (!projectId) {
     throw new Error("Project ID not found");
   }

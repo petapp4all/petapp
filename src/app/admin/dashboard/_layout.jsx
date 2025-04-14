@@ -1,14 +1,5 @@
 import React, { useCallback, useState } from "react";
-import {
-  View,
-  Image,
-  Pressable,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-} from "react-native";
-import { Colors } from "@/src/constants/Colors";
-import { FontAwesome } from "@expo/vector-icons";
+import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { Stack } from "expo-router";
 import { ThemedText } from "@/src/components/ThemedText";
 import Sidebar from "@/src/components/adminSidebar";

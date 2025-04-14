@@ -171,8 +171,7 @@ const AdminDashboard = () => {
           labels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
           datasets: [
             {
-              // Provide a fallback value (e.g., an array of 0s) if activeUsersPerDay is undefined
-              data: users?.activeUsersPerDay || [0, 0, 0, 0, 0, 0, 0],
+              data: users?.loginsPerDay || [0, 0, 0, 0, 0, 0, 0],
             },
           ],
         }}

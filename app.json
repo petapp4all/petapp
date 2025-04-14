@@ -29,6 +29,18 @@
           },
           {
             "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "v9wttpbfk9.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "v9wttpbfk9.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
           }
         ]
       },
@@ -43,9 +55,13 @@
       },
       "googleServicesFile": "./google-services.json",
       "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.INTERNET",
+        "android.permission.INTERNET",
         "android.permission.INTERNET"
       ],
-      "runtimeVersion": "1.0.0"
+      "runtimeVersion": "1.0.0",
+      "package": "com.petrolapp.petrolApp"
     },
     "web": {
       "bundler": "metro",
@@ -60,7 +76,7 @@
           "image": "./assets/images/app-logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#9C2227"
         }
       ]
     ],
@@ -68,8 +84,8 @@
       "typedRoutes": true
     },
     "extra": {
-      "apiUrlDevelopment": "https://petrol-auth.vercel.app/api",
-      "apiUrlProduction": "https://petrol-auth.vercel.app/api",
+      "apiUrlDevelopment": "https://petapp-eight.vercel.app/api",
+      "apiUrlProduction": "https://petapp-eight.vercel.app/api",
       "router": {
         "origin": false
       },
@@ -77,6 +93,9 @@
         "projectId": "70b7c9ba-67cf-4d3c-828d-e1bdef15eba3"
       }
     },
-    "owner": "petrolapp"
+    "owner": "petrolapp",
+    "updates": {
+      "url": "https://u.expo.dev/70b7c9ba-67cf-4d3c-828d-e1bdef15eba3"
+    }
   }
 }

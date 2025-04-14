@@ -6,7 +6,7 @@ const extra = Constants.expoConfig?.extra || Constants.manifest?.extra || {};
 
 export const apiUrl = isDevelopment
   ? extra.apiUrlDevelopment || "http://localhost:8000/api"
-  : extra.apiUrlProduction || "https://petrol-auth.vercel.app/api";
+  : extra.apiUrlProduction || "https://petapp-eight.vercel.app/api";
 
 export const queryClient = new QueryClient();
 
