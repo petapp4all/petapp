@@ -203,7 +203,7 @@ userRouter.get(
 
       loginEvents.forEach((event) => {
         const date = new Date(event.loginAt);
-        const weekday = (date.getUTCDay() + 6) % 7; // Adjust: Monday = 0
+        const weekday = date.getUTCDay(); // Sunday = 0
         loginsPerDay[weekday]++;
       });
 
