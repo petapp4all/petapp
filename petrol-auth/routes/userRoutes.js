@@ -69,45 +69,9 @@ userRouter.post(
       req.body.password,
       user.password
     );
-
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
-
-    // Update lastActive timestamp
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { lastActive: new Date() },
-    });
-
-    // Get current date range for today
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-
-    const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 59, 999);
-
-    // Check if login already recorded for today
-    const existingLogin = await prisma.loginHistory.findFirst({
-      where: {
-        userId: user.id,
-        loginAt: {
-          gte: startOfDay,
-          lte: endOfDay,
-        },
-      },
-    });
-
-    // Only create login record if none exists for today
-    if (!existingLogin) {
-      await prisma.loginHistory.create({
-        data: {
-          userId: user.id,
-          loginAt: new Date(),
-        },
-      });
-    }
-
     res.json({
       id: user.id,
       name: user.name,
@@ -118,6 +82,59 @@ userRouter.post(
       country: user.country,
       token: generateToken(user),
     });
+  })
+);
+
+// Track User Activity - Update or Create login history
+userRouter.post(
+  "/track-activity",
+  expressAsyncHandler(async (req, res) => {
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: "userId is required" });
+    }
+
+    // Update user's last active time
+    await prisma.user.update({
+      where: { id: userId },
+      data: { lastActive: new Date() },
+    });
+
+    const now = new Date();
+    const startOfDay = new Date(now);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(now);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    // Check if login already exists for today
+    const existingLogin = await prisma.loginHistory.findFirst({
+      where: {
+        userId,
+        loginAt: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+      },
+    });
+
+    if (existingLogin) {
+      // Optionally update the existing login record's timestamp
+      await prisma.loginHistory.update({
+        where: { id: existingLogin.id },
+        data: { loginAt: now },
+      });
+    } else {
+      // Create new login history record
+      await prisma.loginHistory.create({
+        data: {
+          userId,
+          loginAt: now,
+        },
+      });
+    }
+
+    res.status(200).json({ message: "Activity tracked successfully" });
   })
 );
 
