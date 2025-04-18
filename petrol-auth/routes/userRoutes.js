@@ -90,7 +90,6 @@ userRouter.post(
   "/track-activity",
   expressAsyncHandler(async (req, res) => {
     const { userId } = req.body;
-
     if (!userId) {
       return res.status(400).json({ message: "userId is required" });
     }
@@ -106,7 +105,6 @@ userRouter.post(
     startOfDay.setHours(0, 0, 0, 0);
     const endOfDay = new Date(now);
     endOfDay.setHours(23, 59, 59, 999);
-
     // Check if login already exists for today
     const existingLogin = await prisma.loginHistory.findFirst({
       where: {
@@ -117,7 +115,6 @@ userRouter.post(
         },
       },
     });
-
     if (existingLogin) {
       // Optionally update the existing login record's timestamp
       await prisma.loginHistory.update({
@@ -133,7 +130,6 @@ userRouter.post(
         },
       });
     }
-
     res.status(200).json({ message: "Activity tracked successfully" });
   })
 );
