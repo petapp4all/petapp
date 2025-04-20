@@ -93,7 +93,6 @@ userRouter.get(
           name: true,
           email: true,
           phone: true,
-          status: true,
           lastActive: true,
           createdAt: true, // include if you want to show it on frontend
         },
