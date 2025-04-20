@@ -25,7 +25,6 @@ model User {
   block             Boolean            @default(false)
   blockCount        Int                @default(0)
   lastActive        DateTime?
-  status            UserStatus         @default(ACTIVE)
   expoPushToken     String?
   notificationsSent NotificationsSent?
   loginHistory      LoginHistory[] // 👈 One-to-many relationship
@@ -46,11 +45,6 @@ model NotificationsSent {
   push   Int    @default(0)
   email  Int    @default(0)
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-enum UserStatus {
-  ACTIVE
-  INACTIVE
 }
 
 enum Role {

@@ -1,6 +1,8 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import expressAsyncHandler from "express-async-handler";
+import { startOfWeek, addDays, endOfDay } from "date-fns";
+
 import { generateToken, sendMail } from "../utils.js";
 import prisma from "../prisma/prisma.js";
 import jwt from "jsonwebtoken";
@@ -80,55 +82,6 @@ userRouter.post(
   })
 );
 
-// Track User Activity - Update or Create login history
-userRouter.post(
-  "/track-activity",
-  expressAsyncHandler(async (req, res) => {
-    const { userId } = req.body;
-    if (!userId) {
-      return res.status(400).json({ message: "userId is required" });
-    }
-
-    // Update user's last active time
-    await prisma.user.update({
-      where: { id: userId },
-      data: { lastActive: new Date() },
-    });
-
-    const now = new Date();
-    const startOfDay = new Date(now);
-    startOfDay.setHours(0, 0, 0, 0);
-    const endOfDay = new Date(now);
-    endOfDay.setHours(23, 59, 59, 999);
-    // Check if login already exists for today
-    const existingLogin = await prisma.loginHistory.findFirst({
-      where: {
-        userId,
-        loginAt: {
-          gte: startOfDay,
-          lte: endOfDay,
-        },
-      },
-    });
-    if (existingLogin) {
-      // Optionally update the existing login record's timestamp
-      await prisma.loginHistory.update({
-        where: { id: existingLogin.id },
-        data: { loginAt: now },
-      });
-    } else {
-      // Create new login history record
-      await prisma.loginHistory.create({
-        data: {
-          userId,
-          loginAt: now,
-        },
-      });
-    }
-    res.status(200).json({ message: "Activity tracked successfully" });
-  })
-);
-
 // Get All Users
 userRouter.get(
   "/",
@@ -158,22 +111,103 @@ userRouter.get(
   })
 );
 
+// Track User Activity - Update or Create login history
+userRouter.post(
+  "/track-activity",
+  expressAsyncHandler(async (req, res) => {
+    const { userId } = req.body;
+    if (!userId) {
+      return res.status(400).json({ message: "userId is required" });
+    }
+    const now = new Date();
+    // Start and end of today
+    const dayStart = new Date(now);
+    dayStart.setHours(0, 0, 0, 0);
+
+    const dayEnd = new Date(now);
+    dayEnd.setHours(23, 59, 59, 999);
+
+    // 🔍 Check if this is the first login for *today*
+    const anyLoginToday = await prisma.loginHistory.findFirst({
+      where: {
+        loginAt: {
+          gte: dayStart,
+          lte: dayEnd,
+        },
+      },
+    });
+
+    // 🗑️ If first login today, delete records from the same weekday *last week*
+    if (!anyLoginToday) {
+      const lastWeekDayStart = new Date(dayStart);
+      lastWeekDayStart.setDate(lastWeekDayStart.getDate() - 7);
+
+      const lastWeekDayEnd = new Date(dayEnd);
+      lastWeekDayEnd.setDate(lastWeekDayEnd.getDate() - 7);
+
+      await prisma.loginHistory.deleteMany({
+        where: {
+          loginAt: {
+            gte: lastWeekDayStart,
+            lte: lastWeekDayEnd,
+          },
+        },
+      });
+    }
+
+    // ⏺ Update or create today's login for this user
+    const existingLogin = await prisma.loginHistory.findFirst({
+      where: {
+        userId,
+        loginAt: {
+          gte: dayStart,
+          lte: dayEnd,
+        },
+      },
+    });
+
+    if (existingLogin) {
+      await prisma.loginHistory.update({
+        where: { id: existingLogin.id },
+        data: { loginAt: now },
+      });
+    } else {
+      await prisma.loginHistory.create({
+        data: {
+          userId,
+          loginAt: now,
+        },
+      });
+    }
+
+    // 🕒 Update last active
+    await prisma.user.update({
+      where: { id: userId },
+      data: { lastActive: now },
+    });
+
+    res.status(200).json({ message: "Activity tracked successfully" });
+  })
+);
+
 //summary
 userRouter.get(
   "/summary",
   expressAsyncHandler(async (req, res) => {
     try {
-      const oneWeekAgo = new Date();
-      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      const now = new Date();
+
+      const weekStart = startOfWeek(now, { weekStartsOn: 1 }); // Monday
+      const weekEnd = endOfDay(addDays(weekStart, 6)); // Sunday night
 
       // Count total users
       const totalUsers = await prisma.user.count();
 
-      // Count new users (created within the past week)
+      // Count new users (created within this week)
       const newUsers = await prisma.user.count({
         where: {
           createdAt: {
-            gte: oneWeekAgo,
+            gte: weekStart,
           },
         },
       });
@@ -185,20 +219,21 @@ userRouter.get(
         },
       });
 
-      // Count active users in the past week based on lastActive
+      // Count active users this week
       const activeUsersCount = await prisma.user.count({
         where: {
           lastActive: {
-            gte: oneWeekAgo,
+            gte: weekStart,
           },
         },
       });
 
-      // Get all login events in the past week
+      // Get logins within this week
       const loginEvents = await prisma.loginHistory.findMany({
         where: {
           loginAt: {
-            gte: oneWeekAgo,
+            gte: weekStart,
+            lte: weekEnd,
           },
         },
         select: {
@@ -206,12 +241,11 @@ userRouter.get(
         },
       });
 
-      // Build login count per weekday (Monday=0 ... Sunday=6)
+      // Initialize: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
       const loginsPerDay = [0, 0, 0, 0, 0, 0, 0];
 
       loginEvents.forEach((event) => {
-        const date = new Date(event.loginAt);
-        const weekday = date.getUTCDay(); // Sunday = 0
+        const weekday = new Date(event.loginAt).getUTCDay(); // 0 = Sunday
         loginsPerDay[weekday]++;
       });
 
@@ -220,7 +254,7 @@ userRouter.get(
         newUsers,
         blockedUsers,
         activeUsersCount,
-        loginsPerDay, // 👈 Send accurate login activity to frontend
+        loginsPerDay,
       });
     } catch (error) {
       res.status(500).json({
