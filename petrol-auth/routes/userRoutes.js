@@ -11,9 +11,7 @@ const userRouter = express.Router();
 userRouter.post(
   "/signup",
   expressAsyncHandler(async (req, res) => {
-    console.log(req.body);
     const { name, email, phone, image, password, country } = req.body;
-
     // Check if user already exists
     const foundUser = await prisma.user.findUnique({ where: { email } });
     if (foundUser) {
@@ -21,10 +19,8 @@ userRouter.post(
         .status(401)
         .json({ message: `User with ${email} already exists` });
     }
-
     // Hash the password
     const hashedPassword = bcrypt.hashSync(password, 10);
-
     // Create new user in the database
     const user = await prisma.user.create({
       data: {
@@ -36,7 +32,6 @@ userRouter.post(
         password: hashedPassword,
       },
     });
-
     // Send response with token
     res.json({
       id: user.id,
