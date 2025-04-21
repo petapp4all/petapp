@@ -27,9 +27,22 @@ model User {
   lastActive        DateTime?
   expoPushToken     String?
   notificationsSent NotificationsSent?
-  loginHistory      LoginHistory[] // 👈 One-to-many relationship
+  loginHistory      LoginHistory[]
+  ads               Ad[]               @relation("UserAds") // ✅ Add this
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
+}
+
+model Ad {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  title          String
+  description    String
+  category       String
+  company        String
+  contactDetails String
+  postedAt       DateTime @default(now())
+  userId         String   @db.ObjectId
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade, name: "UserAds")
 }
 
 model LoginHistory {

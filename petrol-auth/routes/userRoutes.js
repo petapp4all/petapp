@@ -118,15 +118,18 @@ userRouter.post(
     if (!userId) {
       return res.status(400).json({ message: "userId is required" });
     }
+
     const now = new Date();
-    // Start and end of today
+    const today = now.getDay(); // 0 = Sunday
+
+    // Set start and end of the day
     const dayStart = new Date(now);
     dayStart.setHours(0, 0, 0, 0);
 
     const dayEnd = new Date(now);
     dayEnd.setHours(23, 59, 59, 999);
 
-    // 🔍 Check if this is the first login for *today*
+    // Check if any user has logged in today
     const anyLoginToday = await prisma.loginHistory.findFirst({
       where: {
         loginAt: {
@@ -136,25 +139,12 @@ userRouter.post(
       },
     });
 
-    // 🗑️ If first login today, delete records from the same weekday *last week*
-    if (!anyLoginToday) {
-      const lastWeekDayStart = new Date(dayStart);
-      lastWeekDayStart.setDate(lastWeekDayStart.getDate() - 7);
-
-      const lastWeekDayEnd = new Date(dayEnd);
-      lastWeekDayEnd.setDate(lastWeekDayEnd.getDate() - 7);
-
-      await prisma.loginHistory.deleteMany({
-        where: {
-          loginAt: {
-            gte: lastWeekDayStart,
-            lte: lastWeekDayEnd,
-          },
-        },
-      });
+    // If today is Sunday and no one has logged in yet, delete all login history
+    if (today === 0 && !anyLoginToday) {
+      await prisma.loginHistory.deleteMany({});
     }
 
-    // ⏺ Update or create today's login for this user
+    // Check if this user already logged in today
     const existingLogin = await prisma.loginHistory.findFirst({
       where: {
         userId,
@@ -179,7 +169,7 @@ userRouter.post(
       });
     }
 
-    // 🕒 Update last active
+    // Update user's last active time
     await prisma.user.update({
       where: { id: userId },
       data: { lastActive: now },
@@ -737,6 +727,62 @@ userRouter.post(
       res
         .status(500)
         .json({ message: "Email sending failed", error: error.message });
+    }
+  })
+);
+
+// Create Ad
+userRouter.post(
+  "/create-ad",
+  expressAsyncHandler(async (req, res) => {
+    const { userId, title, description, category, company, contactDetails } =
+      req.body;
+
+    if (!userId || !title || !description || !category) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const ad = await prisma.ad.create({
+      data: {
+        title,
+        description,
+        category,
+        company,
+        contactDetails,
+        userId,
+      },
+    });
+
+    res.status(201).json(ad);
+  })
+);
+
+// Get All Add
+userRouter.get(
+  "/get-ads",
+  expressAsyncHandler(async (req, res) => {
+    try {
+      const ads = await prisma.ad.findMany({
+        orderBy: { postedAt: "desc" },
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true,
+              phone: true,
+              country: true,
+              image: true,
+            },
+          },
+        },
+      });
+      res.status(200).json(ads);
+    } catch (error) {
+      console.error("Error fetching ads:", error);
+      res.status(500).json({ message: "Failed to fetch ads" });
     }
   })
 );
