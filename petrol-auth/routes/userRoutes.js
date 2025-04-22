@@ -254,33 +254,6 @@ userRouter.get(
   })
 );
 
-// Get Single User by ID
-userRouter.get(
-  "/:id",
-  expressAsyncHandler(async (req, res) => {
-    try {
-      const { id } = req.params;
-
-      const user = await prisma.user.findUnique({
-        where: { id },
-        include: {
-          notificationsSent: true, // optional: include related notification stats
-        },
-      });
-
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      res.json(user);
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Failed to fetch user", error: error.message });
-    }
-  })
-);
-
 // Update User
 userRouter.put(
   "/:id",
@@ -786,7 +759,32 @@ userRouter.get(
     }
   })
 );
+// Get Single User by ID
+userRouter.get(
+  "/:id",
+  expressAsyncHandler(async (req, res) => {
+    try {
+      const { id } = req.params;
 
+      const user = await prisma.user.findUnique({
+        where: { id },
+        include: {
+          notificationsSent: true, // optional: include related notification stats
+        },
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.json(user);
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Failed to fetch user", error: error.message });
+    }
+  })
+);
 //ads-count
 userRouter.get(
   "/ads-count/:id",
