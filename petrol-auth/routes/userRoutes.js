@@ -708,8 +708,7 @@ userRouter.post(
 userRouter.post(
   "/create-ad",
   expressAsyncHandler(async (req, res) => {
-    const { userId, title, description, category, company, contactDetails } =
-      req.body;
+    const { userId, title, description, category, company } = req.body;
 
     if (!userId || !title || !description || !category) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -724,7 +723,6 @@ userRouter.post(
         description,
         category,
         company,
-        contactDetails,
         userId,
       },
     });
@@ -734,23 +732,13 @@ userRouter.post(
 );
 
 // Get All Add
+// Get All Ads - WITHOUT full user details
 userRouter.get(
   "/get-ads",
   expressAsyncHandler(async (req, res) => {
     try {
       const ads = await prisma.ad.findMany({
         orderBy: { postedAt: "desc" },
-        include: {
-          user: {
-            select: {
-              name: true,
-              email: true,
-              phone: true,
-              country: true,
-              image: true,
-            },
-          },
-        },
       });
       res.status(200).json(ads);
     } catch (error) {
@@ -759,7 +747,41 @@ userRouter.get(
     }
   })
 );
-// Get Single User by ID
+
+// Get Single Ad by ID - WITH full user details
+userRouter.get(
+  "/get-ad/:id",
+  expressAsyncHandler(async (req, res) => {
+    try {
+      const ad = await prisma.ad.findUnique({
+        where: { id: req.params.id },
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true,
+              phone: true,
+              country: true,
+              image: true,
+              address: true,
+            },
+          },
+        },
+      });
+
+      if (!ad) {
+        return res.status(404).json({ message: "Ad not found" });
+      }
+
+      res.status(200).json(ad);
+    } catch (error) {
+      console.error("Error fetching ad:", error);
+      res.status(500).json({ message: "Failed to fetch ad" });
+    }
+  })
+);
+
+// Get User by ID
 userRouter.get(
   "/:id",
   expressAsyncHandler(async (req, res) => {
@@ -853,6 +875,32 @@ userRouter.post(
     } catch (error) {
       console.error("Error marking ads as seen:", error);
       res.status(500).json({ message: "Failed to update seen ads" });
+    }
+  })
+);
+
+//Delete-ad
+userRouter.delete(
+  "/delete-ad/:id",
+  expressAsyncHandler(async (req, res) => {
+    const adId = req.params.id;
+
+    try {
+      // Optional: Check if the ad exists before deletion
+      const ad = await prisma.ad.findUnique({ where: { id: adId } });
+
+      if (!ad) {
+        return res.status(404).json({ message: "Ad not found" });
+      }
+
+      await prisma.ad.delete({
+        where: { id: adId },
+      });
+
+      res.status(200).json({ message: "Ad deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting ad:", error);
+      res.status(500).json({ message: "Failed to delete ad" });
     }
   })
 );

@@ -36,16 +36,15 @@ model User {
 }
 
 model Ad {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  title          String
-  description    String
-  category       String
-  company        String
-  contactDetails String
-  postedAt       DateTime @default(now())
-  userId         String   @db.ObjectId
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade, name: "UserAds")
-  seenBy         SeenAd[] // ✅ Add this
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  category    String
+  company     String
+  postedAt    DateTime @default(now())
+  userId      String   @db.ObjectId
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade, name: "UserAds")
+  seenBy      SeenAd[]
 }
 
 model SeenAd {
