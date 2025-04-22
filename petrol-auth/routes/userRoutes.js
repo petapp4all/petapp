@@ -789,14 +789,12 @@ userRouter.get(
 
 //ads-count
 userRouter.get(
-  "/ads-count",
+  "/ads-count/:id",
   expressAsyncHandler(async (req, res) => {
     try {
-      const { userId } = req.body;
-
       // Get all ad IDs that the user has seen
       const seenAdIds = await prisma.seenAd.findMany({
-        where: { userId },
+        where: { userId: req.params.id },
         select: { adId: true },
       });
 
@@ -818,10 +816,8 @@ userRouter.get(
 
 //mark-ads-seen
 userRouter.post(
-  "/mark-ads-seen",
+  "/mark-ads-seen/:id",
   expressAsyncHandler(async (req, res) => {
-    const { userId } = req.body;
-
     try {
       const ads = await prisma.ad.findMany({
         select: { id: true },
@@ -829,7 +825,7 @@ userRouter.post(
 
       const seenEntries = ads.map((ad) => ({
         adId: ad.id,
-        userId,
+        userId: req.params.id,
       }));
 
       await prisma.seenAd.createMany({
