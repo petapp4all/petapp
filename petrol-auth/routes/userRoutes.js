@@ -787,4 +787,62 @@ userRouter.get(
   })
 );
 
+//ads-count
+userRouter.get(
+  "/ads-count",
+  expressAsyncHandler(async (req, res) => {
+    try {
+      const userId = req.user.id;
+
+      // Get all ad IDs that the user has seen
+      const seenAdIds = await prisma.seenAd.findMany({
+        where: { userId },
+        select: { adId: true },
+      });
+
+      const unseenAdsCount = await prisma.ad.count({
+        where: {
+          id: {
+            notIn: seenAdIds.map((entry) => entry.adId),
+          },
+        },
+      });
+
+      res.status(200).json({ count: unseenAdsCount });
+    } catch (error) {
+      console.error("Error getting ads count:", error);
+      res.status(500).json({ message: "Failed to get ads count" });
+    }
+  })
+);
+
+//mark-ads-seen
+userRouter.post(
+  "/mark-ads-seen",
+  expressAsyncHandler(async (req, res) => {
+    const userId = req.user.id;
+
+    try {
+      const ads = await prisma.ad.findMany({
+        select: { id: true },
+      });
+
+      const seenEntries = ads.map((ad) => ({
+        adId: ad.id,
+        userId,
+      }));
+
+      await prisma.seenAd.createMany({
+        data: seenEntries,
+        skipDuplicates: true, // avoids duplicate entries
+      });
+
+      res.status(200).json({ message: "Ads marked as seen" });
+    } catch (error) {
+      console.error("Error marking ads as seen:", error);
+      res.status(500).json({ message: "Failed to update seen ads" });
+    }
+  })
+);
+
 export default userRouter;

@@ -28,9 +28,11 @@ model User {
   expoPushToken     String?
   notificationsSent NotificationsSent?
   loginHistory      LoginHistory[]
-  ads               Ad[]               @relation("UserAds") // ✅ Add this
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
+  ads               Ad[]               @relation("UserAds")
+  seenAds           SeenAd[] // ✅ Add this
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Ad {
@@ -43,6 +45,16 @@ model Ad {
   postedAt       DateTime @default(now())
   userId         String   @db.ObjectId
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade, name: "UserAds")
+  seenBy         SeenAd[] // ✅ Add this
+}
+
+model SeenAd {
+  id     String   @id @default(auto()) @map("_id") @db.ObjectId
+  user   User     @relation(fields: [userId], references: [id])
+  userId String   @db.ObjectId
+  ad     Ad       @relation(fields: [adId], references: [id])
+  adId   String   @db.ObjectId
+  seenAt DateTime @default(now()) // optional, but nice to have
 }
 
 model LoginHistory {

@@ -9,6 +9,9 @@ npx prisma init
 npx prisma generate
 npx prisma db push
 
+git remote add adeyemi https://github.com/adeyemithecoder/petapp.git
+git push adeyemi main
+
 npx prisma migrate dev --name init
 npx prisma generate
 
