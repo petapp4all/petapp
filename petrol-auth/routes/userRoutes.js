@@ -792,7 +792,7 @@ userRouter.get(
   "/ads-count",
   expressAsyncHandler(async (req, res) => {
     try {
-      const userId = req.user.id;
+      const { userId } = req.body;
 
       // Get all ad IDs that the user has seen
       const seenAdIds = await prisma.seenAd.findMany({
@@ -820,7 +820,7 @@ userRouter.get(
 userRouter.post(
   "/mark-ads-seen",
   expressAsyncHandler(async (req, res) => {
-    const userId = req.user.id;
+    const { userId } = req.body;
 
     try {
       const ads = await prisma.ad.findMany({
