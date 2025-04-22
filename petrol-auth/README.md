@@ -9,6 +9,7 @@ npx prisma init
 npx prisma generate
 npx prisma db push
 
+git commit -a -m "add adCount"
 git remote add adeyemi https://github.com/adeyemithecoder/petapp.git
 git push adeyemi main
 

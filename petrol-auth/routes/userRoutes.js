@@ -818,20 +818,38 @@ userRouter.get(
 userRouter.post(
   "/mark-ads-seen/:id",
   expressAsyncHandler(async (req, res) => {
+    const userId = req.params.id;
+
     try {
+      // Get all ad IDs
       const ads = await prisma.ad.findMany({
         select: { id: true },
       });
 
-      const seenEntries = ads.map((ad) => ({
-        adId: ad.id,
-        userId: req.params.id,
-      }));
+      const allAdIds = ads.map((ad) => ad.id);
 
-      await prisma.seenAd.createMany({
-        data: seenEntries,
-        skipDuplicates: true, // avoids duplicate entries
+      // Find already seen ads for this user
+      const seenAds = await prisma.seenAd.findMany({
+        where: {
+          userId,
+          adId: { in: allAdIds },
+        },
+        select: { adId: true },
       });
+
+      const seenAdIds = new Set(seenAds.map((entry) => entry.adId));
+
+      // Filter only unseen ads
+      const unseenEntries = allAdIds
+        .filter((adId) => !seenAdIds.has(adId))
+        .map((adId) => ({ adId, userId }));
+
+      // Only create unseen ones
+      if (unseenEntries.length > 0) {
+        await prisma.seenAd.createMany({
+          data: unseenEntries,
+        });
+      }
 
       res.status(200).json({ message: "Ads marked as seen" });
     } catch (error) {
