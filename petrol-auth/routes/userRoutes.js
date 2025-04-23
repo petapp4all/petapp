@@ -999,7 +999,7 @@ userRouter.post(
 
 // GET /api/pricing
 userRouter.get(
-  "/pricing",
+  "/price/get",
   expressAsyncHandler(async (req, res) => {
     const pricing = await prisma.adPricing.findMany({
       orderBy: { amount: "asc" },
