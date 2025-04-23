@@ -58,6 +58,12 @@ model SeenAd {
   seenAt DateTime @default(now())
 }
 
+model AdPricing {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  duration String @unique
+  amount   Int
+}
+
 model LoginHistory {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   userId  String   @db.ObjectId // ✅ Fixes the type mismatch

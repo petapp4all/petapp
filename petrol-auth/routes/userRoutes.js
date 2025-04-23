@@ -976,4 +976,36 @@ userRouter.post(
   })
 );
 
+// POST /api/pricing
+userRouter.post(
+  "/pricing",
+  expressAsyncHandler(async (req, res) => {
+    const { duration, amount } = req.body;
+
+    if (!duration || !amount) {
+      return res
+        .status(400)
+        .json({ message: "Duration and amount are required" });
+    }
+
+    const updated = await prisma.adPricing.upsert({
+      where: { duration },
+      update: { amount },
+      create: { duration, amount },
+    });
+    res.json(updated);
+  })
+);
+
+// GET /api/pricing
+userRouter.get(
+  "/pricing",
+  expressAsyncHandler(async (req, res) => {
+    const pricing = await prisma.adPricing.findMany({
+      orderBy: { amount: "asc" },
+    });
+    res.json(pricing);
+  })
+);
+
 export default userRouter;
