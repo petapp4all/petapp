@@ -19,6 +19,8 @@ model User {
   country           String
   resetToken        String?            @default("")
   resetCode         String?            @default("")
+  advertPin         String?            @default("")
+  pinValidity       String?            @default("")
   image             String?            @default("")
   role              Role               @default(USER)
   address           String?
@@ -29,7 +31,7 @@ model User {
   notificationsSent NotificationsSent?
   loginHistory      LoginHistory[]
   ads               Ad[]               @relation("UserAds")
-  seenAds           SeenAd[] // ✅ Add this
+  seenAds           SeenAd[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

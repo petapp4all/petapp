@@ -732,7 +732,6 @@ userRouter.post(
 );
 
 // Get All Add
-// Get All Ads - WITHOUT full user details
 userRouter.get(
   "/get-ads",
   expressAsyncHandler(async (req, res) => {
@@ -901,6 +900,78 @@ userRouter.delete(
     } catch (error) {
       console.error("Error deleting ad:", error);
       res.status(500).json({ message: "Failed to delete ad" });
+    }
+  })
+);
+
+//Send Advert PIN
+userRouter.post(
+  "/send-pin",
+  expressAsyncHandler(async (req, res) => {
+    const { email, pinValidity } = req.body;
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    // Generate a 6-digit random PIN
+    const generatedPin = Math.floor(100000 + Math.random() * 900000);
+
+    // Update user with PIN, token, and validity
+    await prisma.user.update({
+      where: { email },
+      data: {
+        advertPin: generatedPin.toString(),
+        pinValidity,
+      },
+    });
+
+    try {
+      const subject = "Your Advert PIN";
+      const sent_to = user.email;
+      const sent_from = process.env.EMAIL_USER;
+      const reply_to = sent_from;
+      const message = `
+        <p>You requested an advert PIN. Use the code below to continue:</p>
+        <h2>${generatedPin}</h2>
+        <p>If you did not request this, please ignore this email.</p>
+      `;
+
+      await sendMail(subject, message, sent_to, sent_from, reply_to);
+
+      res.json({ message: "Email sent successfully" });
+    } catch (error) {
+      res.status(500).json({
+        message: "Email sending failed",
+        error: error.message,
+      });
+    }
+  })
+);
+
+//confirm-pin
+userRouter.post(
+  "/confirm-pin",
+  expressAsyncHandler(async (req, res) => {
+    const { email, advertPin } = req.body;
+
+    try {
+      const user = await prisma.user.findFirst({
+        where: { email, advertPin },
+      });
+
+      if (!user) {
+        return res.status(400).json({ message: "Invalid advertPin" });
+      }
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { advertPin: null },
+      });
+
+      res.json({ message: "User found" });
+    } catch (error) {
+      res.status(400).json({ message: "Invalid or expired code" });
     }
   })
 );
