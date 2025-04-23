@@ -993,7 +993,7 @@ userRouter.post(
       update: { amount },
       create: { duration, amount },
     });
-    res.json(updated);
+    res.json({ message: "Successfully updated" });
   })
 );
 
