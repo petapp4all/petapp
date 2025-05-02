@@ -71,22 +71,21 @@ export default function TabLayout() {
           ),
         }}
       />
-
-      <Tabs.Screen
-        name="marketPlace"
-        options={{
-          title: "Market Pla..",
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="shopping-bag" color={color} />
-          ),
-        }}
-      />
       <Tabs.Screen
         name="news"
         options={{
           title: "News",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="newspaper-o" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="marketPlace"
+        options={{
+          title: "Market Pl..",
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="shopping-cart" color={color} />
           ),
         }}
       />

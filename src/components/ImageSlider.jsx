@@ -19,7 +19,7 @@ const ImageSlider = () => {
     flatListRef.current?.scrollToIndex({
       index,
       animated: true,
-      viewPosition: 0.5, // Ensures proper centering
+      viewPosition: 0.5,
     });
   }, []);
 
@@ -42,7 +42,7 @@ const ImageSlider = () => {
         data={images}
         horizontal
         pagingEnabled
-        snapToInterval={width} // Ensures each image fully aligns
+        snapToInterval={width}
         snapToAlignment="center"
         decelerationRate="fast"
         showsHorizontalScrollIndicator={false}
@@ -50,7 +50,7 @@ const ImageSlider = () => {
         renderItem={({ item }) => (
           <Image
             source={item}
-            style={{ width, height: 180 }}
+            style={{ width, height: 140, padding: 30 }}
             resizeMode="stretch"
           />
         )}

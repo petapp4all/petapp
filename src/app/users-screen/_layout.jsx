@@ -1,78 +1,36 @@
 import { Stack } from "expo-router";
 
+const screens = [
+  { name: "about", title: "About" },
+  { name: "contact", title: "Contact Support" },
+  { name: "FullArticle", title: "Full Article" },
+  { name: "privacy", title: "Privacy & Policy" },
+  { name: "terms", title: "Terms & Condition" },
+  { name: "user-details", title: "Edit User Details" },
+  { name: "delete-account", title: "Delete Account" },
+  { name: "advert", title: "Adverts" },
+  { name: "create-ads", title: "Create Your Advert" },
+  { name: "AdvertDetails", title: "Advert Details" },
+  { name: "webview", title: "Make Payment" },
+  { name: "ArticleDetails", title: "Article Details" },
+];
+
 export default function Layout() {
   return (
     <Stack>
-      <Stack.Screen
-        name="about"
-        options={{
-          title: "About",
-          headerTitleAlign: "center",
-          headerTitleStyle: {
-            fontWeight: "bold",
-          },
-        }}
-      />
-      <Stack.Screen
-        name="contact"
-        options={{
-          title: "Contact Support",
-          headerTitleAlign: "center",
-          headerTitleStyle: {
-            fontWeight: "bold",
-          },
-        }}
-      />
-      <Stack.Screen
-        name="FullArticle"
-        options={{
-          title: "Full Article",
-          headerTitleAlign: "center",
-          headerTitleStyle: {
-            fontWeight: "bold",
-          },
-        }}
-      />
-      <Stack.Screen
-        name="privacy"
-        options={{
-          title: "Privacy & Policy",
-          headerTitleAlign: "center",
-          headerTitleStyle: {
-            fontWeight: "bold",
-          },
-        }}
-      />
-      <Stack.Screen
-        name="terms"
-        options={{
-          title: "Terms & Condition",
-          headerTitleAlign: "center",
-          headerTitleStyle: {
-            fontWeight: "bold",
-          },
-        }}
-      />
-      <Stack.Screen
-        name="user-details"
-        options={{
-          title: "Edit User Details",
-          headerTitleAlign: "center",
-          headerTitleStyle: {
-            fontWeight: "bold",
-          },
-        }}
-      />
-      <Stack.Screen
-        name="delete-account"
-        options={{
-          title: "Delete Account",
-          headerTitleAlign: "center",
-          headerTitleStyle: {
-            fontWeight: "bold",
-          },
-        }}
-      />
+      {screens.map(({ name, title }) => (
+        <Stack.Screen
+          key={name}
+          name={name}
+          options={{
+            title,
+            headerTitleAlign: "center",
+            headerTitleStyle: {
+              fontWeight: "bold",
+            },
+          }}
+        />
+      ))}
     </Stack>
   );
 }

@@ -1,8 +1,6 @@
 import { View, ActivityIndicator } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { WebView } from "react-native-webview";
-import { TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 
 const FullArticle = () => {
   const { url } = useLocalSearchParams();
@@ -10,11 +8,6 @@ const FullArticle = () => {
 
   return (
     <View className="flex-1">
-      {/* Back Button */}
-      {/* <TouchableOpacity onPress={() => router.back()} className="p-4">
-        <Ionicons name="arrow-back" size={24} color="black" />
-      </TouchableOpacity> */}
-
       {/* WebView to Display the Article */}
       <WebView
         source={{ uri: url }}

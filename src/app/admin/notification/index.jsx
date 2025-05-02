@@ -10,7 +10,9 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  Button,
   Alert,
+  StyleSheet,
 } from "react-native";
 import { sendNotificationToManyUsers } from "../../../components/utils/auth";
 
@@ -23,7 +25,7 @@ export default function NotificationScreen() {
       setSending(true);
       await sendNotificationToManyUsers({
         title: "🛢️ Petrol News Update",
-        body: "Click to see the latest petrol updates.",
+        body: "Click to see the latest petrol news.",
         data: {
           screen: "/users/news",
           image:
@@ -38,6 +40,7 @@ export default function NotificationScreen() {
       setSending(false);
     }
   };
+
   const SendPriceUpdate = async () => {
     try {
       setIsSending(true);

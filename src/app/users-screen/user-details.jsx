@@ -7,22 +7,24 @@ import {
   ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { getUserDetails, updateUser } from "../../components/utils/auth";
+import { getUserById, updateUser } from "../../components/utils/auth";
 
 const UserDetails = () => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
-      const user = await getUserDetails();
-      console.log(user);
+      const user = await getUserById();
+      console.log("user=", user);
       if (user) {
         setFullName(user.name || "");
         setEmail(user.email || "");
         setPhoneNumber(user.phone || "");
+        setAddress(user.address || "");
       }
     };
     fetchUserDetails();
@@ -34,6 +36,7 @@ const UserDetails = () => {
       const updatedUser = {
         name: fullName,
         email,
+        address,
         phone: phoneNumber,
       };
       await updateUser(updatedUser);
@@ -59,6 +62,12 @@ const UserDetails = () => {
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
+      />
+      <TextInput
+        className="w-full h-12 border border-gray-300 rounded-lg px-3 mb-4 bg-white"
+        placeholder="Address"
+        value={address}
+        onChangeText={setAddress}
       />
       <TextInput
         className="w-full h-12 border border-gray-300 rounded-lg px-3 mb-4 bg-white"

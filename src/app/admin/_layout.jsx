@@ -81,6 +81,15 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="ads"
+        options={{
+          title: "Advert",
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="bullhorn" color={color} type="FontAwesome5" />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

@@ -70,7 +70,6 @@ const Menu = () => {
         }
       } catch (error) {
         console.log("Error checking login status:", error);
-        // Fallback in case of error
         router.replace("/sign-in");
       }
     };
@@ -91,34 +90,24 @@ const Menu = () => {
       </LinearGradient>
 
       {/* Prices Section */}
-      <View className="flex-row justify-between">
-        <View className="bg-white p-4 rounded-lg shadow-md flex-1 mr-2">
-          <Text className="text-gray-700 font-semibold">PMS</Text>
-          <Text className="text-gray-500 text-xs">High Price</Text>
-          <Text className="text-xl font-bold text-gray-800">₦985.00</Text>
-          <Text className="text-gray-500 text-xs">Best Price</Text>
-          <Text className="text-lg font-bold text-green-600">₦831.00</Text>
+      <View className="bg-white p-4 rounded-2xl shadow-lg flex-1 mr-2">
+        <View className="flex flex-row justify-between items-start mb-4">
+          <Text className="text-gray-700 text-lg font-semibold">PMS</Text>
         </View>
 
-        <View className="bg-white p-4 rounded-lg shadow-md flex-1 ml-2">
-          <Text className="text-gray-700 font-semibold">AGO</Text>
-          <Text className="text-gray-500 text-xs">High Price</Text>
-          <Text className="text-xl font-bold text-gray-800">₦985.00</Text>
-          <Text className="text-gray-500 text-xs">Best Price</Text>
-          <Text className="text-lg font-bold text-green-600">₦831.00</Text>
+        <View className="flex flex-row justify-between items-center mb-2">
+          <Text className="text-gray-500 text-sm">High Price</Text>
+          <Text className="text-xl font-bold text-gray-800">₦950.00</Text>
+        </View>
+
+        <View className="flex flex-row justify-between items-center">
+          <Text className="text-gray-500 text-sm">Best Price</Text>
+          <Text className="text-xl font-bold text-green-600">₦835.00</Text>
         </View>
       </View>
 
       {/* Quick Actions - FIXED */}
       <View className="flex-row justify-between my-4">
-        <TouchableOpacity
-          onPress={() => router.push("/users/marketPlace")}
-          className="bg-white p-4 rounded-lg shadow-md flex-1 items-center mr-2"
-        >
-          <FontAwesome5 name="store" size={24} color="#0072FF" />
-          <Text className="text-gray-600 text-center">Market Place</Text>
-        </TouchableOpacity>
-
         <TouchableOpacity
           onPress={() => router.push("/users/nearbyStation")}
           className="bg-white p-4 rounded-lg shadow-md flex-1 items-center mx-2"
@@ -128,15 +117,23 @@ const Menu = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
+          onPress={() => router.push("/users/marketPlace")}
+          className="bg-white p-4 rounded-lg shadow-md flex-1 items-center ml-2"
+        >
+          <FontAwesome5 name="store" size={24} color="#0072FF" />
+          <Text className="text-gray-600 text-center">Market Place</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
           onPress={() => router.push("/users/news")}
           className="bg-white p-4 rounded-lg shadow-md flex-1 items-center ml-2"
         >
           <FontAwesome5 name="newspaper" size={24} color="#0072FF" />
-          <Text className="text-gray-600">News</Text>
+          <Text className="text-gray-600 text-center">Latest News</Text>
         </TouchableOpacity>
       </View>
       {/* Oil & Gas News Section */}
-      <View className="my-4">
+      <View className="my-1 ">
         <OilGasNews />
       </View>
     </ScrollView>

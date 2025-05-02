@@ -5,9 +5,10 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/app-logo.png",
-    "scheme": "petrolapp",
+    "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+
     "splash": {
       "image": "./assets/images/app-logo.png",
       "resizeMode": "contain",
@@ -51,7 +52,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/app-logo.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#9C2227"
       },
       "googleServicesFile": "./google-services.json",
       "permissions": [
@@ -69,6 +70,12 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      [
+        "@rnmapbox/maps",
+        {
+          "accessToken": "pk.eyJ1IjoicGV0YXBwNGFsbCIsImEiOiJjbTk3M2ppMWcwMHF3MmxxdDJuZm55aTlwIn0.T8aof4n1b8YpYZPWtnHExg"
+        }
+      ],
       "expo-router",
       [
         "expo-splash-screen",
@@ -81,8 +88,13 @@
       ]
     ],
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": true,
+      "bridgeless": false,
+      "tsconfigPaths": true,
+      "eagerRootViewManager": true,
+      "turboModules": true
     },
+
     "extra": {
       "apiUrlDevelopment": "https://petapp-eight.vercel.app/api",
       "apiUrlProduction": "https://petapp-eight.vercel.app/api",
@@ -93,7 +105,6 @@
         "projectId": "70b7c9ba-67cf-4d3c-828d-e1bdef15eba3"
       }
     },
-    "owner": "petrolapp",
     "updates": {
       "url": "https://u.expo.dev/70b7c9ba-67cf-4d3c-828d-e1bdef15eba3"
     }

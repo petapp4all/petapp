@@ -16,8 +16,8 @@ export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
 // Async thunk: fetch single user
 export const fetchUserById = createAsyncThunk(
   "users/fetchUserById",
-  async (userId) => {
-    const user = await getUserById(userId);
+  async () => {
+    const user = await getUserById();
     return user;
   }
 );

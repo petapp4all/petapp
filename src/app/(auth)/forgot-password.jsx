@@ -37,7 +37,6 @@ const ForgetPasswordScreen = () => {
         pathname: "/reset-password",
         params: { token: data.token },
       });
-      console.log("data=", data);
     } catch (error) {
       console.log("error=", error);
 

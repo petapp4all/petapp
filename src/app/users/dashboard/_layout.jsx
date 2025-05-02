@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { View, Image, Pressable, StyleSheet, Dimensions } from "react-native";
-import { Stack } from "expo-router";
+import React, { useCallback, useState } from "react";
+import { View, Image, Pressable, Text } from "react-native";
+import { Stack, useFocusEffect, useRouter } from "expo-router";
+import { FontAwesome } from "@expo/vector-icons";
 import { ThemedText } from "@/src/components/ThemedText";
 import Sidebar from "@/src/components/userSidebar";
 import {
@@ -9,32 +10,48 @@ import {
   State,
   TapGestureHandler,
 } from "react-native-gesture-handler";
+import { addCount } from "../../../components/utils/ads";
 
-const SCREEN_WIDTH = Dimensions.get("window").width;
-const EDGE_ZONE = 20; // Only allow swipes from the leftmost 20 pixels
+const EDGE_ZONE = 20;
 
 export default function MenuLayout({ navigation }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [count, setCount] = useState(0);
+  const router = useRouter();
 
   const onSwipe = ({ nativeEvent }) => {
-    if (
-      nativeEvent.state === State.END && // Trigger only when swipe ends
-      nativeEvent.translationX > 50 // Ensure it moves right at least 50 pixels
-    ) {
+    if (nativeEvent.state === State.END && nativeEvent.translationX > 50) {
       setIsSidebarOpen(true);
     }
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      const adCount = async () => {
+        try {
+          const data = await addCount();
+          setCount(data);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      adCount();
+    }, [])
+  );
+
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      {/* Left Edge Gesture Area */}
-      <View style={styles.gestureArea}>
+    <GestureHandlerRootView className="flex-1">
+      {/* Gesture area on the left edge */}
+      <View
+        className="absolute left-0 top-0 bottom-0 z-10"
+        style={{ width: EDGE_ZONE }}
+      >
         <PanGestureHandler onHandlerStateChange={onSwipe}>
-          <View style={styles.touchableArea} />
+          <View className="flex-1" />
         </PanGestureHandler>
       </View>
 
-      <View style={styles.container}>
+      <View className="flex-1 bg-white">
         <Stack
           screenOptions={{
             headerLeft: () => (
@@ -44,34 +61,47 @@ export default function MenuLayout({ navigation }) {
                 <Pressable>
                   <Image
                     source={require("@/assets/images/admin.jpg")}
-                    style={styles.profileImage}
+                    className="w-[50px] h-[50px] rounded-full"
                   />
                 </Pressable>
               </TapGestureHandler>
             ),
             headerTitle: () => (
-              <View style={styles.titleContainer}>
-                <ThemedText style={styles.titleText}>
+              <View className="items-center justify-center mr-[50px]">
+                <Text className="text-[20px] ml-8 font-bold">
                   Splantom Petrol
-                </ThemedText>
+                </Text>
               </View>
             ),
-            // headerRight: () => (
-            //   <Pressable>
-            //     {({ pressed }) => (
-            //       <FontAwesome
-            //         name="bell"
-            //         size={25}
-            //         color={Colors.light.tint}
-            //         style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-            //       />
-            //     )}
-            //   </Pressable>
-            // ),
+            headerRight: () => (
+              <TapGestureHandler
+                onHandlerStateChange={() => router.push("/users-screen/advert")}
+              >
+                <Pressable className="mr-[15px]">
+                  {({ pressed }) => (
+                    <View className="relative">
+                      <FontAwesome
+                        name="bell"
+                        size={25}
+                        color="blue"
+                        style={{ opacity: pressed ? 0.5 : 1 }}
+                      />
+                      {count > 0 && (
+                        <View className="absolute -top-1 -right-1 bg-red-600 rounded-full w-4 h-4 items-center justify-center">
+                          <Text className="text-white text-[10px] font-bold">
+                            {count}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                  )}
+                </Pressable>
+              </TapGestureHandler>
+            ),
           }}
         />
 
-        {/* Sidebar Component */}
+        {/* Sidebar */}
         <Sidebar
           isSidebarOpen={isSidebarOpen}
           setIsSidebarOpen={setIsSidebarOpen}
@@ -80,37 +110,3 @@ export default function MenuLayout({ navigation }) {
     </GestureHandlerRootView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "white",
-  },
-  profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 50,
-  },
-  titleContainer: {
-    // flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    // width: "100%",
-    marginRight: 50,
-  },
-  titleText: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  gestureArea: {
-    position: "absolute",
-    left: 0,
-    top: 0,
-    bottom: 0,
-    width: EDGE_ZONE,
-    zIndex: 10,
-  },
-  touchableArea: {
-    flex: 1, // Fill the gesture area
-  },
-});

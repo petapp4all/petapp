@@ -6,16 +6,12 @@ import {
   Alert,
   ActivityIndicator,
   TextInput,
-  Button,
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { fetchUserById } from "../../../redux/slices/userSlice";
-import {
-  sendImportantEmail,
-  sendNotificationToUser,
-} from "../../../components/utils/auth";
+import { sendNotificationToUser } from "../../../components/utils/auth";
 
 const SingleUser = () => {
   const { id } = useLocalSearchParams();
@@ -23,12 +19,7 @@ const SingleUser = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [emailSubject, setEmailSubject] = useState("Important Message");
-  const [emailMessage, setEmailMessage] = useState(
-    "This is an important message."
-  );
   const [sendingNotification, setSendingNotification] = useState(false);
-  const [sendingEmail, setSendingEmail] = useState(false);
 
   const handleSendNotification = async () => {
     if (!id) {
@@ -51,25 +42,6 @@ const SingleUser = () => {
       Alert.alert("Error", err.message || "Failed to send notification");
     } finally {
       setSendingNotification(false);
-    }
-  };
-
-  const handleSendEmail = async () => {
-    if (!user?.email) {
-      return Alert.alert("Validation", "User email not available.");
-    }
-    setSendingEmail(true);
-    try {
-      await sendImportantEmail({
-        email: user.email,
-        subject: emailSubject,
-        message: emailMessage,
-      });
-      Alert.alert("Success", "Email sent successfully!");
-    } catch (error) {
-      Alert.alert("Error", error.message || "Failed to send email");
-    } finally {
-      setSendingEmail(false);
     }
   };
 
@@ -152,47 +124,6 @@ const SingleUser = () => {
           ) : (
             <Text className="text-white font-semibold text-base">
               Send Notification
-            </Text>
-          )}
-        </TouchableOpacity>
-      </View>
-
-      {/* Email Section */}
-      <View className="bg-white mb-16 rounded-2xl p-4 shadow-md">
-        <Text className="text-xl font-semibold mb-4 text-gray-800">
-          Send Important Email
-        </Text>
-
-        <Text className="text-sm text-gray-600 mb-1">Subject</Text>
-        <TextInput
-          placeholder="Subject"
-          value={emailSubject}
-          onChangeText={setEmailSubject}
-          className="bg-gray-100 p-3 rounded-lg mb-3"
-        />
-
-        <Text className="text-sm text-gray-600 mb-1">Message</Text>
-        <TextInput
-          placeholder="Message"
-          value={emailMessage}
-          onChangeText={setEmailMessage}
-          multiline
-          numberOfLines={4}
-          className="bg-gray-100 p-3 rounded-lg mb-4"
-        />
-
-        <TouchableOpacity
-          className={`bg-green-600 py-3 rounded-lg items-center ${
-            sendingEmail ? "opacity-70" : ""
-          }`}
-          onPress={handleSendEmail}
-          disabled={sendingEmail}
-        >
-          {sendingEmail ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text className="text-white font-semibold text-base">
-              Send Email
             </Text>
           )}
         </TouchableOpacity>

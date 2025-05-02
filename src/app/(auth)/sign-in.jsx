@@ -5,7 +5,6 @@ import {
   Animated,
   Alert,
   ActivityIndicator,
-  Keyboard,
 } from "react-native";
 import React, { useRef, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -64,7 +63,6 @@ const SignInScreen = () => {
           const userDetails = JSON.parse(userDetailsString); // Parse the string to an object
           Alert.alert("Success", "Authenticated successfully!");
           await linkPushTokenToUser();
-          Keyboard.dismiss();
           if (userDetails.role === "USER") {
             router.replace("/users/dashboard");
           } else {
@@ -84,7 +82,6 @@ const SignInScreen = () => {
     mutationFn: loginUser,
     onSuccess: (data) => {
       Alert.alert("Success", "Login successful!");
-      Keyboard.dismiss();
       if (data.role === "USER") {
         router.replace("/users/dashboard");
       } else {

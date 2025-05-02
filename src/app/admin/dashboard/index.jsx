@@ -13,6 +13,8 @@ import { useRouter, useSegments } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getAllUsersSummary } from "../../../components/utils/auth";
 import { LineChart } from "react-native-chart-kit";
+// import { VictoryLine, VictoryChart, VictoryAxis } from "victory-native";
+
 import { Dimensions } from "react-native";
 
 const AdminDashboard = () => {
@@ -166,33 +168,63 @@ const AdminDashboard = () => {
           Active Users Per Day (Weekly)
         </Text>
       </View>
+
       <LineChart
         data={{
           labels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-          datasets: [
-            {
-              data: users?.loginsPerDay || [0, 0, 0, 0, 0, 0, 0],
-            },
-          ],
+          datasets: [{ data: users?.loginsPerDay || [0, 0, 1, 0, 0, 0, 0] }],
         }}
-        width={screenWidth - 40} // minus padding
+        width={screenWidth - 40}
         height={200}
+        fromZero={true}
+        bezier={false}
         chartConfig={{
           backgroundGradientFrom: "#00509D",
           backgroundGradientTo: "#002F63",
           decimalPlaces: 0,
           color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
           labelColor: () => "#fff",
+          formatYLabel: (yValue) => {
+            const val = Math.round(Number(yValue));
+            return val <= 1 ? val.toString() : "";
+          },
+          propsForDots: {
+            r: "4",
+            strokeWidth: "2",
+            stroke: "#fff",
+          },
           style: {
             borderRadius: 16,
           },
         }}
-        bezier
         style={{
           marginVertical: 8,
           borderRadius: 16,
         }}
       />
+
+      {/* <VictoryChart domainPadding={20}>
+  <VictoryAxis
+    tickValues={[0, 1]}
+    tickFormat={["0", "1"]}
+  />
+  <VictoryAxis
+    dependentAxis
+    tickValues={[0, 1]}
+    tickFormat={["0", "1"]}
+  />
+  <VictoryLine
+    data={[
+      { x: "Sun", y: 0 },
+      { x: "Mon", y: 0 },
+      { x: "Tue", y: 1 },
+      { x: "Wed", y: 0 },
+      { x: "Thu", y: 0 },
+      { x: "Fri", y: 0 },
+      { x: "Sat", y: 0 },
+    ]}
+  />
+</VictoryChart> */}
     </ScrollView>
   );
 };

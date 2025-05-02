@@ -34,7 +34,6 @@ const OilGasNews = () => {
           `https://newsapi.org/v2/everything?q=oil+AND+gas+AND+${encodedCountry}&apiKey=19fa4e57e51f46908f98d448ca4184f1`
         );
         const data = await response.json();
-
         if (data.articles) {
           const sortedArticles = data.articles
             .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))
@@ -52,21 +51,23 @@ const OilGasNews = () => {
   }, [loggedInUser]);
 
   return (
-    <View style={{ marginVertical: 16, paddingHorizontal: 16 }}>
+    <View style={{ marginBottom: 16, paddingHorizontal: 16 }}>
       {/* Header */}
       <View
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
-          marginBottom: 16,
+          marginBottom: 5,
         }}
       >
         <Text style={{ fontSize: 18, fontWeight: "bold", color: "#333" }}>
           Oil & Gas News
         </Text>
         <TouchableOpacity onPress={() => router.push("/users/news")}>
-          <Text style={{ color: "blue" }}>See all</Text>
+          <Text style={{ color: "blue", fontWeight: "bold", fontSize: 15 }}>
+            See all
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -86,7 +87,7 @@ const OilGasNews = () => {
             <TouchableOpacity
               key={index}
               style={{
-                marginRight: 16,
+                marginRight: 12, // reduced from 16
                 backgroundColor: "white",
                 shadowOpacity: 0.2,
                 borderRadius: 10,
@@ -94,7 +95,7 @@ const OilGasNews = () => {
               }}
               onPress={() =>
                 router.push({
-                  pathname: `/users/news/${index}`,
+                  pathname: "/users-screen/ArticleDetails",
                   params: {
                     title: item.title,
                     author: item.author,
@@ -108,11 +109,10 @@ const OilGasNews = () => {
                 })
               }
             >
-              {/* Image Container with Overlay Text */}
               <View
                 style={{
-                  width: 250,
-                  height: 150,
+                  width: 200, // reduced from 250
+                  height: 120, // reduced from 150
                   position: "relative",
                   borderRadius: 8,
                   overflow: "hidden",
@@ -136,7 +136,7 @@ const OilGasNews = () => {
                 >
                   <Text
                     style={{
-                      fontSize: 16,
+                      fontSize: 14, // reduced from 16
                       fontWeight: "600",
                       color: "white",
                       textAlign: "center",

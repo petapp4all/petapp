@@ -6,7 +6,7 @@ export default function Layout() {
       <Stack.Screen
         name="index"
         options={{
-          title: "Oil & Gas Related News",
+          title: "Adverts",
           headerTitleAlign: "center",
           headerTitleStyle: {
             fontWeight: "bold",
@@ -16,7 +16,7 @@ export default function Layout() {
       <Stack.Screen
         name="[id]"
         options={{
-          title: "Article Details",
+          title: "Advert Details",
           headerTitleAlign: "center",
           headerTitleStyle: {
             fontWeight: "bold",

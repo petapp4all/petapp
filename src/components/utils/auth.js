@@ -40,9 +40,11 @@ export const loginUser = async (credentials) => {
   }
 };
 
-export const getUserById = async (userId) => {
+export const getUserById = async () => {
   try {
-    const response = await fetch(`${apiUrl}/users/${userId}`);
+    const userDetails = await AsyncStorage.getItem("userDetails");
+    const { id } = JSON.parse(userDetails);
+    const response = await fetch(`${apiUrl}/users/${id}`);
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || "Failed to fetch user");
@@ -127,6 +129,9 @@ export const sendExpoPushToken = async (expoPushToken) => {
     if (!parsedUser?.id) {
       throw new Error("User ID not found");
     }
+    await axios.post(`${apiUrl}/users/track-activity`, {
+      userId: parsedUser.id,
+    });
     const response = await axios.post(`${apiUrl}/users/push-token`, {
       userId: parsedUser.id,
       expoPushToken,
