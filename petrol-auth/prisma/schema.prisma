@@ -33,6 +33,28 @@ model User {
   ads               Ad[]               @relation("UserAds")
   seenAds           SeenAd[]
 
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  stations  Station[] @relation(name: "UserStations")
+}
+
+model Station {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  logo              String
+  lastUpdated       String
+  pms               Int?
+  ago               Int?
+  address           String
+  supportedOrdering Boolean  @default(false)
+  email             String
+  operatingHours    String
+  availableProducts String[] // ["PMS", "AGO", "LPG"]
+  paymentMethods    String[] // ["Cash", "POS"]
+  facilities        String[] // ["ATM", "Car Wash"]
+  ownerId           String?  @db.ObjectId
+  owner             User?    @relation(fields: [ownerId], references: [id], onDelete: Cascade, name: "UserStations")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

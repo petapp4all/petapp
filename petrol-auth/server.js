@@ -2,6 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import userRouter from "./routes/userRoutes.js";
+import adsRouter from "./routes/ads.js";
+import stationRouter from "./routes/station.js";
 
 dotenv.config();
 
@@ -13,6 +15,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/users", userRouter);
+app.use("/api/ads", adsRouter);
+app.use("/api/station", stationRouter);
 
 app.get("/", (req, res) => res.send("Welcome to Splantom PetrolApp API"));
 
