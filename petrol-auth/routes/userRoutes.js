@@ -261,7 +261,7 @@ userRouter.put(
     const user = await prisma.user.findUnique({
       where: { id: req.params.id },
     });
-    console.log("user:", user);
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -272,11 +272,8 @@ userRouter.put(
         name: req.body.name || user.name,
         email: req.body.email || user.email,
         phone: req.body.phone || user.phone,
-        image: req.body.image || user.image,
+        address: req.body.address || user.address,
         role: req.body.role || user.role,
-        password: req.body.password
-          ? bcrypt.hashSync(req.body.password, 10)
-          : user.password,
       },
     });
     console.log("updatedUser=", updatedUser);
@@ -285,9 +282,8 @@ userRouter.put(
       name: updatedUser.name,
       email: updatedUser.email,
       phone: updatedUser.phone,
-      image: updatedUser.image,
+      address: updatedUser.address,
       role: updatedUser.role,
-      token: generateToken(updatedUser),
     });
   })
 );
@@ -806,6 +802,7 @@ userRouter.get(
     }
   })
 );
+
 //ads-count
 userRouter.get(
   "/ads-count/:id",
