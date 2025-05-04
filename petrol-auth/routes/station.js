@@ -13,7 +13,6 @@ stationRouter.post(
     const {
       name,
       logo,
-
       pms,
       ago,
       address,
@@ -30,8 +29,8 @@ stationRouter.post(
       data: {
         name,
         logo,
-        pms,
-        ago,
+        pms: Number(pms),
+        ago: Number(ago),
         address,
         supportedOrdering,
         email,

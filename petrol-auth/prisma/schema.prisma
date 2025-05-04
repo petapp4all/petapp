@@ -41,7 +41,7 @@ model User {
 model Station {
   id                String   @id @default(auto()) @map("_id") @db.ObjectId
   name              String
-  logo              String
+  logo              String?
   pms               Int?
   ago               Int?
   address           String
