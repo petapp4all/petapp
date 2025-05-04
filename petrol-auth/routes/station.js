@@ -13,7 +13,7 @@ stationRouter.post(
     const {
       name,
       logo,
-      lastUpdated,
+
       pms,
       ago,
       address,
@@ -30,7 +30,6 @@ stationRouter.post(
       data: {
         name,
         logo,
-        lastUpdated,
         pms,
         ago,
         address,
