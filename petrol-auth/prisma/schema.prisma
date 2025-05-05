@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String             @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  email             String             @unique
+  phone             String
+  password          String
+  country           String
+  resetToken        String?            @default("")
+  resetCode         String?            @default("")
+  advertPin         String?            @default("")
+  pinValidity       String?            @default("")
+  image             String?            @default("")
+  role              Role               @default(USER)
+  address           String?
+  block             Boolean            @default(false)
+  blockCount        Int                @default(0)
+  lastActive        DateTime?
+  expoPushToken     String?
+  notificationsSent NotificationsSent?
+  loginHistory      LoginHistory[]
+  ads               Ad[]               @relation("UserAds")
+  seenAds           SeenAd[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  stations  Station[] @relation(name: "UserStations")
+}
+
+model Station {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  logo              String?
+  pms               Int?
+  ago               Int?
+  address           String
+  supportedOrdering Boolean  @default(false)
+  email             String
+  operatingHours    String
+  availableProducts String[] // ["PMS", "AGO", "LPG"]
+  paymentMethods    String[] // ["Cash", "POS"]
+  facilities        String[] // ["ATM", "Car Wash"]
+  ownerId           String?  @db.ObjectId
+  owner             User?    @relation(fields: [ownerId], references: [id], onDelete: Cascade, name: "UserStations")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Ad {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  category    String
+  company     String
+  postedAt    DateTime @default(now())
+  userId      String   @db.ObjectId
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade, name: "UserAds")
+  seenBy      SeenAd[]
+}
+
+model SeenAd {
+  id     String   @id @default(auto()) @map("_id") @db.ObjectId
+  user   User     @relation(fields: [userId], references: [id])
+  userId String   @db.ObjectId
+  ad     Ad       @relation(fields: [adId], references: [id], onDelete: Cascade)
+  adId   String   @db.ObjectId
+  seenAt DateTime @default(now())
+}
+
+model AdPricing {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  duration String @unique
+  amount   Int
+}
+
+model LoginHistory {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId  String   @db.ObjectId // ✅ Fixes the type mismatch
+  loginAt DateTime @default(now())
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model NotificationsSent {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @unique @db.ObjectId
+  push   Int    @default(0)
+  email  Int    @default(0)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
