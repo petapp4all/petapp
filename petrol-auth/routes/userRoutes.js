@@ -276,7 +276,6 @@ userRouter.put(
         role: req.body.role || user.role,
       },
     });
-    console.log("updatedUser=", updatedUser);
     res.json({
       id: updatedUser.id,
       name: updatedUser.name,
