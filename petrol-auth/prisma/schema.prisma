@@ -36,6 +36,7 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   stations  Station[] @relation(name: "UserStations")
+  Order     Order[]
 }
 
 model Station {
@@ -48,14 +49,31 @@ model Station {
   supportedOrdering Boolean  @default(false)
   email             String
   operatingHours    String
-  availableProducts String[] // ["PMS", "AGO", "LPG"]
-  paymentMethods    String[] // ["Cash", "POS"]
-  facilities        String[] // ["ATM", "Car Wash"]
+  availableProducts String[]
+  paymentMethods    String[]
+  facilities        String[]
   ownerId           String?  @db.ObjectId
   owner             User?    @relation(fields: [ownerId], references: [id], onDelete: Cascade, name: "UserStations")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId           String   @db.ObjectId
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userName         String
+  userPhone        String
+  stationName      String
+  stationEmail     String
+  ownerId          String
+  fuelType         String
+  litres           Int
+  totalAmount      Float
+  deliveryAddress  String
+  expectedDateTime DateTime
+  createdAt        DateTime @default(now())
 }
 
 model Ad {

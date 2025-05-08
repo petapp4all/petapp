@@ -70,7 +70,6 @@ stationRouter.get(
     if (!station) {
       return res.status(404).json({ message: "Station not found" });
     }
-
     res.json(station);
   })
 );
