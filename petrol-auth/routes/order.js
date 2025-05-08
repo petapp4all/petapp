@@ -61,7 +61,7 @@ orderRouter.post(
   })
 );
 
-// Get all orders (with optional filters)
+// Get all orders
 orderRouter.get(
   "/all-orders",
   expressAsyncHandler(async (req, res) => {
@@ -71,10 +71,16 @@ orderRouter.get(
     if (userId) whereClause.userId = userId;
     if (ownerId) whereClause.ownerId = ownerId;
 
-    const orders = await prisma.order.findMany({
-      where: whereClause,
-      orderBy: { createdAt: "desc" }, // Latest first
-    });
+    const queryOptions = {
+      orderBy: { createdAt: "desc" },
+    };
+
+    // Only include 'where' if there are conditions
+    if (userId || ownerId) {
+      queryOptions.where = whereClause;
+    }
+
+    const orders = await prisma.order.findMany(queryOptions);
 
     res.status(200).json(orders);
   })
