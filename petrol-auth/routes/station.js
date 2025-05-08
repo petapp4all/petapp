@@ -104,22 +104,18 @@ stationRouter.get(
     res.json(stations);
   })
 );
+
 // Get Stations By Owner ID
 stationRouter.get(
   "/by-owner/:ownerId",
   expressAsyncHandler(async (req, res) => {
     const { ownerId } = req.params;
-
-    const stations = await prisma.station.findMany({
-      where: {
-        ownerId,
-      },
-      orderBy: {
-        updatedAt: "desc",
-      },
+    const station = await prisma.station.findFirst({
+      where: { ownerId },
     });
+    res.json(station);
 
-    res.json(stations);
+    res.json(station);
   })
 );
 
