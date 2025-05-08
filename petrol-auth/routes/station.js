@@ -46,6 +46,54 @@ stationRouter.post(
   })
 );
 
+// Update Station
+stationRouter.put(
+  "/:id",
+  expressAsyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const {
+      name,
+      logo,
+      pms,
+      ago,
+      address,
+      supportedOrdering,
+      email,
+      operatingHours,
+      availableProducts,
+      paymentMethods,
+      facilities,
+    } = req.body;
+
+    const existingStation = await prisma.station.findUnique({
+      where: { id },
+    });
+
+    if (!existingStation) {
+      return res.status(404).json({ message: "Station not found" });
+    }
+
+    const updatedStation = await prisma.station.update({
+      where: { id },
+      data: {
+        name,
+        logo,
+        pms: Number(pms),
+        ago: Number(ago),
+        address,
+        supportedOrdering,
+        email,
+        operatingHours,
+        availableProducts,
+        paymentMethods,
+        facilities,
+      },
+    });
+
+    res.json(updatedStation);
+  })
+);
+
 // Get All Station
 stationRouter.get(
   "/",
@@ -53,6 +101,24 @@ stationRouter.get(
     const stations = await prisma.station.findMany({
       orderBy: { updatedAt: "desc" },
     });
+    res.json(stations);
+  })
+);
+// Get Stations By Owner ID
+stationRouter.get(
+  "/by-owner/:ownerId",
+  expressAsyncHandler(async (req, res) => {
+    const { ownerId } = req.params;
+
+    const stations = await prisma.station.findMany({
+      where: {
+        ownerId,
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+    });
+
     res.json(stations);
   })
 );
