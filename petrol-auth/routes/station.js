@@ -114,8 +114,36 @@ stationRouter.get(
       where: { ownerId },
     });
     res.json(station);
+  })
+);
 
-    res.json(station);
+stationRouter.get(
+  "/details/:ownerId",
+  expressAsyncHandler(async (req, res) => {
+    const { ownerId } = req.params;
+
+    const stations = await prisma.station.findFirst({
+      where: { ownerId },
+      include: {
+        owner: {
+          select: {
+            name: true,
+            email: true,
+            phone: true,
+            country: true,
+            address: true,
+          },
+        },
+      },
+    });
+
+    if (!stations || stations.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No stations found for this owner." });
+    }
+
+    res.json(stations);
   })
 );
 
