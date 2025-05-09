@@ -118,12 +118,12 @@ stationRouter.get(
 );
 
 stationRouter.get(
-  "/details/:ownerId",
+  "/details/:id",
   expressAsyncHandler(async (req, res) => {
-    const { ownerId } = req.params;
+    const { id } = req.params;
 
-    const stations = await prisma.station.findFirst({
-      where: { ownerId },
+    const stations = await prisma.station.findUnique({
+      where: { id },
       include: {
         owner: {
           select: {
