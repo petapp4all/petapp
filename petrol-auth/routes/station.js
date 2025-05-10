@@ -94,6 +94,30 @@ stationRouter.put(
   })
 );
 
+// Delete Station By ID
+stationRouter.delete(
+  "/:id",
+  expressAsyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    // First, check if the station exists
+    const station = await prisma.station.findUnique({
+      where: { id },
+    });
+
+    if (!station) {
+      return res.status(404).json({ message: "Station not found" });
+    }
+
+    // Delete the station
+    await prisma.station.delete({
+      where: { id },
+    });
+
+    res.json({ message: "Station deleted successfully" });
+  })
+);
+
 // Get All Station
 stationRouter.get(
   "/",
@@ -117,6 +141,7 @@ stationRouter.get(
   })
 );
 
+// Get Stations Details
 stationRouter.get(
   "/details/:id",
   expressAsyncHandler(async (req, res) => {
