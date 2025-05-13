@@ -69,6 +69,7 @@ model Order {
   stationEmail     String
   ownerId          String
   fuelType         String
+  completed        Boolean  @default(false)
   litres           Int
   totalAmount      Float
   deliveryAddress  String

@@ -86,4 +86,29 @@ orderRouter.get(
   })
 );
 
+// Mark order as completed
+orderRouter.put(
+  "/:id/complete",
+  expressAsyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    // Find the order
+    const order = await prisma.order.findUnique({
+      where: { id },
+    });
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    // Update the order's completed status
+    const updatedOrder = await prisma.order.update({
+      where: { id },
+      data: { completed: true },
+    });
+
+    res.status(200).json(updatedOrder);
+  })
+);
+
 export default orderRouter;
