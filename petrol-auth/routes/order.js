@@ -137,7 +137,7 @@ orderRouter.post(
 );
 
 // get-review
-reviewRouter.get(
+orderRouter.get(
   "/get-review",
   expressAsyncHandler(async (req, res) => {
     const reviews = await prisma.review.findMany({
