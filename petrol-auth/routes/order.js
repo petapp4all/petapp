@@ -111,4 +111,46 @@ orderRouter.put(
   })
 );
 
+//create-review
+orderRouter.post(
+  "/create-review",
+  expressAsyncHandler(async (req, res) => {
+    const { userId, content, rating } = req.body;
+
+    if (!userId || !content) {
+      return res.status(400).json({ message: "User and content are required" });
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const review = await prisma.review.create({
+      data: {
+        userId,
+        content,
+        rating: rating || 5,
+      },
+    });
+
+    res.status(201).json(review);
+  })
+);
+
+// get-review
+reviewRouter.get(
+  "/get-review",
+  expressAsyncHandler(async (req, res) => {
+    const reviews = await prisma.review.findMany({
+      orderBy: { createdAt: "desc" },
+      include: {
+        user: {
+          select: { name: true, image: true },
+        },
+      },
+    });
+
+    res.status(200).json(reviews);
+  })
+);
+
 export default orderRouter;
