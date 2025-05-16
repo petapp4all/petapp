@@ -44,7 +44,6 @@ imageRouter.put(
         overwrite: true, // Allow overwriting the existing image
         resource_type: "image",
       });
-      console.log("Updated Image => ", result);
       res.json({ secure_url: result.secure_url });
     } catch (err) {
       console.error("Image update failed", err);
@@ -60,6 +59,7 @@ imageRouter.delete(
   "/delete/:public_id",
   expressAsyncHandler(async (req, res) => {
     const { public_id } = req.params;
+    console.log("public_id=", public_id);
     try {
       const result = await cloudinary.uploader.destroy(public_id, {
         resource_type: "image",
