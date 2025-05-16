@@ -5,6 +5,7 @@ import userRouter from "./routes/userRoutes.js";
 import adsRouter from "./routes/ads.js";
 import stationRouter from "./routes/station.js";
 import orderRouter from "./routes/order.js";
+import imageRouter from "./routes/image.js";
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use("/api/users", userRouter);
 app.use("/api/ads", adsRouter);
 app.use("/api/station", stationRouter);
 app.use("/api/order", orderRouter);
+app.use("/api/image", imageRouter);
 
 app.get("/", (req, res) => res.send("Welcome to Splantom PetrolApp API"));
 
