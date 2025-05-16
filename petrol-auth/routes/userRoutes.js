@@ -678,7 +678,6 @@ userRouter.post(
             email: { increment: 1 },
           },
         });
-        console.log("Create new");
       } else {
         await prisma.notificationsSent.create({
           data: {
