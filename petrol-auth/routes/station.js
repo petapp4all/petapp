@@ -13,6 +13,8 @@ stationRouter.post(
     const {
       name,
       logo,
+      image,
+      imageId,
       pms,
       ago,
       address,
@@ -28,6 +30,8 @@ stationRouter.post(
     const station = await prisma.station.create({
       data: {
         name,
+        image,
+        imageId,
         logo,
         pms: Number(pms),
         ago: Number(ago),
@@ -53,6 +57,8 @@ stationRouter.put(
     const { id } = req.params;
     const {
       name,
+      image,
+      imageId,
       logo,
       pms,
       ago,
@@ -77,6 +83,8 @@ stationRouter.put(
       where: { id },
       data: {
         name,
+        image,
+        imageId,
         logo,
         pms: Number(pms),
         ago: Number(ago),

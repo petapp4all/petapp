@@ -10,9 +10,10 @@ const adsRouter = express.Router();
 adsRouter.post(
   "/create-ad",
   expressAsyncHandler(async (req, res) => {
-    const { userId, title, description, category, company } = req.body;
+    const { userId, title, description, category, image, imageId, company } =
+      req.body;
 
-    if (!userId || !title || !description || !category) {
+    if (!userId || !title || !image || !imageId || !description || !category) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
@@ -22,6 +23,8 @@ adsRouter.post(
     const ad = await prisma.ad.create({
       data: {
         title,
+        image,
+        imageId,
         description,
         category,
         company,
@@ -61,6 +64,8 @@ adsRouter.get(
             select: {
               name: true,
               email: true,
+              image: true,
+              imageId: true,
               phone: true,
               country: true,
               image: true,

@@ -2,7 +2,6 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import expressAsyncHandler from "express-async-handler";
 import { startOfWeek, addDays, endOfDay } from "date-fns";
-
 import { generateToken, sendMail } from "../utils.js";
 import prisma from "../prisma/prisma.js";
 import jwt from "jsonwebtoken";
@@ -75,6 +74,7 @@ userRouter.post(
       email: user.email,
       role: user.role,
       image: user.image,
+      imageId: user.imageId,
       phone: user.phone,
       country: user.country,
       token: generateToken(user),
@@ -92,6 +92,8 @@ userRouter.get(
           id: true,
           name: true,
           email: true,
+          image: true,
+          imageId: true,
           phone: true,
           lastActive: true,
           createdAt: true, // include if you want to show it on frontend
@@ -270,6 +272,8 @@ userRouter.put(
       where: { id: req.params.id },
       data: {
         name: req.body.name || user.name,
+        image: req.body.image || user.image,
+        image: req.body.imageId || user.imageId,
         email: req.body.email || user.email,
         phone: req.body.phone || user.phone,
         address: req.body.address || user.address,
@@ -279,6 +283,8 @@ userRouter.put(
     res.json({
       id: updatedUser.id,
       name: updatedUser.name,
+      image: updatedUser.image,
+      imageId: updatedUser.imageId,
       email: updatedUser.email,
       phone: updatedUser.phone,
       address: updatedUser.address,
@@ -708,7 +714,7 @@ userRouter.get(
       const user = await prisma.user.findUnique({
         where: { id },
         include: {
-          notificationsSent: true, // optional: include related notification stats
+          notificationsSent: true,
         },
       });
 

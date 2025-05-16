@@ -22,6 +22,7 @@ model User {
   advertPin         String?            @default("")
   pinValidity       String?            @default("")
   image             String?            @default("")
+  imageId           String?            @default("")
   role              Role               @default(USER)
   address           String?
   block             Boolean            @default(false)
@@ -43,7 +44,8 @@ model User {
 model Station {
   id                String   @id @default(auto()) @map("_id") @db.ObjectId
   name              String
-  logo              String?
+  image             String?  @default("")
+  imageId           String?  @default("")
   pms               Int?
   ago               Int?
   address           String
@@ -74,6 +76,8 @@ model Order {
   userId           String   @db.ObjectId
   user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userName         String
+  image            String?  @default("")
+  imageId          String?  @default("")
   userPhone        String
   stationName      String
   stationEmail     String
@@ -92,6 +96,8 @@ model Ad {
   title       String
   description String
   category    String
+  image       String?  @default("")
+  imageId     String?  @default("")
   company     String
   postedAt    DateTime @default(now())
   userId      String   @db.ObjectId

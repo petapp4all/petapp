@@ -16,6 +16,8 @@ imageRouter.post(
   "/upload",
   expressAsyncHandler(async (req, res) => {
     try {
+      console.log("Incoming image data:", req.body.image.slice(0, 30)); // print beginning only
+
       const result = await cloudinary.uploader.upload(req.body.image, {
         public_id: nanoid(),
         resource_type: "image",
