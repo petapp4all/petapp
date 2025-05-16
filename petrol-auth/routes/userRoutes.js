@@ -273,7 +273,7 @@ userRouter.put(
       data: {
         name: req.body.name || user.name,
         image: req.body.image || user.image,
-        image: req.body.imageId || user.imageId,
+        imageId: req.body.imageId || user.imageId,
         email: req.body.email || user.email,
         phone: req.body.phone || user.phone,
         address: req.body.address || user.address,
