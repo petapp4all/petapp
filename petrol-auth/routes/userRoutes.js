@@ -1,7 +1,7 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import expressAsyncHandler from "express-async-handler";
-import { startOfWeek, addDays, endOfDay } from "date-fns";
+import { subDays } from "date-fns";
 import { deleteImageByPublicId, generateToken, sendMail } from "../utils.js";
 import prisma from "../prisma/prisma.js";
 import jwt from "jsonwebtoken";
@@ -187,57 +187,30 @@ userRouter.get(
   expressAsyncHandler(async (req, res) => {
     try {
       const now = new Date();
+      const sevenDaysAgo = subDays(now, 7);
 
-      const weekStart = startOfWeek(now, { weekStartsOn: 1 }); // Monday
-      const weekEnd = endOfDay(addDays(weekStart, 6)); // Sunday night
-
-      // Count total users
       const totalUsers = await prisma.user.count();
 
-      // Count new users (created within this week)
       const newUsers = await prisma.user.count({
         where: {
           createdAt: {
-            gte: weekStart,
+            gte: sevenDaysAgo,
           },
         },
       });
 
-      // Count blocked users
       const blockedUsers = await prisma.user.count({
         where: {
           block: true,
         },
       });
 
-      // Count active users this week
       const activeUsersCount = await prisma.user.count({
         where: {
           lastActive: {
-            gte: weekStart,
+            gte: sevenDaysAgo,
           },
         },
-      });
-
-      // Get logins within this week
-      const loginEvents = await prisma.loginHistory.findMany({
-        where: {
-          loginAt: {
-            gte: weekStart,
-            lte: weekEnd,
-          },
-        },
-        select: {
-          loginAt: true,
-        },
-      });
-
-      // Initialize: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
-      const loginsPerDay = [0, 0, 0, 0, 0, 0, 0];
-
-      loginEvents.forEach((event) => {
-        const weekday = new Date(event.loginAt).getUTCDay(); // 0 = Sunday
-        loginsPerDay[weekday]++;
       });
 
       res.json({
@@ -245,7 +218,6 @@ userRouter.get(
         newUsers,
         blockedUsers,
         activeUsersCount,
-        loginsPerDay,
       });
     } catch (error) {
       res.status(500).json({
