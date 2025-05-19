@@ -1,7 +1,7 @@
 import express from "express";
 import expressAsyncHandler from "express-async-handler";
 
-import { sendMail } from "../utils.js";
+import { deleteImageByPublicId } from "../utils.js";
 import prisma from "../prisma/prisma.js";
 
 const stationRouter = express.Router();
@@ -108,13 +108,24 @@ stationRouter.delete(
   expressAsyncHandler(async (req, res) => {
     const { id } = req.params;
 
-    // First, check if the station exists
+    // Check if the station exists and get imageId
     const station = await prisma.station.findUnique({
       where: { id },
+      select: { imageId: true }, // only select what's needed
     });
 
     if (!station) {
       return res.status(404).json({ message: "Station not found" });
+    }
+
+    // Delete image from Cloudinary if it exists
+    if (station.imageId) {
+      try {
+        await deleteImageByPublicId(station.imageId);
+      } catch (err) {
+        console.error("Failed to delete station image from Cloudinary:", err);
+        // Optional: continue or abort depending on importance
+      }
     }
 
     // Delete the station
@@ -122,7 +133,7 @@ stationRouter.delete(
       where: { id },
     });
 
-    res.json({ message: "Station deleted successfully" });
+    res.json({ message: "Station and image deleted successfully" });
   })
 );
 

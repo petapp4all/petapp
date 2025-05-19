@@ -106,8 +106,9 @@ model Ad {
 }
 
 model SeenAd {
-  id     String   @id @default(auto()) @map("_id") @db.ObjectId
-  user   User     @relation(fields: [userId], references: [id])
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  user User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   userId String   @db.ObjectId
   ad     Ad       @relation(fields: [adId], references: [id], onDelete: Cascade)
   adId   String   @db.ObjectId

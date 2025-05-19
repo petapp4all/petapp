@@ -1,7 +1,7 @@
 import express from "express";
 import expressAsyncHandler from "express-async-handler";
 
-import { sendMail } from "../utils.js";
+import { deleteImageByPublicId, sendMail } from "../utils.js";
 import prisma from "../prisma/prisma.js";
 
 const adsRouter = express.Router();
@@ -166,18 +166,34 @@ adsRouter.delete(
     const adId = req.params.id;
 
     try {
-      // Optional: Check if the ad exists before deletion
-      const ad = await prisma.ad.findUnique({ where: { id: adId } });
-
+      // Fetch ad and its imageId
+      const ad = await prisma.ad.findUnique({
+        where: { id: adId },
+        select: { imageId: true }, // only fetch imageId
+      });
+      console.log("ad=", ad);
       if (!ad) {
         return res.status(404).json({ message: "Ad not found" });
       }
 
+      // If imageId exists, delete from Cloudinary
+      if (ad.imageId) {
+        console.log("object");
+        try {
+          const res = await deleteImageByPublicId(ad.imageId);
+          console.log("res=", res);
+        } catch (err) {
+          console.error("Failed to delete ad image from Cloudinary:", err);
+          // You may continue or halt here depending on criticality
+        }
+      }
+
+      // Delete ad from database
       await prisma.ad.delete({
         where: { id: adId },
       });
 
-      res.status(200).json({ message: "Ad deleted successfully" });
+      res.status(200).json({ message: "Ad and image deleted successfully" });
     } catch (error) {
       console.error("Error deleting ad:", error);
       res.status(500).json({ message: "Failed to delete ad" });

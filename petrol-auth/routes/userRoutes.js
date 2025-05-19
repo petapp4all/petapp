@@ -2,7 +2,7 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import expressAsyncHandler from "express-async-handler";
 import { startOfWeek, addDays, endOfDay } from "date-fns";
-import { generateToken, sendMail } from "../utils.js";
+import { deleteImageByPublicId, generateToken, sendMail } from "../utils.js";
 import prisma from "../prisma/prisma.js";
 import jwt from "jsonwebtoken";
 
@@ -488,11 +488,30 @@ userRouter.delete(
 );
 
 // Delete UserById
+
 userRouter.delete(
   "/:id",
   expressAsyncHandler(async (req, res) => {
+    const user = await prisma.user.findUnique({
+      where: { id: req.params.id },
+      select: { imageId: true }, // only fetch what you need
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    if (user.imageId) {
+      try {
+        await deleteImageByPublicId(user.imageId);
+      } catch (err) {
+        console.error("Failed to delete user image from Cloudinary:", err);
+        // You may choose to continue or return error here depending on criticality
+      }
+    }
+
     await prisma.user.delete({ where: { id: req.params.id } });
-    res.json({ message: "User deleted successfully" });
+
+    res.json({ message: "User and image deleted successfully" });
   })
 );
 
