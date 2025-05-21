@@ -1,0 +1,27 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts",
+    "nativewind-env.d.ts",
+    "src/app/user/_layout.jsx",
+    "src/app/user/index.jsx",
+    "src/app/user/menu/_layout.jsx",
+    "src/app/user/menu/index.jsx",
+    "src/app/_layout.jsx",
+    "src/constants/Colors.js",
+    "src/app/user/marketPlace/index.jsx",
+    "src/app/users/news/index.jsx",
+    "src/app/users/nearbyStation/index.jsx",
+    "src/components/usePushNotifications.jss",
+    "src/components/sendPushNotification.jss"
+  ]
+}
