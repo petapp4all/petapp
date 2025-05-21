@@ -52,14 +52,6 @@ const OilGasNews = () => {
     fetchNews();
   }, [loggedInUser]);
 
-  {
-    !loading && news.length === 0 && (
-      <Text style={{ color: "red", marginTop: 10 }}>
-        No news articles available. Please try again later.
-      </Text>
-    );
-  }
-
   return (
     <View style={{ marginBottom: 16 }}>
       {/* Header */}
@@ -87,6 +79,10 @@ const OilGasNews = () => {
           color="blue"
           style={{ marginTop: 16 }}
         />
+      ) : news.length === 0 ? (
+        <Text style={{ color: "red", marginTop: 10 }}>
+          No news articles available. Please try again later.
+        </Text>
       ) : (
         <ScrollView
           horizontal
@@ -97,7 +93,7 @@ const OilGasNews = () => {
             <TouchableOpacity
               key={index}
               style={{
-                marginRight: 12, // reduced from 16
+                marginRight: 12,
                 backgroundColor: "white",
                 shadowOpacity: 0.2,
                 borderRadius: 10,
@@ -121,8 +117,8 @@ const OilGasNews = () => {
             >
               <View
                 style={{
-                  width: 200, // reduced from 250
-                  height: 120, // reduced from 150
+                  width: 200,
+                  height: 120,
                   position: "relative",
                   borderRadius: 8,
                   overflow: "hidden",
@@ -133,7 +129,6 @@ const OilGasNews = () => {
                   style={{ width: "100%", height: "100%" }}
                   resizeMode="cover"
                 />
-                {/* Text Overlay */}
                 <View
                   style={{
                     position: "absolute",
@@ -146,7 +141,7 @@ const OilGasNews = () => {
                 >
                   <Text
                     style={{
-                      fontSize: 14, // reduced from 16
+                      fontSize: 14,
                       fontWeight: "600",
                       color: "white",
                       textAlign: "center",

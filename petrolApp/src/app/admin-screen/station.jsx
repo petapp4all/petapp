@@ -68,7 +68,7 @@ const MarketPlace = () => {
                     {item.name}
                   </Text>
                   <Text className="text-gray-500 text-sm">
-                    Last updated {item.lastUpdated}
+                    Last updated: {new Date(item.updatedAt).toLocaleString()}
                   </Text>
                 </View>
               </View>

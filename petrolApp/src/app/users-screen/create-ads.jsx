@@ -91,25 +91,6 @@ const CreateAds = () => {
     }, [])
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      const fetchPrice = async () => {
-        try {
-          const user = await getUserDetails();
-          if (user) {
-            setRole(user.role);
-          }
-
-          const data = await getPricing();
-          setPricingData(data);
-        } catch (error) {
-          console.log("Error:", error);
-        }
-      };
-      fetchPrice();
-    }, [])
-  );
-
   const durationMap = {
     "1w": "One Week",
     "2w": "Two Weeks",
@@ -165,6 +146,7 @@ const CreateAds = () => {
         body: "Click for more details.",
         data: {
           screen: "/users/dashboard",
+          image,
         },
       });
       Alert.alert("Success", "Ad created successfully.");

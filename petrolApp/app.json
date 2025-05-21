@@ -90,8 +90,8 @@
     },
 
     "extra": {
-      "apiUrlDevelopment": "https://petapp-eight.vercel.app/api",
-      "apiUrlProduction": "https://petapp-eight.vercel.app/api",
+      "apiUrlDevelopment": "https://petapp-black.vercel.app/api",
+      "apiUrlProduction": "https://petapp-black.vercel.app/api",
       "router": {
         "origin": false
       },

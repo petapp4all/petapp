@@ -86,6 +86,7 @@ export default function RootLayout() {
     const subscription = Notifications.addNotificationResponseReceivedListener(
       (response) => {
         const screen = response?.notification?.request?.content?.data?.screen;
+        console.log("response", response?.notification?.request?.content);
         console.log("🔔 Notification clicked. Navigating to:", screen);
 
         if (screen) {

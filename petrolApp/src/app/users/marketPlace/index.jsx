@@ -10,7 +10,7 @@ import {
 import { Link } from "expo-router";
 import { useDispatch, useSelector } from "react-redux";
 import Search from "../../../components/Search";
-import { fetchStations } from "../../../redux/slices/stationSlice"; // Adjust the path if needed
+import { fetchStations } from "../../../redux/slices/stationSlice";
 
 const MarketPlace = () => {
   const dispatch = useDispatch();
@@ -49,14 +49,14 @@ const MarketPlace = () => {
                         ? { uri: item.image }
                         : require("@/assets/images/gasStation.png")
                     }
-                    className="w-16 h-16 rounded-full mr-3"
+                    className="w-20 h-16 rounded-lg mr-3"
                   />
                   <View>
                     <Text className="font-semibold text-lg text-gray-900">
                       {item.name}
                     </Text>
                     <Text className="text-gray-500 text-sm">
-                      Last updated {new Date(item.updatedAt).toLocaleString()}
+                      Last updated: {new Date(item.updatedAt).toLocaleString()}
                     </Text>
                   </View>
                 </View>

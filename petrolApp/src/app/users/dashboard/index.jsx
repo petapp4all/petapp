@@ -7,20 +7,22 @@ import {
   Alert,
   useWindowDimensions,
 } from "react-native";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import OilGasNews from "@/src/components/OilGasNews";
-import { useRouter, useSegments } from "expo-router";
+import { useFocusEffect, useRouter, useSegments } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-// import ImageSlider from "../../../components/ImageSlider";
+import { getStations } from "@/src/components/utils/ads";
 
 const Menu = () => {
   const router = useRouter();
 
   const segments = useSegments();
   const { width } = useWindowDimensions();
-  const isTablet = width >= 768; // Adjust based on what you consider "tablet"
+  const isTablet = width >= 768;
+  const [highestPrice, setHighestPrice] = useState(0);
+  const [lowestPrice, setLowestPrice] = useState(0);
 
   useEffect(() => {
     const backAction = () => {
@@ -79,6 +81,23 @@ const Menu = () => {
     checkLoginStatus();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      const fetchStations = async () => {
+        try {
+          const data = await getStations();
+          const pmsPrices = data.map((station) => station.pms).filter(Boolean);
+          setHighestPrice(Math.max(...pmsPrices));
+          setLowestPrice(Math.min(...pmsPrices));
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
+      fetchStations();
+    }, [])
+  );
+
   return (
     <ScrollView className="flex-1 bg-gray-100 p-4">
       {/* <ImageSlider /> */}
@@ -99,12 +118,16 @@ const Menu = () => {
 
         <View className="flex flex-row justify-between items-center mb-2">
           <Text className="text-gray-500 text-sm">High Price</Text>
-          <Text className="text-xl font-bold text-gray-800">₦950.00</Text>
+          <Text className="text-xl font-bold text-gray-800">
+            ₦{highestPrice.toFixed(2)}
+          </Text>
         </View>
 
         <View className="flex flex-row justify-between items-center">
           <Text className="text-gray-500 text-sm">Best Price</Text>
-          <Text className="text-xl font-bold text-green-600">₦835.00</Text>
+          <Text className="text-xl font-bold text-green-600">
+            ₦{lowestPrice.toFixed(2)}
+          </Text>
         </View>
       </View>
 
@@ -121,7 +144,6 @@ const Menu = () => {
             <FontAwesome5 name="gas-pump" size={24} color="#0072FF" />
             <Text className="text-gray-600 text-center">Nearby Station</Text>
           </TouchableOpacity>
-
           <TouchableOpacity
             onPress={() => router.push("/users/marketPlace")}
             className="bg-white p-4 rounded-lg shadow-md flex-1 items-center mx-1 mb-4"
@@ -129,7 +151,6 @@ const Menu = () => {
             <FontAwesome5 name="store" size={24} color="#0072FF" />
             <Text className="text-gray-600 text-center">Market Place</Text>
           </TouchableOpacity>
-
           <TouchableOpacity
             onPress={() => router.push("/users/news")}
             className="bg-white p-4 rounded-lg shadow-md flex-1 items-center mx-1 mb-4"
@@ -137,9 +158,6 @@ const Menu = () => {
             <FontAwesome5 name="newspaper" size={24} color="#0072FF" />
             <Text className="text-gray-600 text-center">Latest News</Text>
           </TouchableOpacity>
-
-          {/* Your Orders on its own row on phone, inline on tablet */}
-
           <View
             className={`${
               isTablet ? "flex-1 mx-1 mb-4" : "w-full mb-4"
@@ -161,7 +179,7 @@ const Menu = () => {
               <Text className="text-gray-600 text-center">Testimonial</Text>
             </TouchableOpacity>
           </View>
-        </View>{" "}
+        </View>
       </View>
       {/* Oil & Gas News Section */}
       <View className="my-1 ">
