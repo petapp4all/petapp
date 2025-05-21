@@ -175,16 +175,12 @@ adsRouter.delete(
       if (!ad) {
         return res.status(404).json({ message: "Ad not found" });
       }
-
-      // If imageId exists, delete from Cloudinary
       if (ad.imageId) {
         console.log("object");
         try {
           const res = await deleteImageByPublicId(ad.imageId);
-          console.log("res=", res);
         } catch (err) {
           console.error("Failed to delete ad image from Cloudinary:", err);
-          // You may continue or halt here depending on criticality
         }
       }
 
