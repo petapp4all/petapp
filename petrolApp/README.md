@@ -27,7 +27,10 @@ rm -rf petrolApp/.git
 
 git remote -v
 
+git rm --cached petrolApp
+rm -rf .git/modules/petrolApp
+
+git add petrolApp
+git commit -m "Properly add petrolApp folder to main repo"
 git push origin main
 git push petapp main
-
-git push petapp main --force
