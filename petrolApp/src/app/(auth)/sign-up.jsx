@@ -16,7 +16,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { FontAwesome, AntDesign } from "@expo/vector-icons";
 import { useMutation } from "@tanstack/react-query";
-import { registerUser } from "../../components/utils/users";
+import {
+  registerUser,
+  requestEmailVerification,
+} from "../../components/utils/users";
 import ReusableInput from "../../components/ReuseAbleInput";
 
 const countries = [
@@ -58,6 +61,10 @@ const SignUpScreen = () => {
   const [country, setCountry] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showCodeModal, setShowCodeModal] = useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [verifying, setVerifying] = useState(false);
+  const [emailForVerification, setEmailForVerification] = useState("");
 
   const mutation = useMutation({
     mutationFn: registerUser,
@@ -72,7 +79,7 @@ const SignUpScreen = () => {
     },
   });
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
     const trimmedName = fullName.trim();
     const trimmedEmail = email.trim();
     const trimmedPhone = phone.trim();
@@ -112,13 +119,22 @@ const SignUpScreen = () => {
       return;
     }
 
-    mutation.mutate({
+    const userData = {
       name: trimmedName,
       email: trimmedEmail,
       phone: trimmedPhone,
       country: trimmedCountry,
       password: trimmedPassword,
-    });
+    };
+
+    try {
+      await requestEmailVerification(userData);
+      setEmailForVerification(trimmedEmail);
+      setShowCodeModal(true); // open verification modal
+    } catch (error) {
+      console.log("Verification Request Failed:", error);
+      Alert.alert("Error", "Could not send verification code.");
+    }
   };
 
   return (
@@ -127,6 +143,59 @@ const SignUpScreen = () => {
       className="flex-1 w-full bg-[#fff]"
       keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
     >
+      <Modal visible={showCodeModal} animationType="slide" transparent>
+        <View className="flex-1 bg-black/40 justify-center items-center">
+          <View className="bg-white w-4/5 p-6 rounded-xl shadow-lg">
+            <Text className="text-lg font-semibold mb-4 text-center">
+              Enter Verification Code
+            </Text>
+            <TextInput
+              className="border border-gray-300 rounded-lg px-4 py-2 text-center text-xl tracking-widest"
+              keyboardType="number-pad"
+              maxLength={6}
+              value={verificationCode}
+              onChangeText={setVerificationCode}
+            />
+            <TouchableOpacity
+              onPress={async () => {
+                setVerifying(true);
+                try {
+                  const result = await verifyEmailCode(
+                    emailForVerification,
+                    verificationCode
+                  );
+                  setShowCodeModal(false);
+                  Alert.alert("Success", "Account verified and created!");
+                  router.push("/sign-in");
+                } catch (err) {
+                  console.log("Verification failed:", err);
+                  Alert.alert("Invalid Code", "Please try again.");
+                } finally {
+                  setVerifying(false);
+                }
+              }}
+              disabled={verifying || verificationCode.length !== 6}
+              className="mt-5 bg-blue-600 py-3 rounded-lg"
+            >
+              {verifying ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text className="text-white text-center font-semibold text-lg">
+                  Verify
+                </Text>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setShowCodeModal(false)}
+              className="mt-4"
+            >
+              <Text className="text-center text-gray-500">Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
@@ -143,7 +212,6 @@ const SignUpScreen = () => {
               value={fullName}
               onChangeText={setFullName}
             />
-
             <ReusableInput
               icon="envelope"
               label="Email Address"

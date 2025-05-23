@@ -9,39 +9,116 @@ import jwt from "jsonwebtoken";
 const userRouter = express.Router();
 
 // Signup
+// userRouter.post(
+//   "/signup",
+//   expressAsyncHandler(async (req, res) => {
+//     const { name, email, phone, image, password, country } = req.body;
+//     // Check if user already exists
+//     const foundUser = await prisma.user.findUnique({ where: { email } });
+//     if (foundUser) {
+//       return res
+//         .status(401)
+//         .json({ message: `User with ${email} already exists` });
+//     }
+//     // Hash the password
+//     const hashedPassword = bcrypt.hashSync(password, 10);
+//     // Create new user in the database
+//     const user = await prisma.user.create({
+//       data: {
+//         name,
+//         email,
+//         phone,
+//         image,
+//         country,
+//         password: hashedPassword,
+//       },
+//     });
+//     // Send response with token
+//     res.json({
+//       id: user.id,
+//       name: user.name,
+//       email: user.email,
+//       image: user.image,
+//       phone: user.phone,
+//       role: user.role,
+//       country: user.country,
+//       token: generateToken(user),
+//     });
+//   })
+// );
+
+//signup-initiate
 userRouter.post(
-  "/signup",
+  "/signup-initiate",
   expressAsyncHandler(async (req, res) => {
-    const { name, email, phone, image, password, country } = req.body;
-    // Check if user already exists
-    const foundUser = await prisma.user.findUnique({ where: { email } });
-    if (foundUser) {
-      return res
-        .status(401)
-        .json({ message: `User with ${email} already exists` });
+    const { name, email, phone, password, country } = req.body;
+
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+      return res.status(409).json({ message: "User already exists" });
     }
-    // Hash the password
-    const hashedPassword = bcrypt.hashSync(password, 10);
-    // Create new user in the database
-    const user = await prisma.user.create({
+
+    const verificationCode = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+
+    // Save this in a temporary table or Redis
+    await prisma.emailVerification.create({
       data: {
-        name,
         email,
+        code: verificationCode,
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000), // Expires in 10 mins
+        name,
         phone,
-        image,
         country,
-        password: hashedPassword,
+        password: bcrypt.hashSync(password, 10),
       },
     });
-    // Send response with token
+
+    // Send email
+    await sendMail(
+      "Verify your email",
+      `Your verification code is: ${verificationCode}`,
+      email,
+      process.env.EMAIL_USER,
+      process.env.EMAIL_USER
+    );
+
+    return res.json({ message: "Verification code sent" });
+  })
+);
+//verify-email
+userRouter.post(
+  "/verify-email",
+  expressAsyncHandler(async (req, res) => {
+    const { email, code } = req.body;
+
+    const record = await prisma.emailVerification.findUnique({
+      where: { email },
+    });
+
+    if (!record || record.code !== code || record.expiresAt < new Date()) {
+      return res.status(400).json({ message: "Invalid or expired code" });
+    }
+
+    // Create user
+    const user = await prisma.user.create({
+      data: {
+        name: record.name,
+        email: record.email,
+        phone: record.phone,
+        password: record.password,
+        country: record.country,
+      },
+    });
+
+    // Clean up verification record
+    await prisma.emailVerification.delete({ where: { email } });
+
     res.json({
       id: user.id,
       name: user.name,
       email: user.email,
-      image: user.image,
-      phone: user.phone,
-      role: user.role,
-      country: user.country,
       token: generateToken(user),
     });
   })
