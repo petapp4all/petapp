@@ -138,12 +138,12 @@ export const sendExpoPushToken = async (expoPushToken) => {
     await axios.post(`${apiUrl}/users/track-activity`, {
       userId: parsedUser.id,
     });
-    const response = await axios.post(`${apiUrl}/users/push-token`, {
+    const { data } = await axios.post(`${apiUrl}/users/push-token`, {
       userId: parsedUser.id,
       expoPushToken,
     });
-
-    return response.data;
+    console.log("data.isBlocked=", data.isBlocked);
+    return data.isBlocked;
   } catch (error) {
     console.error(
       "Error sending push token:",

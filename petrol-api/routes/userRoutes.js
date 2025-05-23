@@ -118,6 +118,7 @@ userRouter.post(
       id: user.id,
       name: user.name,
       email: user.email,
+      block: user.block,
       role: user.role,
       image: user.image,
       imageId: user.imageId,

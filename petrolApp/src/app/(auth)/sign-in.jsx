@@ -62,7 +62,8 @@ const SignInScreen = () => {
           const userDetails = JSON.parse(userDetailsString);
           Keyboard.dismiss();
           console.log("data=", data);
-          await linkPushTokenToUser();
+          const isBlocked = await linkPushTokenToUser();
+          console.log("isBlocked=", isBlocked);
           if (userDetails.role === "USER") {
             router.replace("/users/dashboard");
           } else {
