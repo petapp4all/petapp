@@ -120,7 +120,8 @@ export const linkPushTokenToUser = async () => {
     const parsedUser = JSON.parse(userData);
 
     if (token && parsedUser?.id) {
-      await sendExpoPushToken(token);
+      const isBlocked = await sendExpoPushToken(token);
+      return isBlocked;
     }
   } catch (error) {
     console.error("Error linking push token to user:", error);
@@ -135,14 +136,13 @@ export const sendExpoPushToken = async (expoPushToken) => {
     if (!parsedUser?.id) {
       throw new Error("User ID not found");
     }
-    await axios.post(`${apiUrl}/users/track-activity`, {
+    const { data } = await axios.post(`${apiUrl}/users/track-activity`, {
       userId: parsedUser.id,
     });
-    const { data } = await axios.post(`${apiUrl}/users/push-token`, {
+    await axios.post(`${apiUrl}/users/push-token`, {
       userId: parsedUser.id,
       expoPushToken,
     });
-    console.log("data.isBlocked=", data.isBlocked);
     return data.isBlocked;
   } catch (error) {
     console.error(

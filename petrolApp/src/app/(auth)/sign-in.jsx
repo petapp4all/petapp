@@ -6,6 +6,7 @@ import {
   Alert,
   ActivityIndicator,
   Keyboard,
+  Modal,
 } from "react-native";
 import { useRef, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -25,7 +26,7 @@ const SignInScreen = () => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [email, setEmail] = useState("");
   const [loggedInUser, setLoggedInUser] = useState(null);
-
+  const [isBlockedModalVisible, setIsBlockedModalVisible] = useState(false);
   const [password, setPassword] = useState("");
   const [isBiometricSupported, setIsBiometricSupported] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
@@ -61,9 +62,12 @@ const SignInScreen = () => {
         if (userDetailsString) {
           const userDetails = JSON.parse(userDetailsString);
           Keyboard.dismiss();
-          console.log("data=", data);
           const isBlocked = await linkPushTokenToUser();
-          console.log("isBlocked=", isBlocked);
+          if (isBlocked) {
+            setIsBlockedModalVisible(true);
+            return;
+          }
+
           if (userDetails.role === "USER") {
             router.replace("/users/dashboard");
           } else {
@@ -82,8 +86,11 @@ const SignInScreen = () => {
   const mutation = useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
-      console.log("data=", data);
       Keyboard.dismiss();
+      if (data.block) {
+        setIsBlockedModalVisible(true);
+        return;
+      }
       if (data.role === "USER") {
         router.replace("/users/dashboard");
       } else {
@@ -109,6 +116,30 @@ const SignInScreen = () => {
 
   return (
     <View className="flex-1 justify-center items-center bg-white">
+      <Modal
+        visible={isBlockedModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setIsBlockedModalVisible(false)}
+      >
+        <View className="flex-1 justify-center items-center bg-black/60">
+          <View className="bg-white p-6 rounded-2xl w-4/5 shadow-lg items-center">
+            <Text className="text-lg font-bold text-center mb-4">
+              Your account has been blocked
+            </Text>
+            <Text className="text-center mb-6">
+              Please contact support or try again later.
+            </Text>
+            <TouchableOpacity
+              className="bg-blue-600 px-5 py-2 rounded-full"
+              onPress={() => setIsBlockedModalVisible(false)}
+            >
+              <Text className="text-white font-semibold">OK</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       <Animated.View
         style={{ opacity: fadeAnim }}
         className="w-full bg-white max-w-md p-1"
