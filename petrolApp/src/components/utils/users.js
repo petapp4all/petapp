@@ -23,6 +23,8 @@ export const verifyEmailCode = async (email, code) => {
     return data;
   } catch (error) {
     console.log("Failed to verifyEmailCode:", error);
+    // 👇 THROW the error so frontend knows it failed
+    throw error.response?.data?.message || "Verification failed";
   }
 };
 

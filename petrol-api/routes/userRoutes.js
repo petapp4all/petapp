@@ -157,73 +157,34 @@ userRouter.get(
     }
   })
 );
-
 // Track User Activity - Update or Create login history
 userRouter.post(
   "/track-activity",
   expressAsyncHandler(async (req, res) => {
     const { userId } = req.body;
+
     if (!userId) {
       return res.status(400).json({ message: "userId is required" });
     }
-
-    const now = new Date();
-    const today = now.getDay(); // 0 = Sunday
-
-    // Set start and end of the day
-    const dayStart = new Date(now);
-    dayStart.setHours(0, 0, 0, 0);
-
-    const dayEnd = new Date(now);
-    dayEnd.setHours(23, 59, 59, 999);
-
-    // Check if any user has logged in today
-    const anyLoginToday = await prisma.loginHistory.findFirst({
-      where: {
-        loginAt: {
-          gte: dayStart,
-          lte: dayEnd,
-        },
-      },
+    // Get current user
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, block: true }, // only return what you need
     });
-
-    // If today is Sunday and no one has logged in yet, delete all login history
-    if (today === 0 && !anyLoginToday) {
-      await prisma.loginHistory.deleteMany({});
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
 
-    // Check if this user already logged in today
-    const existingLogin = await prisma.loginHistory.findFirst({
-      where: {
-        userId,
-        loginAt: {
-          gte: dayStart,
-          lte: dayEnd,
-        },
-      },
-    });
-
-    if (existingLogin) {
-      await prisma.loginHistory.update({
-        where: { id: existingLogin.id },
-        data: { loginAt: now },
-      });
-    } else {
-      await prisma.loginHistory.create({
-        data: {
-          userId,
-          loginAt: now,
-        },
-      });
-    }
-
-    // Update user's last active time
+    // Update lastActive timestamp
     await prisma.user.update({
       where: { id: userId },
-      data: { lastActive: now },
+      data: { lastActive: new Date() },
     });
 
-    res.status(200).json({ message: "Activity tracked successfully" });
+    res.status(200).json({
+      message: "Activity tracked successfully",
+      isBlocked: user.block,
+    });
   })
 );
 

@@ -65,7 +65,6 @@ const SignUpScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showCodeModal, setShowCodeModal] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
-  const [verifying, setVerifying] = useState(false);
   const [emailForVerification, setEmailForVerification] = useState("");
 
   const mutation = useMutation({
@@ -163,7 +162,6 @@ const SignUpScreen = () => {
             />
             <TouchableOpacity
               onPress={async () => {
-                setVerifying(true);
                 setIsSubmitting(true);
                 try {
                   const result = await verifyEmailCode(
@@ -175,10 +173,9 @@ const SignUpScreen = () => {
                   router.push("/sign-in");
                 } catch (err) {
                   console.log("Verification failed:", err);
-                  Alert.alert("Invalid Code", "Please try again.");
+                  Alert.alert("Invalid Code", err.toString()); // Show the actual error
                 } finally {
-                  setVerifying(false);
-                  setIsSubmitting(true);
+                  setIsSubmitting(false);
                 }
               }}
               disabled={isSubmitting || verificationCode.length !== 6}

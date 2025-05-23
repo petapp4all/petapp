@@ -30,7 +30,6 @@ model User {
   lastActive        DateTime?
   expoPushToken     String?
   notificationsSent NotificationsSent?
-  loginHistory      LoginHistory[]
   ads               Ad[]               @relation("UserAds")
   seenAds           SeenAd[]
   createdAt         DateTime           @default(now())
@@ -117,13 +116,6 @@ model AdPricing {
   id       String @id @default(auto()) @map("_id") @db.ObjectId
   duration String @unique
   amount   Int
-}
-
-model LoginHistory {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId  String   @db.ObjectId // ✅ Fixes the type mismatch
-  loginAt DateTime @default(now())
-  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model NotificationsSent {
