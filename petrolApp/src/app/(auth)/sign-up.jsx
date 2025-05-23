@@ -19,6 +19,7 @@ import { useMutation } from "@tanstack/react-query";
 import {
   registerUser,
   requestEmailVerification,
+  verifyEmailCode,
 } from "../../components/utils/users";
 import ReusableInput from "../../components/ReuseAbleInput";
 
@@ -60,6 +61,7 @@ const SignUpScreen = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [country, setCountry] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showCodeModal, setShowCodeModal] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
@@ -128,12 +130,15 @@ const SignUpScreen = () => {
     };
 
     try {
+      setIsSubmitting(true);
       await requestEmailVerification(userData);
       setEmailForVerification(trimmedEmail);
       setShowCodeModal(true); // open verification modal
     } catch (error) {
       console.log("Verification Request Failed:", error);
       Alert.alert("Error", "Could not send verification code.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -147,7 +152,7 @@ const SignUpScreen = () => {
         <View className="flex-1 bg-black/40 justify-center items-center">
           <View className="bg-white w-4/5 p-6 rounded-xl shadow-lg">
             <Text className="text-lg font-semibold mb-4 text-center">
-              Enter Verification Code
+              Enter Verification Code Sent to {emailForVerification}
             </Text>
             <TextInput
               className="border border-gray-300 rounded-lg px-4 py-2 text-center text-xl tracking-widest"
@@ -159,6 +164,7 @@ const SignUpScreen = () => {
             <TouchableOpacity
               onPress={async () => {
                 setVerifying(true);
+                setIsSubmitting(true);
                 try {
                   const result = await verifyEmailCode(
                     emailForVerification,
@@ -172,12 +178,13 @@ const SignUpScreen = () => {
                   Alert.alert("Invalid Code", "Please try again.");
                 } finally {
                   setVerifying(false);
+                  setIsSubmitting(true);
                 }
               }}
-              disabled={verifying || verificationCode.length !== 6}
+              disabled={isSubmitting || verificationCode.length !== 6}
               className="mt-5 bg-blue-600 py-3 rounded-lg"
             >
-              {verifying ? (
+              {isSubmitting ? (
                 <ActivityIndicator color="#fff" />
               ) : (
                 <Text className="text-white text-center font-semibold text-lg">
@@ -291,14 +298,14 @@ const SignUpScreen = () => {
             <TouchableOpacity
               className="rounded-lg overflow-hidden mt-6"
               onPress={handleSignUp}
-              disabled={mutation.isPending}
+              disabled={isSubmitting}
             >
               <LinearGradient
                 colors={["#0072FF", "#00C6FF"]}
                 className="px-6 py-3 rounded-lg flex-row justify-center items-center"
                 style={{ opacity: mutation.isPending ? 0.5 : 1 }}
               >
-                {mutation.isPending ? (
+                {isSubmitting ? (
                   <ActivityIndicator color="#fff" size="small" />
                 ) : (
                   <Text className="text-white text-lg text-center font-semibold">

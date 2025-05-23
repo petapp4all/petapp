@@ -2,23 +2,6 @@ import { apiUrl } from "./utils.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
-// export const registerUser = async (userData) => {
-//   const response = await fetch(`${apiUrl}/users/signup`, {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(userData),
-//   });
-
-//   const data = await response.json();
-
-//   if (!response.ok) {
-//     throw new Error(data.message || "Registration failed");
-//   }
-
-//   return data;
-// };
 export const requestEmailVerification = async (userData) => {
   try {
     const { data } = await axios.post(

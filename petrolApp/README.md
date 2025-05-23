@@ -31,6 +31,6 @@ git rm --cached petrolApp
 rm -rf .git/modules/petrolApp
 
 git add petrolApp
-git commit -m "Properly add petrolApp folder to main repo"
+git commit -a -m "edit registration logic"
 git push origin main
 git push petapp main
