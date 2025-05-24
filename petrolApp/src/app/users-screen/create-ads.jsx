@@ -123,7 +123,6 @@ const CreateAds = () => {
     try {
       setloading(true);
       const user = await getUserDetails();
-      console.log("user=", user);
       if (!user) {
         return Alert.alert("Error", "User not found. Please log in again.");
       }
@@ -139,7 +138,6 @@ const CreateAds = () => {
         image,
         imageId,
       };
-      console.log("newAd=", newAd);
       const res = await createAd(newAd);
       await sendNotificationToManyUsers({
         title: form.title,

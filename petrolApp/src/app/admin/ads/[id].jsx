@@ -71,8 +71,8 @@ const AdvertDetails = () => {
           source={
             ad?.image ? { uri: ad.image } : require("@/assets/images/ads.jpeg")
           }
-          className="w-full h-52 rounded-xl"
-          resizeMode="cover"
+          className="w-full h-60 rounded-xl"
+          resizeMode="contain"
         />
       </View>
       <View className="bg-gray-100 p-4 rounded-xl mb-4 shadow">
