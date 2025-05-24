@@ -29,6 +29,7 @@ adsRouter.post(
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) return res.status(404).json({ message: "User not found" });
 
+    // Create the ad
     const ad = await prisma.ad.create({
       data: {
         title,
@@ -39,6 +40,15 @@ adsRouter.post(
         company,
         userId,
         validity,
+      },
+    });
+
+    // Clear advertPin and pinValidity
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        advertPin: "",
+        pinValidity: "",
       },
     });
 

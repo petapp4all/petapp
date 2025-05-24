@@ -140,15 +140,15 @@ const CreateAds = () => {
         imageId,
       };
       console.log("newAd=", newAd);
-      // const res = await createAd(newAd);
-      // await sendNotificationToManyUsers({
-      //   title: form.title,
-      //   body: "Click for more details.",
-      //   data: {
-      //     screen: "/users/dashboard",
-      //     image,
-      //   },
-      // });
+      const res = await createAd(newAd);
+      await sendNotificationToManyUsers({
+        title: form.title,
+        body: "Click for more details.",
+        data: {
+          screen: "/users/dashboard",
+          image,
+        },
+      });
       Alert.alert("Success", "Ad created successfully.");
       router.back();
     } catch (err) {
