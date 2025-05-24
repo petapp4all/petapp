@@ -3,6 +3,7 @@ import expressAsyncHandler from "express-async-handler";
 
 import { deleteImageByPublicId, sendMail } from "../utils.js";
 import prisma from "../prisma/prisma.js";
+import { subWeeks, subMonths, isBefore } from "date-fns";
 
 const adsRouter = express.Router();
 
@@ -10,8 +11,16 @@ const adsRouter = express.Router();
 adsRouter.post(
   "/create-ad",
   expressAsyncHandler(async (req, res) => {
-    const { userId, title, description, category, image, imageId, company } =
-      req.body;
+    const {
+      userId,
+      title,
+      description,
+      category,
+      image,
+      imageId,
+      company,
+      validity,
+    } = req.body;
 
     if (!userId || !title || !image || !imageId || !description || !category) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -29,6 +38,7 @@ adsRouter.post(
         category,
         company,
         userId,
+        validity,
       },
     });
 
@@ -41,10 +51,45 @@ adsRouter.get(
   "/get-ads",
   expressAsyncHandler(async (req, res) => {
     try {
-      const ads = await prisma.ad.findMany({
+      const allAds = await prisma.ad.findMany({
         orderBy: { postedAt: "desc" },
       });
-      res.status(200).json(ads);
+
+      const now = new Date();
+      const validAds = [];
+
+      for (const ad of allAds) {
+        if (!ad.validity || ad.validity === "") {
+          validAds.push(ad);
+          continue;
+        }
+
+        let expiryDate;
+
+        switch (ad.validity) {
+          case "1w":
+            expiryDate = subWeeks(now, 1);
+            break;
+          case "2w":
+            expiryDate = subWeeks(now, 2);
+            break;
+          case "1m":
+            expiryDate = subMonths(now, 1);
+            break;
+          default:
+            validAds.push(ad); // Treat unknown validity as non-expiring
+            continue;
+        }
+
+        // Check if the ad is expired
+        if (isBefore(ad.postedAt, expiryDate)) {
+          await prisma.ad.delete({ where: { id: ad.id } });
+        } else {
+          validAds.push(ad);
+        }
+      }
+
+      res.status(200).json(validAds);
     } catch (error) {
       console.error("Error fetching ads:", error);
       res.status(500).json({ message: "Failed to fetch ads" });

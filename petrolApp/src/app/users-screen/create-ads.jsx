@@ -68,7 +68,6 @@ const CreateAds = () => {
       const fetchInitialData = async () => {
         try {
           const user = await getUserDetails();
-          console.log("user=", user);
           if (user) {
             setRole(user.role);
             const userCountry = user.country;
@@ -121,7 +120,6 @@ const CreateAds = () => {
     if (!form.title || !form.description || !form.company) {
       return Alert.alert("Validation Error", "All fields are required.");
     }
-
     try {
       setloading(true);
       const user = await getUserDetails();
@@ -136,6 +134,7 @@ const CreateAds = () => {
         ...form,
         postedAt: new Date().toISOString(),
         userId: user.id,
+        validity: user.pinValidity || "",
         image,
         imageId,
       };

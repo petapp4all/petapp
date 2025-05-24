@@ -96,6 +96,7 @@ model Ad {
   category    String
   image       String?  @default("")
   imageId     String?  @default("")
+  validity    String?  @default("")
   company     String
   postedAt    DateTime @default(now())
   userId      String   @db.ObjectId

@@ -54,7 +54,7 @@ const Advert = () => {
       fetchAds();
     }, [])
   );
-  // router.push(`/admin/ads/${item.id}`)}
+  console.log("ads=", ads);
   const renderItem = ({ item }) => (
     <TouchableOpacity onPress={() => router.push(`/admin/ads/${item.id}`)}>
       <View className="bg-white p-4 rounded-2xl mb-4 shadow shadow-black/10">
