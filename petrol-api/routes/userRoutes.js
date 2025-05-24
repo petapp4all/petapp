@@ -123,8 +123,8 @@ userRouter.post(
       image: user.image,
       imageId: user.imageId,
       phone: user.phone,
+      pinValidity: user.pinValidity,
       country: user.country,
-      token: generateToken(user),
     });
   })
 );

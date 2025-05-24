@@ -123,6 +123,7 @@ const CreateAds = () => {
     try {
       setloading(true);
       const user = await getUserDetails();
+      console.log("user=", user);
       if (!user) {
         return Alert.alert("Error", "User not found. Please log in again.");
       }
@@ -138,16 +139,16 @@ const CreateAds = () => {
         image,
         imageId,
       };
-
-      const res = await createAd(newAd);
-      await sendNotificationToManyUsers({
-        title: form.title,
-        body: "Click for more details.",
-        data: {
-          screen: "/users/dashboard",
-          image,
-        },
-      });
+      console.log("newAd=", newAd);
+      // const res = await createAd(newAd);
+      // await sendNotificationToManyUsers({
+      //   title: form.title,
+      //   body: "Click for more details.",
+      //   data: {
+      //     screen: "/users/dashboard",
+      //     image,
+      //   },
+      // });
       Alert.alert("Success", "Ad created successfully.");
       router.back();
     } catch (err) {
