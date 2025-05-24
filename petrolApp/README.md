@@ -7,7 +7,7 @@ eas build -p android
 eas build -p android --profile production
 eas build -p android --profile development
 eas build -p android --profile preview
-eas update --channel preview --platform android --message "adjust registration logic"
+eas update --channel preview --platform android --message "adjust advert logic"
 
 steps to install nativewind
 npx expo install nativewind tailwindcss@^3.4.17 react-native-reanimated@3.16.2 react-native-safe-area-context
