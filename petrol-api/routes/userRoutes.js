@@ -9,7 +9,6 @@ import jwt from "jsonwebtoken";
 const userRouter = express.Router();
 
 //signup-initiate
-
 userRouter.post(
   "/signup-initiate",
   expressAsyncHandler(async (req, res) => {
@@ -86,6 +85,15 @@ userRouter.post(
     });
 
     // Clean up verification record
+
+    await prisma.emailVerification.deleteMany({
+      where: {
+        expiresAt: {
+          lt: new Date(),
+        },
+      },
+    });
+
     res.json({
       id: user.id,
       name: user.name,
