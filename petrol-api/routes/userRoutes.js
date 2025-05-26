@@ -9,43 +9,54 @@ import jwt from "jsonwebtoken";
 const userRouter = express.Router();
 
 //signup-initiate
+
 userRouter.post(
   "/signup-initiate",
   expressAsyncHandler(async (req, res) => {
-    const { name, email, phone, password, country } = req.body;
+    try {
+      const { name, email, phone, password, country } = req.body;
 
-    const existingUser = await prisma.user.findUnique({ where: { email } });
-    if (existingUser) {
-      return res.status(409).json({ message: "User already exists" });
-    }
+      const existingUser = await prisma.user.findUnique({ where: { email } });
+      if (existingUser) {
+        return res.status(409).json({ message: "User already exists" });
+      }
 
-    const verificationCode = Math.floor(
-      100000 + Math.random() * 900000
-    ).toString();
+      const verificationCode = Math.floor(
+        100000 + Math.random() * 900000
+      ).toString();
 
-    // Save this in a temporary table or Redis
-    await prisma.emailVerification.create({
-      data: {
+      // Delete any existing verification entries for this email
+      await prisma.emailVerification.deleteMany({
+        where: { email },
+      });
+
+      // Save new verification entry
+      await prisma.emailVerification.create({
+        data: {
+          email,
+          code: verificationCode,
+          expiresAt: new Date(Date.now() + 10 * 60 * 1000), // Expires in 10 mins
+          name,
+          phone,
+          country,
+          password: bcrypt.hashSync(password, 10),
+        },
+      });
+
+      // Send verification email
+      await sendMail(
+        "Verify your email",
+        `Your verification code is: ${verificationCode}`,
         email,
-        code: verificationCode,
-        expiresAt: new Date(Date.now() + 10 * 60 * 1000), // Expires in 10 mins
-        name,
-        phone,
-        country,
-        password: bcrypt.hashSync(password, 10),
-      },
-    });
+        process.env.EMAIL_USER,
+        process.env.EMAIL_USER
+      );
 
-    // Send email
-    await sendMail(
-      "Verify your email",
-      `Your verification code is: ${verificationCode}`,
-      email,
-      process.env.EMAIL_USER,
-      process.env.EMAIL_USER
-    );
-
-    return res.json({ message: "Verification code sent" });
+      return res.json({ message: "Verification code sent" });
+    } catch (error) {
+      console.error("Error in /signup-initiate:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
   })
 );
 
@@ -75,15 +86,6 @@ userRouter.post(
     });
 
     // Clean up verification record
-
-    await prisma.emailVerification.deleteMany({
-      where: {
-        expiresAt: {
-          lt: new Date(),
-        },
-      },
-    });
-
     res.json({
       id: user.id,
       name: user.name,

@@ -132,7 +132,7 @@ const SignUpScreen = () => {
       setIsSubmitting(true);
       await requestEmailVerification(userData);
       setEmailForVerification(trimmedEmail);
-      setShowCodeModal(true); // open verification modal
+      setShowCodeModal(true);
     } catch (error) {
       console.log("Verification Request Failed:", error);
       Alert.alert("Error", "Could not send verification code.");
@@ -152,6 +152,9 @@ const SignUpScreen = () => {
           <View className="bg-white w-4/5 p-6 rounded-xl shadow-lg">
             <Text className="text-lg font-semibold mb-4 text-center">
               Enter Verification Code Sent to {emailForVerification}
+            </Text>
+            <Text className="text-sm text-center font-bold mb-4">
+              If you don't see the email, please check your spam folder.
             </Text>
             <TextInput
               className="border border-gray-300 rounded-lg px-4 py-2 text-center text-xl tracking-widest"
