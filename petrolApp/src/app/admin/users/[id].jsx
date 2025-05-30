@@ -146,9 +146,6 @@ const SingleUser = () => {
         <Text className="text-xl text-gray-700">
           🗓 Registered Date: {new Date(user.createdAt).toLocaleString()}
         </Text>
-        <Text className="text-xl text-gray-700">
-          🔄 Updated Date: {new Date(user.updatedAt).toLocaleString()}
-        </Text>
 
         <Text className={`text-xl font-bold ${statusColor}`}>
           ⚡ Status: {displayStatus}

@@ -6,11 +6,9 @@ const extra = Constants.expoConfig?.extra || Constants.manifest?.extra || {};
 
 export const apiUrl = isDevelopment
   ? extra.apiUrlDevelopment || "http://localhost:8000/api"
-  : extra.apiUrlProduction || "https://petrol-auth.vercel.app/api";
+  : extra.apiUrlProduction || "https://petapp-black.vercel.app/api";
 
 export const queryClient = new QueryClient();
-
-// utils/currency.js
 
 const API_KEY = "87d978790ca385ed78570a66";
 

@@ -6,10 +6,6 @@ const StationOwnerTerms = () => {
   const router = useRouter();
   return (
     <ScrollView className="flex-1 bg-white p-4">
-      <Text className="text-2xl font-bold text-black mb-4">
-        Station Owner Terms and Conditions
-      </Text>
-
       <Text className="text-gray-700 mb-4">
         These terms and conditions govern your access to and use of Splantom
         PetrolApp as a registered station owner. By creating a station owner
