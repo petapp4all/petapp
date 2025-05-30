@@ -1,100 +1,115 @@
-Project Overview
+# PetrolApp
 
-PetrolApp is a comprehensive mobile application designed to help users efficiently manage their fuel-related activities.
-Built with React Native (Expo) and powered by a Node.js/Express backend using MongoDB and Prisma ORM, the app offers the following key features:
+## 🛠 Project Overview
 
-       View the latest fuel prices in real time
+**PetrolApp** is a comprehensive mobile application designed to help users efficiently manage their fuel-related activities.  
+Built with **React Native (Expo)** and powered by a **Node.js/Express** backend using **MongoDB** and **Prisma ORM**, the app offers the following key features:
 
-       Locate the nearest filling stations using an interactive map
-
-       Stay informed with the latest oil and gas news
-
-       Order fuel directly from the app
-
-       Advertise products or services related to the oil and gas industry
-
-       Allow station owners to register and manage their fuel stations
+- View the latest fuel prices in real time
+- Locate the nearest filling stations using an interactive map
+- Stay informed with the latest oil and gas news
+- Order fuel directly from the app
+- Advertise products or services related to the oil and gas industry
+- Allow station owners to register and manage their fuel stations
 
 PetrolApp bridges the gap between users and fuel service providers, creating a modern, user-friendly experience for both consumers and businesses in the petroleum sector.
 
-<!-- Tech Stack -->
+---
 
-Frontend (React Native with Expo)
+## ⚙️ Tech Stack
 
-<!-- Backend -->
+### Frontend
 
-Node.js with Express
-Prisma ORM (MongoDB)
+- React Native with Expo
 
-npx prisma generate
-npm run start
+### Backend
 
-API_URL= https://petapp-black.vercel.app/api
+- Node.js with Express
+- Prisma ORM (MongoDB)
 
-Getting Started
+### API Base URL
 
- <!-- Frontend Setup -->
+```
+API_URL=https://petapp-black.vercel.app/api
+```
 
+---
+
+## 🚀 Getting Started
+
+### 🔧 Frontend Setup
+
+```bash
 cd petrolApp
 npm install
 npx expo start
+```
 
-<!-- You need a development build to avoid any posible error as some library force the app to only works on real devices -->
+> 📌 **Note:** You need a development build to avoid possible errors, as some libraries require running on a real device.
 
- <!-- Backend Setup -->
+### 🖥 Backend Setup
 
+```bash
 cd backend
 npm install
 npx prisma generate
 npm run dev
+```
 
-Third-Party Services & Dependencies
+---
 
-Frontend Dependencies
-Library and their Purpose
+## 📦 Third-Party Services & Dependencies
 
-@expo/vector-icons -----> Icons
-@react-native-async-storage/async-storage -----> Local storage
-@react-native-community/datetimepicker -----> Native date/time picker
-@react-native-picker/picker -----> Dropdown picker
-@react-navigation/bottom-tabs -----> Bottom tab navigation
-@reduxjs/toolkit, react-redux -----> State management
-@rnmapbox/maps -----> (Mapbox GL)
-@tanstack/react-query -----> Async data fetching and caching
-axios -----> HTTP client
-date-fns -----> Date utility functions
-expo-\* (image-picker, location, notifications, blur, updates, etc.) Expo's native modules
-firebase -----> notifications
-nativewind, tailwindcss -----> Tailwind styling in React Native
-react-hook-form -----> Form validation
-react-native-geolocation-service -----> High-accuracy location
-react-native-paper -----> Material UI components
-react-native-paystack-webview -----> In-app Paystack payments
-react-native-webview -----> Embedded webviews
+### ✅ Frontend Dependencies and Their Purpose
 
-Backend Dependencies
-Third-Party Services & Dependencies
-Library and their Purpose
-express -----> Web server
-cors -----> Handle CORS
-dotenv -----> Environment variables
-bcryptjs -----> Password hashing
-jsonwebtoken -----> Token-based auth
-axios -----> Backend-to-backend API calls
-prisma, @prisma/client -----> MongoDB ORM
-cloudinary -----> Image uploads
-nodemailer -----> Email sending
-nanoid -----> Unique ID generation
-date-fns -----> Date formatting
-express-async-handler -----> Simplifies async error handling
-nodemon -----> Auto-restarting dev server
+- `@expo/vector-icons` → Icons
+- `@react-native-async-storage/async-storage` → Local storage
+- `@react-native-community/datetimepicker` → Native date/time picker
+- `@react-native-picker/picker` → Dropdown picker
+- `@react-navigation/bottom-tabs` → Bottom tab navigation
+- `@reduxjs/toolkit`, `react-redux` → State management
+- `@rnmapbox/maps` → Mapbox GL
+- `@tanstack/react-query` → Async data fetching and caching
+- `axios` → HTTP client
+- `date-fns` → Date utility functions
+- `expo-*` (e.g. image-picker, location, notifications, blur, updates, etc.) → Expo's native modules
+- `firebase` → Notifications
+- `nativewind`, `tailwindcss` → Tailwind styling in React Native
+- `react-hook-form` → Form validation
+- `react-native-geolocation-service` → High-accuracy location
+- `react-native-paper` → Material UI components
+- `react-native-paystack-webview` → In-app Paystack payments
+- `react-native-webview` → Embedded webviews
 
-Deployment
-Frontend
-Use EAS Build for production builds
+---
 
-Publish OTA updates via expo publish
+### ✅ Backend Dependencies and Their Purpose
 
-Backend
-Deploy using:
-Vercel (for serverless)
+- `express` → Web server
+- `cors` → Handle CORS
+- `dotenv` → Environment variables
+- `bcryptjs` → Password hashing
+- `jsonwebtoken` → Token-based authentication
+- `axios` → Backend-to-backend API calls
+- `prisma`, `@prisma/client` → MongoDB ORM
+- `cloudinary` → Image uploads
+- `nodemailer` → Email sending
+- `nanoid` → Unique ID generation
+- `date-fns` → Date formatting
+- `express-async-handler` → Simplifies async error handling
+- `nodemon` → Auto-restarting dev server
+
+---
+
+## 🚢 Deployment
+
+### Frontend
+
+- Use **EAS Build** for production builds
+- Publish OTA updates via `expo publish`
+
+### Backend
+
+- Deploy using **Vercel** (for serverless)
+
+---
