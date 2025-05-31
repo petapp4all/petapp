@@ -191,6 +191,7 @@ stationRouter.get(
 );
 
 // POST /api/petrolprice
+
 stationRouter.post(
   "/price",
   expressAsyncHandler(async (req, res) => {
@@ -200,6 +201,22 @@ stationRouter.post(
       return res
         .status(400)
         .json({ message: "stationName and price are required" });
+    }
+
+    // Check if a price already exists for the station
+    const existingPrice = await prisma.petrolPrice.findFirst({
+      where: {
+        stationName: {
+          equals: stationName,
+          mode: "insensitive", // optional: ignores case
+        },
+      },
+    });
+
+    if (existingPrice) {
+      return res.status(400).json({
+        message: `Price for station "${stationName}" already exists.`,
+      });
     }
 
     const newPrice = await prisma.petrolPrice.create({

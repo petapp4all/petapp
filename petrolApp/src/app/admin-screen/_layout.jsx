@@ -47,6 +47,17 @@ export default function Layout() {
           },
         }}
       />
+      <Stack.Screen
+        name="price"
+        options={{
+          title: "Price",
+          headerTitleAlign: "center",
+          headerTitleStyle: {
+            fontSize: 25,
+            fontWeight: "bold",
+          },
+        }}
+      />
     </Stack>
   );
 }

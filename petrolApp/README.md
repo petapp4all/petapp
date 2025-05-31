@@ -7,7 +7,7 @@ eas update --channel preview --platform android --message "adjust image upload"
 
 git add petrolApp
 git commit -a -m "edit registration logic"
-git push origin main
 git push petapp main
+git push origin main
 
 npx prisma db push
