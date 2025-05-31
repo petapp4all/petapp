@@ -58,8 +58,11 @@ const ImageUploadComponent = forwardRef((props, ref) => {
   const compressImage = async (uri) => {
     const result = await ImageManipulator.manipulateAsync(
       uri,
-      [{ resize: { width: 1024 } }],
-      { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
+      [], // No resize action
+      {
+        compress: 0.4, // More aggressive compression (0.4 or even 0.3 if needed)
+        format: ImageManipulator.SaveFormat.JPEG,
+      }
     );
     return result.uri;
   };
@@ -106,6 +109,7 @@ const ImageUploadComponent = forwardRef((props, ref) => {
 
     setLoading(true);
     try {
+      console.log("base64Image=", base64Image);
       const { data } = await axios.post(`${apiUrl}/image/upload`, {
         image: base64Image,
       });

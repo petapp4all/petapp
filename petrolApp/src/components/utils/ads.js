@@ -113,58 +113,6 @@ export const deleteAd = async (id) => {
   }
 };
 
-export const getStations = async () => {
-  try {
-    const { data } = await axios.get(`${apiUrl}/station`);
-    return data;
-  } catch (error) {
-    console.error("Error fetch station:", error.message);
-    throw error;
-  }
-};
-
-export const getStationById = async (id) => {
-  try {
-    const { data } = await axios.get(`${apiUrl}/station/${id}`);
-    return data;
-  } catch (error) {
-    console.error("Error fetch station:", error.message);
-    throw error;
-  }
-};
-
-export const deleteStation = async (id) => {
-  try {
-    const { data } = await axios.delete(`${apiUrl}/station/${id}`);
-    return data;
-  } catch (error) {
-    console.error("Error fetch station:", error.message);
-    throw error;
-  }
-};
-
-export const getStationDetails = async (id) => {
-  try {
-    const { data } = await axios.get(`${apiUrl}/station/details/${id}`);
-    return data;
-  } catch (error) {
-    console.error("Error fetch station:", error.message);
-    throw error;
-  }
-};
-
-export const getStationByOwner = async () => {
-  try {
-    const userData = await AsyncStorage.getItem("userDetails");
-    const { id } = JSON.parse(userData);
-    const { data } = await axios.get(`${apiUrl}/station/by-owner/${id}`);
-    return data;
-  } catch (error) {
-    console.error("Error fetch station:", error.message);
-    throw error;
-  }
-};
-
 export const createOrder = async (orderDetails) => {
   try {
     const { data } = await axios.post(`${apiUrl}/order/create`, orderDetails);

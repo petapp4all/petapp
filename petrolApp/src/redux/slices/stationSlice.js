@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getStations, getStationById } from "@/src/components/utils/ads";
+import { getStations, getStationById } from "@/src/components/utils/station";
 
 // Async thunk: fetch all stations
 export const fetchStations = createAsyncThunk(

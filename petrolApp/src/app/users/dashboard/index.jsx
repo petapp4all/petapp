@@ -13,7 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import OilGasNews from "@/src/components/OilGasNews";
 import { useFocusEffect, useRouter, useSegments } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getStations } from "@/src/components/utils/ads";
+import { getStations } from "../../../components/utils/station";
 
 const Menu = () => {
   const router = useRouter();

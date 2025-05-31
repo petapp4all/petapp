@@ -15,7 +15,7 @@ import ReusableInput from "../../components/ReuseAbleInput";
 import CheckboxDropdown from "../../components/CheckboxDropdown";
 import { Switch } from "react-native-paper";
 import { useRoute } from "@react-navigation/native";
-import { getStationByOwner } from "../../components/utils/ads";
+import { getStationByOwner } from "../../components/utils/station";
 
 const EditStationScreen = () => {
   const route = useRoute();

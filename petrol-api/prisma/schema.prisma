@@ -39,6 +39,12 @@ model User {
   Review            Review[]
 }
 
+model PetrolPrice {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  stationName String
+  price       Float
+}
+
 model Station {
   id                String   @id @default(auto()) @map("_id") @db.ObjectId
   name              String

@@ -187,6 +187,16 @@ const AdminDashboard = () => {
             </View>
             <Text className="text-gray-800 text-center">Orders</Text>
           </TouchableOpacity>
+
+          <TouchableOpacity
+            className="w-[30%] items-center"
+            onPress={() => router.push("/admin-screen/price")}
+          >
+            <View className="bg-[#e6ffe6] p-2 rounded-full mb-1">
+              <FontAwesome5 name="shopping-basket" size={25} color="#00cc44" />
+            </View>
+            <Text className="text-gray-800 text-center">Price</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>

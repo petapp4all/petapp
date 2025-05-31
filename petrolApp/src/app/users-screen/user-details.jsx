@@ -11,12 +11,13 @@ import { getUserById, updateUser } from "../../components/utils/users";
 import ReusableInput from "../../components/ReuseAbleInput";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ImageUploadComponent from "../../components/ImageUploadComponent";
+import { useRouter } from "expo-router";
 
 const UserDetails = () => {
   const [loading, setLoading] = useState(false);
   const imageUploaderRef = useRef(null);
   const [user, setUser] = useState(null);
-
+  const router = useRouter();
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
@@ -56,7 +57,7 @@ const UserDetails = () => {
 
       const { image, imageId } =
         await imageUploaderRef.current.uploadImageToServer();
-
+      console.log("image, imageId=", image, imageId);
       const updatedUser = {
         ...user,
         image,
@@ -66,6 +67,7 @@ const UserDetails = () => {
       await updateUser(updatedUser);
 
       Alert.alert("Success", "User details updated successfully!");
+      router.push("/users/dashboard");
     } catch (error) {
       Alert.alert("Error", error.message || "Failed to update user details.");
     } finally {

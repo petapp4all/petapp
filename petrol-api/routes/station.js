@@ -1,6 +1,5 @@
 import express from "express";
 import expressAsyncHandler from "express-async-handler";
-
 import { deleteImageByPublicId } from "../utils.js";
 import prisma from "../prisma/prisma.js";
 
@@ -188,6 +187,70 @@ stationRouter.get(
     }
 
     res.json(stations);
+  })
+);
+
+// POST /api/petrolprice
+stationRouter.post(
+  "/price",
+  expressAsyncHandler(async (req, res) => {
+    const { stationName, price } = req.body;
+
+    if (!stationName || price == null) {
+      return res
+        .status(400)
+        .json({ message: "stationName and price are required" });
+    }
+
+    const newPrice = await prisma.petrolPrice.create({
+      data: {
+        stationName,
+        price: Number(price),
+      },
+    });
+
+    res.status(201).json(newPrice);
+  })
+);
+
+// PUT /api/petrolprice/:id
+stationRouter.put(
+  "/price/:id",
+  expressAsyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { stationName, price } = req.body;
+
+    const existing = await prisma.petrolPrice.findUnique({
+      where: { id },
+    });
+
+    if (!existing) {
+      return res.status(404).json({ message: "PetrolPrice entry not found" });
+    }
+
+    const updated = await prisma.petrolPrice.update({
+      where: { id },
+      data: {
+        stationName,
+        price: Number(price),
+      },
+    });
+
+    res.json(updated);
+  })
+);
+
+// GET /api/petrolprice
+stationRouter.get(
+  "/price",
+  expressAsyncHandler(async (req, res) => {
+    const prices = await prisma.petrolPrice.findMany({
+      orderBy: {
+        stationName: "asc",
+      },
+    });
+
+    res.json(prices);
   })
 );
 

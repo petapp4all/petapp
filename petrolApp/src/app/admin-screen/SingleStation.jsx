@@ -10,7 +10,10 @@ import {
 import { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router"; // ← add useRouter
 import { MaterialIcons } from "@expo/vector-icons";
-import { getStationDetails, deleteStation } from "../../components/utils/ads";
+import {
+  getStationDetails,
+  deleteStation,
+} from "../../components/utils/station";
 
 const SingleStation = () => {
   const { id } = useLocalSearchParams();

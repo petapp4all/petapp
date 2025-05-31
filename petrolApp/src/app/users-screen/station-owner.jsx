@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { getStationByOwner } from "../../components/utils/ads";
+import { getStationByOwner } from "../../components/utils/station";
 import { useRouter } from "expo-router";
 
 const StationOwner = ({ user, navigation }) => {
